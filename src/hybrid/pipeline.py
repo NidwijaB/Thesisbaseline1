@@ -10,7 +10,7 @@ Given a partial code snippet it:
 """
 
 from __future__ import annotations
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import torch
 
 from src.retrieval.retriever import Retriever

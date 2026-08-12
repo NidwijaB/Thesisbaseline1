@@ -92,7 +92,22 @@ def run_rag_only(examples, cfg, ft_model_path):
     latency = measure_system("rag_only", examples, gen_fn, retrieve_fn=retrieve_fn)
     preds   = [gen_fn(ex["input"], retrieve_fn(ex["input"])) for ex in examples]
     refs    = [ex["output"] for ex in examples]
-    return run_evaluation("rag_only", preds, refs, latency=latency), latency
+
+    # TODO: Populate retrieved_list and relevant_list for retrieval quality metrics.
+    # retrieved_list: for each example, the list of file paths the retriever fetched.
+    #   e.g. [[chunk.file_path for chunk in retriever.retrieve(ex["input"])] for ex in examples]
+    # relevant_list: for each example, the ground-truth relevant file paths from the benchmark.
+    #   e.g. [ex["relevant_files"] for ex in examples]  ← field name depends on your dataset
+    retrieved_list = None  # TODO: replace with actual retrieved file IDs
+    relevant_list  = None  # TODO: replace with ground-truth relevant file IDs from benchmark
+
+    return run_evaluation(
+        "rag_only", preds, refs,
+        latency=latency,
+        retrieved_list=retrieved_list,
+        relevant_list=relevant_list,
+        k_values=cfg.retrieval.top_k_values,
+    ), latency
 
 
 def run_finetuning_only(examples, cfg, ft_model_path):
@@ -105,6 +120,7 @@ def run_finetuning_only(examples, cfg, ft_model_path):
     latency = measure_system("finetuning_only", examples, gen_fn, retrieve_fn=None)
     preds   = [gen_fn(ex["input"], None) for ex in examples]
     refs    = [ex["output"] for ex in examples]
+    # No retrieval for Fine-Tuning-Only — retrieved_list/relevant_list intentionally None
     return run_evaluation("finetuning_only", preds, refs, latency=latency), latency
 
 
@@ -121,7 +137,22 @@ def run_hybrid(examples, cfg, ft_model_path):
     latency = measure_system("hybrid", examples, gen_fn, retrieve_fn=retrieve_fn)
     preds   = [gen_fn(ex["input"], retrieve_fn(ex["input"])) for ex in examples]
     refs    = [ex["output"] for ex in examples]
-    return run_evaluation("hybrid", preds, refs, latency=latency), latency
+
+    # TODO: Populate retrieved_list and relevant_list for retrieval quality metrics.
+    # retrieved_list: for each example, the list of file paths the retriever fetched.
+    #   e.g. [[chunk.file_path for chunk in retriever.retrieve(ex["input"])] for ex in examples]
+    # relevant_list: for each example, the ground-truth relevant file paths from the benchmark.
+    #   e.g. [ex["relevant_files"] for ex in examples]  ← field name depends on your dataset
+    retrieved_list = None  # TODO: replace with actual retrieved file IDs
+    relevant_list  = None  # TODO: replace with ground-truth relevant file IDs from benchmark
+
+    return run_evaluation(
+        "hybrid", preds, refs,
+        latency=latency,
+        retrieved_list=retrieved_list,
+        relevant_list=relevant_list,
+        k_values=cfg.retrieval.top_k_values,
+    ), latency
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
