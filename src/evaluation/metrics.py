@@ -92,6 +92,58 @@ def recall_at_k(retrieved: List[str], relevant: List[str], k: int) -> float:
     return len(set(retrieved_k) & set(relevant)) / len(relevant)
 
 
+def mean_reciprocal_rank(retrieved: List[str], relevant: List[str]) -> float:
+    """
+    MRR — Mean Reciprocal Rank.
+    Returns the reciprocal of the rank of the first relevant result.
+    A score of 1.0 means the first retrieved item was relevant.
+    A score of 0.0 means nothing relevant was retrieved.
+    """
+    relevant_set = set(relevant)
+    for rank, item in enumerate(retrieved, start=1):
+        if item in relevant_set:
+            return 1.0 / rank
+    return 0.0
+
+
+def evaluate_retrieval(
+    retrieved_list: List[List[str]],
+    relevant_list: List[List[str]],
+    k: int = 5,
+    k_values: List[int] = None,
+) -> dict:
+    """
+    Aggregate retrieval metrics over a list of queries.
+
+    Parameters
+    ----------
+    retrieved_list : list of retrieved file/chunk IDs per query
+    relevant_list  : list of ground-truth relevant file/chunk IDs per query
+    k              : primary K for Precision@K and Recall@K
+    k_values       : optional list of K values for ablation sweep (e.g. [1,3,5,10])
+    """
+    if k_values is None:
+        k_values = [k]
+
+    prec_scores = {kv: [] for kv in k_values}
+    rec_scores  = {kv: [] for kv in k_values}
+    mrr_scores  = []
+
+    for retrieved, relevant in zip(retrieved_list, relevant_list):
+        for kv in k_values:
+            prec_scores[kv].append(precision_at_k(retrieved, relevant, kv))
+            rec_scores[kv].append(recall_at_k(retrieved, relevant, kv))
+        mrr_scores.append(mean_reciprocal_rank(retrieved, relevant))
+
+    result = {"mrr": round(sum(mrr_scores) / len(mrr_scores), 4)}
+    for kv in k_values:
+        result[f"precision@{kv}"] = round(sum(prec_scores[kv]) / len(prec_scores[kv]), 4)
+        result[f"recall@{kv}"]    = round(sum(rec_scores[kv])  / len(rec_scores[kv]),  4)
+
+    result["n_queries"] = len(retrieved_list)
+    return result
+
+
 # ── Aggregate Completion Evaluation ──────────────────────────────────────────
 
 def evaluate_completion(predictions: List[str], references: List[str]) -> dict:
