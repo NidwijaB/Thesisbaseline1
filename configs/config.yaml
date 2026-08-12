@@ -49,25 +49,35 @@ retrieval:
 # LLM (used by RAG-only and Hybrid)
 # ─────────────────────────────────────────────
 llm:
-  model: "Qwen/Qwen2.5-Coder-7B"               # alt: "deepseek-ai/deepseek-coder-6.7b-base", "bigcode/starcoder2-7b"
+  model: "Qwen/Qwen2.5-Coder-1.5B"             # 1.5B — fits in 4–6 GB VRAM
+  # Alternatives by VRAM budget:
+  #   ~4 GB  → "Qwen/Qwen2.5-Coder-1.5B"       (recommended for low-end)
+  #   ~6 GB  → "deepseek-ai/deepseek-coder-1.3b-base"
+  #   ~10 GB → "Qwen/Qwen2.5-Coder-3B"
+  #   ~14 GB → "Qwen/Qwen2.5-Coder-7B"         (original)
+  load_in_4bit: true                            # 4-bit quantization at inference too
   frozen: true                                  # frozen for RAG-only; overridden for hybrid
 
 # ─────────────────────────────────────────────
 # Fine-Tuning
 # ─────────────────────────────────────────────
 finetuning:
-  base_model: "Qwen/Qwen2.5-Coder-7B"
-  method: "lora"                                # lora | qlora | full
-  lora_r: 16
-  lora_alpha: 32
+  base_model: "Qwen/Qwen2.5-Coder-1.5B"        # match llm.model
+  method: "qlora"                               # lora | qlora | full
+  load_in_4bit: true
+  bnb_4bit_compute_dtype: "float16"
+  bnb_4bit_use_double_quant: true
+  lora_r: 8                                     # reduced rank saves more memory
+  lora_alpha: 16
   lora_dropout: 0.05
   target_modules: ["q_proj", "v_proj"]
   epochs: 3
-  batch_size: 4
-  gradient_accumulation_steps: 4
+  batch_size: 1                                 # minimum batch
+  gradient_accumulation_steps: 16              # effective batch = 16
   learning_rate: 2.0e-4
-  max_seq_length: 2048
+  max_seq_length: 512                           # 512 fits in ~4 GB
   fp16: true
+  gradient_checkpointing: true
   output_dir: "experiments/finetuned_model"
 
 # ─────────────────────────────────────────────

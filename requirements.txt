@@ -4,6 +4,7 @@ transformers>=4.40.0
 datasets>=2.18.0
 accelerate>=0.27.0
 peft>=0.10.0  # LoRA / QLoRA
+bitsandbytes>=0.43.0  # QLoRA 4-bit quantization
 
 # Embeddings & Retrieval
 faiss-cpu>=1.8.0

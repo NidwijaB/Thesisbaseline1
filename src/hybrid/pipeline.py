@@ -37,17 +37,27 @@ class HybridPipeline:
         max_new_tokens: int = 128,
         temperature: float = 0.2,
         device: str = "cuda",
+        load_in_4bit: bool = True,
     ):
         self.retriever = retriever
         self.device = device
         self.max_new_tokens = max_new_tokens
         self.temperature = temperature
 
-        logger.info(f"Loading fine-tuned model from {model_path}")
+        logger.info(f"Loading fine-tuned model from {model_path} (4-bit={load_in_4bit})")
         self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
+
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=load_in_4bit,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.float16,
+            bnb_4bit_use_double_quant=True,
+        ) if load_in_4bit else None
+
         self.model = AutoModelForCausalLM.from_pretrained(
             model_path,
             trust_remote_code=True,
+            quantization_config=bnb_config,
             device_map="auto",
         )
         self.model.eval()

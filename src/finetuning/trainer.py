@@ -7,14 +7,16 @@ LoRA / QLoRA fine-tuning entry point using HuggingFace PEFT + Transformers.
 from __future__ import annotations
 from pathlib import Path
 
+import torch
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     TrainingArguments,
     Trainer,
     DataCollatorForSeq2Seq,
+    BitsAndBytesConfig,
 )
-from peft import LoraConfig, get_peft_model, TaskType
+from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
 
 from src.finetuning.dataset import build_dataset
 from src.utils.config import load_config
@@ -32,13 +34,29 @@ def run_finetuning(config_path: str = "configs/config.yaml"):
     tokenizer.pad_token = tokenizer.eos_token
 
     logger.info(f"Loading base model: {ft.base_model}")
+
+    bnb_config = None
+    if ft.method == "qlora":
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.float16,
+            bnb_4bit_use_double_quant=getattr(ft, "bnb_4bit_use_double_quant", True),
+        )
+        logger.info("QLoRA: loading model in 4-bit NF4")
+
     model = AutoModelForCausalLM.from_pretrained(
         ft.base_model,
         trust_remote_code=True,
+        quantization_config=bnb_config,
         device_map="auto",
     )
 
     if ft.method in ("lora", "qlora"):
+        if ft.method == "qlora":
+            model = prepare_model_for_kbit_training(model)
+        if getattr(ft, "gradient_checkpointing", False):
+            model.gradient_checkpointing_enable()
         lora_cfg = LoraConfig(
             task_type=TaskType.CAUSAL_LM,
             r=ft.lora_r,
@@ -66,6 +84,7 @@ def run_finetuning(config_path: str = "configs/config.yaml"):
         gradient_accumulation_steps=ft.gradient_accumulation_steps,
         learning_rate=ft.learning_rate,
         fp16=ft.fp16,
+        gradient_checkpointing=getattr(ft, "gradient_checkpointing", False),
         evaluation_strategy="epoch" if "validation" in dataset else "no",
         save_strategy="epoch",
         logging_steps=50,
