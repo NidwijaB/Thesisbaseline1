@@ -1,0 +1,109 @@
+# ─────────────────────────────────────────────
+# Comparative Study Configuration
+# Fine-Tuning vs RAG vs Hybrid — Enterprise Code Completion
+# ─────────────────────────────────────────────
+
+project:
+  name: "comparative-study-code-completion"
+  seed: 42
+  device: "cuda"          # cuda | cpu
+
+# ─────────────────────────────────────────────
+# Paths
+# ─────────────────────────────────────────────
+paths:
+  data_root: "data/"
+  repobench: "data/repobench/"
+  crosscodeeval: "data/crosscodeeval/"
+  processed: "data/processed/"
+  embeddings: "data/embeddings/"
+  results: "results/"
+  experiments: "experiments/"
+
+# ─────────────────────────────────────────────
+# Systems Under Comparison
+# ─────────────────────────────────────────────
+systems:
+  rag_only:
+    enabled: true
+    description: "RAG-only baseline: retrieval context injected into a frozen LLM"
+  finetuning_only:
+    enabled: true
+    description: "Fine-tuning-only baseline: project-adapted model, no retrieval"
+  hybrid:
+    enabled: true
+    description: "Proposed hybrid: retrieval context fed into a fine-tuned model"
+
+# ─────────────────────────────────────────────
+# Retrieval (RAG)
+# ─────────────────────────────────────────────
+retrieval:
+  embedding_model: "microsoft/unixcoder-base"   # alt: "BAAI/bge-base-en-v1.5", "microsoft/codebert-base"
+  vector_db: "faiss"                            # faiss | chromadb
+  chunk_size: 256                               # lines
+  chunk_overlap: 32
+  top_k: 5
+  top_k_values: [1, 3, 5, 10]                  # sweep for ablation
+
+# ─────────────────────────────────────────────
+# LLM (used by RAG-only and Hybrid)
+# ─────────────────────────────────────────────
+llm:
+  model: "Qwen/Qwen2.5-Coder-7B"               # alt: "deepseek-ai/deepseek-coder-6.7b-base", "bigcode/starcoder2-7b"
+  frozen: true                                  # frozen for RAG-only; overridden for hybrid
+
+# ─────────────────────────────────────────────
+# Fine-Tuning
+# ─────────────────────────────────────────────
+finetuning:
+  base_model: "Qwen/Qwen2.5-Coder-7B"
+  method: "lora"                                # lora | qlora | full
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: ["q_proj", "v_proj"]
+  epochs: 3
+  batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 2.0e-4
+  max_seq_length: 2048
+  fp16: true
+  output_dir: "experiments/finetuned_model"
+
+# ─────────────────────────────────────────────
+# Generation
+# ─────────────────────────────────────────────
+generation:
+  max_new_tokens: 128
+  temperature: 0.2
+  do_sample: false
+
+# ─────────────────────────────────────────────
+# Evaluation
+# ─────────────────────────────────────────────
+evaluation:
+  # Code quality metrics
+  metrics:
+    - exact_match
+    - edit_similarity
+    - identifier_accuracy
+    - code_bleu
+  # Retrieval-specific metrics
+  retrieval_metrics:
+    - precision_at_k
+    - recall_at_k
+  k_values: [1, 3, 5]
+  # Efficiency metrics
+  efficiency_metrics:
+    - retrieval_latency_ms
+    - inference_latency_ms
+    - total_latency_ms
+    - gpu_memory_mb
+
+# ─────────────────────────────────────────────
+# Experiment Tracking
+# ─────────────────────────────────────────────
+tracking:
+  tool: "mlflow"          # mlflow | wandb
+  experiment_name: "comparative-study-code-completion"
+  log_artifacts: true
