@@ -1,0 +1,60 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.spec
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Environment variables
+.env
+*.env
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Data & model files
+data/embeddings/
+data/processed/
+*.pkl
+*.npy
+*.npz
+*.h5
+*.hdf5
+*.pt
+*.pth
+*.bin
+*.ckpt
+
+# Results & logs
+results/
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Coverage & testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
