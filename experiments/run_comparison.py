@@ -93,13 +93,17 @@ def run_rag_only(examples, cfg, ft_model_path):
     preds   = [gen_fn(ex["input"], retrieve_fn(ex["input"])) for ex in examples]
     refs    = [ex["output"] for ex in examples]
 
-    # TODO: Populate retrieved_list and relevant_list for retrieval quality metrics.
-    # retrieved_list: for each example, the list of file paths the retriever fetched.
-    #   e.g. [[chunk.file_path for chunk in retriever.retrieve(ex["input"])] for ex in examples]
-    # relevant_list: for each example, the ground-truth relevant file paths from the benchmark.
-    #   e.g. [ex["relevant_files"] for ex in examples]  ← field name depends on your dataset
-    retrieved_list = None  # TODO: replace with actual retrieved file IDs
-    relevant_list  = None  # TODO: replace with ground-truth relevant file IDs from benchmark
+    # Retrieval quality: what the retriever actually fetched vs. the
+    # ground-truth "relevant_files" written by src/preprocessing/prepare_datasets.py.
+    # If that field is missing (e.g. a hand-written benchmark without it),
+    # retrieval metrics are skipped gracefully rather than crashing.
+    retrieved_list = [
+        [chunk.file_path for chunk in retriever.retrieve(ex["input"])] for ex in examples
+    ]
+    relevant_list = [ex.get("relevant_files") for ex in examples]
+    if any(r is None for r in relevant_list):
+        logger.warning("Some examples are missing 'relevant_files' — retrieval metrics will be skipped.")
+        retrieved_list = relevant_list = None
 
     return run_evaluation(
         "rag_only", preds, refs,
@@ -138,13 +142,14 @@ def run_hybrid(examples, cfg, ft_model_path):
     preds   = [gen_fn(ex["input"], retrieve_fn(ex["input"])) for ex in examples]
     refs    = [ex["output"] for ex in examples]
 
-    # TODO: Populate retrieved_list and relevant_list for retrieval quality metrics.
-    # retrieved_list: for each example, the list of file paths the retriever fetched.
-    #   e.g. [[chunk.file_path for chunk in retriever.retrieve(ex["input"])] for ex in examples]
-    # relevant_list: for each example, the ground-truth relevant file paths from the benchmark.
-    #   e.g. [ex["relevant_files"] for ex in examples]  ← field name depends on your dataset
-    retrieved_list = None  # TODO: replace with actual retrieved file IDs
-    relevant_list  = None  # TODO: replace with ground-truth relevant file IDs from benchmark
+    # Same retrieval-quality wiring as run_rag_only() above.
+    retrieved_list = [
+        [chunk.file_path for chunk in retriever.retrieve(ex["input"])] for ex in examples
+    ]
+    relevant_list = [ex.get("relevant_files") for ex in examples]
+    if any(r is None for r in relevant_list):
+        logger.warning("Some examples are missing 'relevant_files' — retrieval metrics will be skipped.")
+        retrieved_list = relevant_list = None
 
     return run_evaluation(
         "hybrid", preds, refs,

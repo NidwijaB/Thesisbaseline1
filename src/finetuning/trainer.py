@@ -26,6 +26,13 @@ logger = get_logger(__name__)
 
 
 def run_finetuning(config_path: str = "configs/config.yaml"):
+    """
+    Loads the base model, wraps it with LoRA/QLoRA adapters, trains on
+    data/processed/train.jsonl, and saves the adapted model + tokenizer to
+    finetuning.output_dir (default: experiments/finetuned_model/).
+    All hyperparameters (epochs, batch size, LoRA rank, etc.) come from
+    configs/config.yaml -> finetuning.* — edit that file, not this one.
+    """
     cfg = load_config(config_path)
     ft = cfg.finetuning
 

@@ -36,6 +36,7 @@ logger = get_logger("main")
 # ── Sub-command handlers ──────────────────────────────────────────────────────
 
 def cmd_index(args):
+    # Chunk -> embed -> store a repository so it can be searched later (RAG component).
     from src.preprocessing.chunker import chunk_repository
     from src.retrieval.embedder import CodeEmbedder
     from src.retrieval.vector_store import FAISSVectorStore
@@ -62,6 +63,7 @@ def cmd_index(args):
 
 
 def cmd_finetune(args):
+    # Trains the Fine-Tuning-only baseline (QLoRA on data/processed/train.jsonl).
     from src.finetuning.trainer import run_finetuning
     run_finetuning(config_path=args.config)
 
@@ -83,6 +85,9 @@ def cmd_evaluate(args):
 
 def cmd_compare(args):
     """Run the full comparative study — the main research output."""
+    # Just forwards to experiments/run_comparison.py with the same CLI args,
+    # so `python main.py compare ...` and `python experiments/run_comparison.py ...`
+    # behave identically.
     import sys
     sys.argv = [
         "run_comparison.py",

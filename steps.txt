@@ -1,3 +1,114 @@
-python -m virtualenv mypy
-mypy\scripts\activate
-pip install -r install/requirements.txt
+====================================================================
+THESIS PROJECT — STEP-BY-STEP RUN ORDER
+====================================================================
+Read docs/thesis_implementation_guide.md for the full explanation of
+each step (what it does, why, and what's already built vs. what you
+still need to run). This file is just the short checklist + commands.
+
+--------------------------------------------------------------------
+STEP 0 — Environment setup (do this once per machine)
+--------------------------------------------------------------------
+python -m venv venv
+venv\Scripts\activate          (Windows)   OR   source venv/bin/activate (Mac/Linux)
+pip install -r requirements.txt
+
+--------------------------------------------------------------------
+STEP 1 — Download the datasets (YOU do this — not automated here)
+--------------------------------------------------------------------
+python data/repobench/download.py
+python data/crosscodeeval/download.py
+
+Notes:
+- RepoBench pulls from HuggingFace: tianyang/repobench_python_v1.1
+- CrossCodeEval defaults to a community HF mirror. Read the docstring
+  at the top of data/crosscodeeval/download.py if you want the
+  official amazon-science/cceval archive instead (requires emailing
+  the authors for the .tar.xz file).
+- Check data/repobench/ and data/crosscodeeval/ afterwards — they
+  should no longer be empty.
+
+--------------------------------------------------------------------
+STEP 2 — Convert raw datasets into the unified training format
+--------------------------------------------------------------------
+python src/preprocessing/prepare_datasets.py
+
+This writes:
+    data/processed/train.jsonl
+    data/processed/val.jsonl
+    data/processed/test.jsonl
+
+Each line looks like:
+    {"input": "<partial code>", "output": "<ground truth>", "relevant_files": [...]}
+
+If this step logs a warning about a missing dataset, go back to Step 1
+and confirm the download actually completed.
+
+--------------------------------------------------------------------
+STEP 3 — Build the retrieval index (RAG component)
+--------------------------------------------------------------------
+python main.py index --repo-root data/repobench/ --repo-id repobench
+
+This chunks the repository files, embeds them, and saves a FAISS
+index to data/embeddings/repobench/. Needed by both the RAG-only
+baseline and the Hybrid system.
+
+--------------------------------------------------------------------
+STEP 4 — Fine-tune the model (Fine-Tuning-only baseline)
+--------------------------------------------------------------------
+python main.py finetune
+
+Trains Qwen2.5-Coder-1.5B with QLoRA on data/processed/train.jsonl.
+Saves the result to experiments/finetuned_model/.
+Expect ~1-3 hours on a single GPU with ~4-6 GB VRAM. This is the step
+YOU run yourself when you're ready to actually train — everything
+before this point is just data + scaffolding.
+
+--------------------------------------------------------------------
+STEP 5 — Run the full three-way comparison (the actual thesis result)
+--------------------------------------------------------------------
+python main.py compare --benchmark data/processed/test.jsonl --ft-model experiments/finetuned_model
+
+Runs RAG-only, Fine-Tuning-only, and Hybrid on the same test set and
+writes:
+    results/rag_only_metrics.json
+    results/finetuning_only_metrics.json
+    results/hybrid_metrics.json
+    results/comparison_summary.json
+    results/comparison_summary.md   <-- copy this table into the thesis
+
+--------------------------------------------------------------------
+OPTIONAL — Ablations for extra depth in the discussion section
+--------------------------------------------------------------------
+- Embedding model ablation (for RQ4):
+    Edit configs/config.yaml -> retrieval.embedding_model
+    (try "BAAI/bge-base-en-v1.5" instead of "microsoft/unixcoder-base")
+    Re-run Step 3 (index) then Step 5 (compare).
+
+- Top-K ablation (for RQ4):
+    configs/config.yaml -> retrieval.top_k_values already sweeps [1,3,5,10]
+    Results appear automatically in comparison_summary.md.
+
+- Run a single system only (faster iteration while debugging):
+    python main.py compare --benchmark data/processed/test.jsonl \
+        --ft-model experiments/finetuned_model --systems hybrid
+
+--------------------------------------------------------------------
+WHERE THINGS LIVE (quick reference)
+--------------------------------------------------------------------
+configs/config.yaml                 all hyperparameters & model choices
+src/preprocessing/                  chunking + dataset conversion
+src/retrieval/                      embedding, FAISS store, retriever (RAG)
+src/finetuning/                     LoRA/QLoRA training
+src/hybrid/pipeline.py              retrieval + fine-tuned model combined
+src/evaluation/                     metrics (CodeBLEU, EM, P@K, latency, etc.)
+experiments/run_comparison.py       orchestrates the 3-way comparison
+results/                            output metrics + the markdown table for the thesis
+docs/thesis_implementation_guide.md full explanation of every phase
+answers_to_presentation_questions.md answers to committee questions from the last presentation
+
+--------------------------------------------------------------------
+CURRENT STATUS (as of last update)
+--------------------------------------------------------------------
+DONE / READY TO RUN : everything above (Steps 0-5 and the scripts they call)
+YOU STILL NEED TO DO : actually run Steps 1, 2, 4 with real data/GPU time,
+                        then Step 5 to get real numbers for the thesis.

@@ -34,3 +34,6 @@ tree-sitter>=0.22.0
 # Testing
 pytest>=8.0.0
 
+# Docs / Reporting
+python-pptx>=1.0.0  # generates docs/slides/Midterm_Progress_Update.pptx
+

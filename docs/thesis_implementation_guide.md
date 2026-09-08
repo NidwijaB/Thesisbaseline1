@@ -22,48 +22,36 @@ Everything is already set up:
 ## PHASE 2 — Datasets
 
 ### Step 1 — Download RepoBench
-**Status: ⚠️ TODO — You must do this manually**
+**Status: ✅ Script ready — you just need to run it**
 
-Proposed: Download from HuggingFace. Contains repository context files,
-completion targets, and ground truth.
+`data/repobench/download.py` pulls `tianyang/repobench_python_v1.1` (the real
+HuggingFace dataset ID, verified against the dataset card) across all three
+configs (`cross_file_first`, `cross_file_random`, `in_file`) and saves each
+to `data/repobench/<config_name>/`.
 
-What the repo has: `data/repobench/` folder exists but is empty.
-
-**What you need to do:**
-```python
-# TODO: Add this script to data/repobench/download.py
-# Install: pip install datasets
-from datasets import load_dataset
-
-dataset = load_dataset("microsoft/repobench-python-v1.1")
-# or whichever split you are using
-dataset.save_to_disk("data/repobench/")
+```bash
+python data/repobench/download.py
 ```
-Check the RepoBench HuggingFace page for the exact dataset name and available splits.
 
 ---
 
 ### Step 2 — Download CrossCodeEval
-**Status: ⚠️ TODO — You must do this manually**
+**Status: ✅ Script ready — you just need to run it (or use the official archive)**
 
-Proposed: Contains cross-file tasks, multiple languages, repository relationships.
+`data/crosscodeeval/download.py` defaults to the community HuggingFace mirror
+`ZHENGRAN/cross_code_eval_python` (no email/request needed). The *official*
+amazon-science/cceval release is only distributed as a manually-requested
+`.tar.xz` — the script's docstring explains how to swap to that path if you
+want the canonical benchmark instead of the mirror.
 
-What the repo has: `data/crosscodeeval/` folder exists but is empty.
-
-**What you need to do:**
-```python
-# TODO: Add this script to data/crosscodeeval/download.py
-from datasets import load_dataset
-
-dataset = load_dataset("amazon-science/cceval", "python")
-# Available languages: python, java, typescript, csharp
-dataset.save_to_disk("data/crosscodeeval/")
+```bash
+python data/crosscodeeval/download.py
 ```
 
 ---
 
 ### Step 3 — Convert to Working Format
-**Status: ⚠️ TODO — preprocessing script needed, but format is already defined**
+**Status: ✅ Script ready — `src/preprocessing/prepare_datasets.py`**
 
 Proposed format:
 ```json
@@ -93,16 +81,20 @@ This is more robust than a raw prompt/target pair because it follows the
 instruction-tuning format that Qwen2.5-Coder was trained on.
 
 **What you need to do:**
-```python
-# TODO: Add a preprocessing script at src/preprocessing/prepare_datasets.py
-# that reads from data/repobench/ and data/crosscodeeval/
-# and writes JSONL files in the correct format:
-#   {"input": "<partial code>", "output": "<correct completion>"}
-# Output files:
-#   data/processed/train.jsonl
-#   data/processed/val.jsonl
-#   data/processed/test.jsonl
+```bash
+# After both datasets are downloaded (Steps 1-2 above):
+python src/preprocessing/prepare_datasets.py
 ```
+
+This also adds a third field, `relevant_files`, used only for scoring
+retrieval quality (Precision@K, Recall@K, MRR):
+```json
+{ "input": "...", "output": "...", "relevant_files": ["path/a.py", "path/b.py"] }
+```
+
+The script groups examples by repository before splitting 80/10/10 into
+train/val/test, so the fine-tuned model is never trained on a repo it is
+later tested against.
 
 Storage format: `data/processed/` uses `.jsonl` (one JSON object per line).
 This is already what all downstream code expects — no changes needed there.
@@ -311,15 +303,6 @@ What the repo has (`src/hybrid/pipeline.py`):
 - Supports 4-bit inference (same memory budget as baseline)
 - `temperature=0.2` for slightly varied but mostly deterministic output
 
-**Note:** There is a missing import in `pipeline.py` — `BitsAndBytesConfig` is
-used but not imported. This is already flagged and will be caught at runtime.
-
-**Fix needed in `src/hybrid/pipeline.py`:**
-```python
-# TODO: Add this import at the top of pipeline.py
-from transformers import BitsAndBytesConfig
-```
-
 **Result: Baseline C (Hybrid) is fully implemented — this is your thesis contribution.**
 
 ---
@@ -355,20 +338,12 @@ installed. Run `pip install evaluate sacrebleu` to enable.
 - Results appear in `results/comparison_summary.md` under "Retrieval Quality" table
 - Fine-Tuning-Only correctly shows N/A (no retrieval component)
 
-**What you need to provide when calling `run_evaluation()` for RAG-Only and Hybrid:**
-```python
-# TODO: When running evaluation, pass ground-truth relevant file lists:
-run_evaluation(
-    system_name="rag_only",
-    predictions=preds,
-    references=refs,
-    retrieved_list=retrieved_file_ids,   # list of lists — what retriever fetched per query
-    relevant_list=ground_truth_file_ids, # list of lists — what was actually relevant
-    k_values=[1, 3, 5, 10],
-)
-# The benchmark datasets (RepoBench / CrossCodeEval) provide ground truth
-# relevant file annotations — extract these when preprocessing in Phase 2.
-```
+**Status: ✅ Wired up** — `experiments/run_comparison.py` (`run_rag_only()` and
+`run_hybrid()`) now builds `retrieved_list` from `retriever.retrieve(...)` and
+`relevant_list` from each example's `relevant_files` field (written by
+`prepare_datasets.py`). If any example is missing that field, retrieval
+metrics are skipped with a warning instead of crashing — so this still works
+even on a benchmark file you hand-write yourself without `relevant_files`.
 
 ### Efficiency — Latency and Memory
 **Status: ✅ Done — more complete than proposed**
@@ -427,86 +402,48 @@ sentence-transformers, evaluate, Levenshtein, psutil, and everything else.
 ---
 
 ### 🔴 STEP 2 — Download RepoBench
-**File to create: `data/repobench/download.py`**
+**Script already written: `data/repobench/download.py`**
 
-RepoBench is on HuggingFace. Run this:
-
-```python
-from datasets import load_dataset
-
-dataset = load_dataset("microsoft/repobench-python-v1.1")
-dataset.save_to_disk("data/repobench/")
-print("RepoBench downloaded.")
+```bash
+python data/repobench/download.py
 ```
 
-Check the exact dataset name on https://huggingface.co/datasets — it may have
-been updated. You want the Python split. It contains:
-- `context` — the repository files around the completion point
-- `import_statement` — imports in the file being completed
-- `code` — the ground truth completion target
-- `next_line` — the specific line to predict
+Pulls `tianyang/repobench_python_v1.1` (verified real dataset ID) for all
+three configs into `data/repobench/cross_file_first/`, `.../cross_file_random/`,
+`.../in_file/`. Each row contains `context` (cross-file snippets),
+`import_statement`, `cropped_code`, `next_line` (the prediction target), and more.
 
 ---
 
 ### 🔴 STEP 3 — Download CrossCodeEval
-**File to create: `data/crosscodeeval/download.py`**
+**Script already written: `data/crosscodeeval/download.py`**
 
-```python
-from datasets import load_dataset
-
-dataset = load_dataset("amazon-science/cceval", "python")
-# Also available: "java", "typescript", "csharp"
-dataset.save_to_disk("data/crosscodeeval/")
-print("CrossCodeEval downloaded.")
+```bash
+python data/crosscodeeval/download.py
 ```
 
-It contains:
-- `task_id` — unique identifier per completion task
-- `prompt` — the partial code (what goes into `input`)
-- `canonical_solution` — the correct completion (what goes into `output`)
-- `cross_file_context` — the relevant files (what goes into `relevant_files`)
+Defaults to the community HuggingFace mirror (`ZHENGRAN/cross_code_eval_python`)
+so you don't have to email the original authors for the official `.tar.xz`
+archive. Read the docstring at the top of that file if you'd rather use the
+official release instead — it explains the small field-name differences.
 
 ---
 
-### 🔴 STEP 4 — Write the Preprocessing Script
-**File to create: `src/preprocessing/prepare_datasets.py`**
+### 🔴 STEP 4 — Run the Preprocessing Script
+**Script already written: `src/preprocessing/prepare_datasets.py`**
 
-This is the most important script you need to write yourself. It must:
-1. Read from `data/repobench/` and `data/crosscodeeval/`
-2. Convert each example to `{"input": "...", "output": "...", "relevant_files": [...]}`
-3. Write to `data/processed/train.jsonl`, `val.jsonl`, `test.jsonl`
-
-The `relevant_files` field is needed for retrieval metrics (Precision@K, Recall@K,
-MRR). Do not skip it — it is what makes your evaluation of RAG meaningful.
-
-Rough structure to follow:
-
-```python
-# src/preprocessing/prepare_datasets.py
-# TODO: Fill in this script
-
-import json
-from pathlib import Path
-from datasets import load_from_disk
-
-def convert_repobench(output_dir="data/processed"):
-    dataset = load_from_disk("data/repobench/")
-    # TODO: iterate dataset splits, map fields to {"input", "output", "relevant_files"}
-    # Write to train.jsonl / val.jsonl / test.jsonl
-    pass
-
-def convert_crosscodeeval(output_dir="data/processed"):
-    dataset = load_from_disk("data/crosscodeeval/")
-    # TODO: iterate dataset, map fields to {"input", "output", "relevant_files"}
-    # Append or merge with existing processed files
-    pass
-
-if __name__ == "__main__":
-    Path("data/processed").mkdir(parents=True, exist_ok=True)
-    convert_repobench()
-    convert_crosscodeeval()
-    print("Done. Check data/processed/")
+```bash
+python src/preprocessing/prepare_datasets.py
 ```
+
+Reads everything downloaded in Steps 2-3, maps both datasets' native fields
+onto the unified `{"input", "output", "relevant_files"}` format, groups by
+repository, and writes an 80/10/10 split to `data/processed/train.jsonl`,
+`val.jsonl`, `test.jsonl`. The `relevant_files` field is what makes retrieval
+metrics (Precision@K, Recall@K, MRR) meaningful later — don't skip this step.
+
+If either dataset's schema has changed since this was written, the script
+logs a warning and skips that dataset rather than crashing — check the logs.
 
 ---
 
@@ -537,32 +474,9 @@ Requires ~4–6 GB VRAM (or will run slowly on CPU).
 
 ---
 
-### 🟡 STEP 7 — Wire In Retrieval Ground Truth (in `run_comparison.py`)
-**File: `experiments/run_comparison.py` — two places marked with `# TODO`**
-
-In `run_rag_only()` and `run_hybrid()`, replace the two `None` placeholders:
-
-```python
-# Replace this:
-retrieved_list = None
-relevant_list  = None
-
-# With this (once your test.jsonl has a "relevant_files" field):
-retrieved_list = [
-    [chunk.file_path for chunk in retriever.retrieve(ex["input"])]
-    for ex in examples
-]
-relevant_list = [ex["relevant_files"] for ex in examples]
-```
-
-This enables Precision@K, Recall@K, and MRR to be calculated and appear in
-your `comparison_summary.md`. Without this, retrieval quality metrics will be
-skipped silently.
-
----
-
-### 🟡 STEP 8 — Run the Full Comparison
-**Do this after Steps 5, 6, and 7 are complete.**
+### 🟡 STEP 7 — Run the Full Comparison
+**Do this after Steps 5 and 6 are complete.** (Retrieval ground truth is
+already wired into `experiments/run_comparison.py` — nothing to edit here.)
 
 ```bash
 python main.py compare \
@@ -611,13 +525,12 @@ Mention the current approach as a limitation in your thesis and note this as fut
 | Step | What | Blocker for |
 |------|------|-------------|
 | 1 | `pip install -r requirements.txt` | Everything |
-| 2 | Download RepoBench | Steps 4, 5, 6, 8 |
-| 3 | Download CrossCodeEval | Steps 4, 5, 6, 8 |
-| 4 | Write `prepare_datasets.py` | Steps 5, 6, 8 |
+| 2 | `python data/repobench/download.py` | Steps 4, 5, 6, 7 |
+| 3 | `python data/crosscodeeval/download.py` | Steps 4, 5, 6, 7 |
+| 4 | `python src/preprocessing/prepare_datasets.py` | Steps 5, 6, 7 |
 | 5 | `python main.py index` | RAG-Only and Hybrid inference |
 | 6 | `python main.py finetune` | Fine-Tuning-Only and Hybrid inference |
-| 7 | Wire `retrieved_list` / `relevant_list` | Retrieval quality metrics (P@K, R@K, MRR) |
-| 8 | `python main.py compare` | Getting your thesis results |
+| 7 | `python main.py compare` | Getting your thesis results |
 | — | Embedding ablation | Optional depth for RQ4 |
 | — | AST chunker upgrade | Optional methodology improvement |
 

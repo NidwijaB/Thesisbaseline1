@@ -39,6 +39,9 @@ class HybridPipeline:
         device: str = "cuda",
         load_in_4bit: bool = True,
     ):
+        # Loads the already-fine-tuned model from disk (see src/finetuning/trainer.py)
+        # and pairs it with a Retriever — this is what makes it "hybrid":
+        # the model itself is project-adapted AND still gets retrieved context per query.
         self.retriever = retriever
         self.device = device
         self.max_new_tokens = max_new_tokens
@@ -63,6 +66,8 @@ class HybridPipeline:
         self.model.eval()
 
     def complete(self, partial_code: str) -> str:
+        # 1) retrieve similar code from the indexed repo, 2) inject it into the
+        # prompt alongside the partial code, 3) generate with the fine-tuned model.
         context = self.retriever.build_context_string(partial_code)
         prompt = PROMPT_TEMPLATE.format(context=context, query=partial_code)
 
