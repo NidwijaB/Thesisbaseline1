@@ -363,3 +363,104 @@ Other checks on the RepoBench fields:
   manifest, a pool and a leakage-checked fine-tuning corpus. The old
   `src/preprocessing/prepare_datasets.py` is not used by these scripts and still
   carries the outdated design (Entry 5).
+
+## Notes for thesis writing (author's reference; no results yet)
+Collected from plan Sections 7, 8, 10, 12 and from facts found in Entries 3 to 11.
+New points are added as bullets under "Added later" at the end of this section's
+later entries, so check later entries for the tag `[writing note]`.
+
+**Hypotheses to write down before any experiment runs (plan Section 7):**
+- H1: hybrid > RAG-only > FT-only on cross-file-dependent examples.
+- H2: the hybrid's gain shrinks when retrieval quality is high.
+- H3: FT-only degrades most on NEW files and unseen code.
+- H4 (low-data): with few files per repo, fine-tuning adds little relative to RAG.
+  A legitimate finding either way.
+
+**Expected vs Wang et al. (2025), to fill in (plan Section 7):** record their
+findings, then your predictions, and say where you expect to match or differ.
+- Their findings: RAG with suitable retrieval beats fine-tuning alone; the
+  combination is best; BM25 beat dense embedders (UniXcoder, CodeT5) on C++;
+  retrieval greatly increases input length and cuts throughput while fine-tuning
+  costs upfront training but no runtime latency; fine-tuning degraded general code
+  generation (forgetting).
+- Their setting: one company's C++, about 120,000 files, 0.5B to 7B models.
+- Your setting: public Python benchmarks, much smaller per-repo data, 1.5B with QLoRA.
+
+**Objective and application domain (plan Sections 0 and 8):** the decision question
+is "given a private repository and a single-GPU budget, which adaptation strategy
+should a team choose, and when does the hybrid's extra complexity pay off?" Domain:
+developer tooling for private codebases under privacy and GPU constraints.
+
+**Contribution framing (plan Section 8):** the controlled experimental design, the
+leakage-safe split construction, and the analysis, not the scripts. Conclusion
+format: numeric recommendations with thresholds, not "it depends".
+
+**Data facts you will likely want to cite (from this log):**
+- CrossCodeEval: 471 repos, 1,368 target files; 206 repos with >= 3 files, 79 with
+  >= 5. After the split: TEST 543 examples; 292 (53.8%) have a relevant file in the
+  main pool, 327 (60.2%) under staleness; only 68 have a relevant file in NEW
+  (Entries 3, 7).
+- Only 27% of CrossCodeEval snippets come from files that are themselves targets, so
+  most relevant repository code is simply not available to the pool (Entry 4). This
+  supports the "benchmark-derived setting" limitation (plan Section 10).
+- RepoBench: both cross-file settings overlap heavily (2,418 shared target files),
+  which is why one shared split is used (Entry 10). TEST: 6,276 + 6,035 examples;
+  gold file in the main pool for about 70%, in BASE+NEW for about 90%.
+- CrossCodeEval prompts always end right after a '.', so training cuts use the
+  same format (Entry 8). RepoBench is full next-line prediction (Entry 11).
+- Fine-tuning validation is not file-held-out (Entries 8, 11): say so.
+- The RepoBench corpus is capped at 12,000 examples to match CrossCodeEval training
+  cost (Entry 11): say so, it is a design choice not in the plan.
+
+**Limitations already visible (plan Section 10 plus extras):**
+- Pools hold only files that appeared in the benchmarks (full files for
+  CrossCodeEval, fragments for RepoBench).
+- CrossCodeEval relevance is a proxy rule (Entry 4); the snippet variant used was
+  the standard one, with the reference-aware variant as a sensitivity check only.
+- Short TEST strings (< 20 characters) are not checked inside corpus inputs.
+- Small CrossCodeEval staleness sample (68).
+
+**Defense prep (plan Section 12):** short answers already exist there; this log
+supplies the numbers behind them.
+
+## Entry 12: Per-repo FAISS indexes for CrossCodeEval and sanity retrieval (Section 5; Section 1, A6; Section 9, step 5 prep)
+- **Asked:** run `build_indexes.py` on one or two repos, check, then all 206 repos, add a
+  small sanity retrieval, and log it.
+- **Done:**
+  - Read `chunker.py::chunk_text` and `src/retrieval/build_indexes.py`; no logic problems found.
+  - Test run on two repos (`20171130-llmux-249dcdb`, which has NEW files, and
+    `AICPS-RS2G-b4e985f`, which has none): llmux 3 chunks in `main` and 4 in `staleness`;
+    AICPS 4 and 4. Matches the manifest.
+  - **Bug found and fixed** in `src/retrieval/embedder.py`: UniXcoder reports
+    `max_seq_length` 1026 but RoBERTa-style position ids start at `pad_token_id + 1 = 2`,
+    so the real limit is 1,024 tokens and a full chunk crashed with
+    `index 1026 is out of bounds`. The embedder now caps `max_seq_length` at
+    `max_position_embeddings - pad_token_id - 1` (1,024). Longer chunks are truncated.
+  - Full run (`python -m src.retrieval.build_indexes`): 206 repos, `main` 806 chunks,
+    `staleness` 931 chunks (806 BASE + 125 NEW). Matches the sizing facts. Took about 17 minutes
+    on CPU. Output in `data/embeddings/crosscodeeval/<repo>/{main,staleness}/` (gitignored).
+  - Wrote `src/retrieval/sanity_check_indexes.py` and ran it: query = last 20 lines of each
+    TEST prompt, searched in the example's own repo index.
+- **Assertions that passed:** no TEST file in any index, every chunk belongs to its repo,
+  `main` holds BASE only, `staleness` holds BASE + NEW only. In the sanity run, 0 TEST
+  chunks were retrieved over 543 TEST examples.
+- **Found (file-level hit@k vs the A3 rule, examples with >= 1 relevant file):**
+
+  | View | Examples | hit@1 | hit@3 | hit@5 | hit@10 |
+  |---|---|---|---|---|---|
+  | main | 292 | 0.603 | 0.932 | 0.983 | 1.000 |
+  | staleness | 327 | 0.532 | 0.893 | 0.960 | 0.997 |
+
+  The example counts match Entry 7 (292 and 327).
+- **Caveat / [writing note]:** these hit rates are inflated. Repos are small (3 to about
+  10 chunks in a pool), so top-5 and top-10 cover almost the whole pool. Treat this only as
+  a smoke test, not as a retrieval result. The informative numbers will be hit@1/hit@3 and
+  P@k / MRR, and BM25 as the comparison. Staleness hit rates are lower because NEW files add
+  competing candidates; hypothesis for H3 and the staleness analysis, not a finding yet.
+- **Limitation (as expected):** about half of each chunk's tokens are cut at 1,024 tokens
+  (median chunk about 1,045). Plan's 256 lines kept; report it.
+- **Open:**
+  - `rank_bm25` is not installed (needed for step 7).
+  - Index build is not yet committed; `chunker.py`, `build_indexes.py`, `embedder.py` and
+    `sanity_check_indexes.py` are uncommitted.
+  - Next: the pilot (trainer paths, evaluation wiring, seeded 50-example rule).

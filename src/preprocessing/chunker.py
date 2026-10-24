@@ -55,6 +55,37 @@ def chunk_file(
     return chunks
 
 
+def chunk_text(
+    text: str,
+    repo_id: str,
+    file_path: str,
+    chunk_size: int = 256,
+    chunk_overlap: int = 32,
+    language: str = "python",
+    metadata: dict | None = None,
+) -> List[CodeChunk]:
+    """Same line-based windows as chunk_file, for text already in memory (the pools)."""
+    lines = text.split("\n")
+    chunks: List[CodeChunk] = []
+    step = max(1, chunk_size - chunk_overlap)
+    i = 0
+    while i < len(lines):
+        window = lines[i: i + chunk_size]
+        chunks.append(
+            CodeChunk(
+                repo_id=repo_id,
+                file_path=file_path,
+                language=language,
+                content="\n".join(window),
+                start_line=i,
+                end_line=i + len(window) - 1,
+                metadata=dict(metadata or {}),
+            )
+        )
+        i += step
+    return chunks
+
+
 def chunk_repository(
     repo_root: str,
     repo_id: str,
