@@ -1,0 +1,264 @@
+# Thesis Experiment and Writing Plan
+# RAG vs Fine-Tuning vs Hybrid for repository-level code completion
+# Data: CrossCodeEval + RepoBench (no raw repo data required)
+
+===========================================================================
+## 0. GOAL AND DECISION QUESTION
+===========================================================================
+Compare RAG-only (System A), fine-tuning-only (System B), and hybrid (System C)
+under identical conditions: same base model (Qwen2.5-Coder-1.5B), same prompts,
+same metrics, same repository knowledge, no test-target leakage.
+
+Decision question (use as the thesis objective):
+  Given a private repository and a single-GPU budget, which adaptation strategy
+  should a team choose, and when does the hybrid's extra complexity pay off?
+
+Application domain (for the thesis and defense):
+  Developer tooling for software companies working on private codebases.
+  Privacy constraints often prevent sending proprietary code to commercial
+  APIs, so teams self-host small open models and must choose how to adapt them
+  under limited GPU budgets.
+
+===========================================================================
+## 1. PRE-PREPROCESSING CHECKLIST (old section A) WITH STATUS
+===========================================================================
+[RESOLVED] A1 Fine-tuning data source
+  - Neither benchmark has a usable training split or full repo files.
+  - Decision: build per-repo knowledge pools from the benchmark data itself,
+    split by file (see Section 3). Never train on prompt + groundtruth of test
+    examples.
+[RESOLVED] A2 Leakage
+  - Decision: file-level split, plus automated leakage assertions (Section 4).
+[Resolved] A3 Retrieval ground truth
+  - RepoBench: gold_snippet_index (verify field names after download).
+  - CrossCodeEval: no gold label. Define a rule, e.g. files named in the
+    example's cross-file snippets that exist in the pool. Document it and
+    report how many examples have at least one relevant pool file.
+[RESOLVED] A4 Language scope
+  - Python only, for both datasets, for all experiments.
+  - Multilingual CrossCodeEval is future work. Say so in the thesis.
+[RESOLVED] A5 Split design (supports staleness test)
+  - Three-way file split per repo (Section 3).
+[RESOLVED] A6 Index scope
+  - One FAISS index per repo, built from pool files only, never containing any
+    test file. In the staleness condition, "new" files are added to the index
+    only. Confirm the target file is excluded by assertion.
+
+===========================================================================
+## 2. DATASETS
+===========================================================================
+CrossCodeEval (Python), primary
+  - Task: complete the rest of a partial line.
+  - Verified on all 2,665 examples: prompt + groundtruth + right_context gives
+    the exact file text (context_start_lineno = 0; newline count in prompt =
+    groundtruth_start_lineno; groundtruth is a single line; right_context is
+    empty in 7 examples where the target is the last line).
+  - 1,368 distinct target files, 471 repos.
+  - Repos with >= 3 distinct files: 206 repos, 2,018 examples.
+  - Repos with >= 5 distinct files: 79 repos, 1,237 examples.
+  - Not verified: content matches the real GitHub files.
+  - Repo names end in a 7-char hex hash (likely a pinned commit, inferred).
+
+RepoBench v1.1 (Python), second dataset
+  - Task: predict the next line.
+  - Fields (from Hugging Face metadata, verify locally): gold_snippet_index,
+    context (list of snippets with identifier, path, snippet).
+  - No train split. Splits are task settings.
+  - data/repobench/ currently has only download.py: download first.
+  - Verify: field names, task settings (prefer cross-file settings), candidates
+    per example, snippet paths, repos and distinct paths per repo, consistency
+    of all_code (or equivalent).
+
+Rules for both
+  - Report results per dataset. Do not pool examples across datasets.
+  - Common internal format (repo, path, text, target); only loaders and filters
+    differ per dataset.
+  - Fixed random seed for every split and sampling step.
+  - Save split manifests (repo, path, split).
+
+===========================================================================
+## 3. SPLIT DESIGN (per repo, by FILE, never by example)
+===========================================================================
+Keep repos with >= 3 distinct files. Split files into:
+  - BASE files (about 50 to 60%): form the knowledge pool. Used for retrieval
+    AND for fine-tuning.
+  - NEW files (about 15 to 20%): available to retrieval only, never in
+    fine-tuning. Used for the staleness test. Only for repos with >= 5 files;
+    for smaller repos, skip NEW and put these files in BASE or TEST.
+  - TEST files (about 25 to 30%): targets are evaluated. Never in the pool,
+    the index, or the fine-tuning data.
+At least 2 BASE files and 1 TEST file per repo.
+
+Conditions:
+  - MAIN condition: pool = BASE. Systems A, B, C all have access to the same
+    information through different channels. Used for the headline comparison.
+  - STALENESS condition: add NEW files to the retrieval index only (A and C).
+    Evaluate test examples whose relevant files are in NEW. B (and the
+    fine-tuned part of C) never saw them. Tests the claim that RAG handles
+    changed or new code and fine-tuning does not.
+  - Note: with few files per repo, staleness results come from a subset of
+    repos (about 79 for CrossCodeEval). Report sample sizes.
+
+Fine-tuning corpus: pooled across repos (one adapter per dataset), built from
+BASE files only. Validation set from BASE files, never from TEST.
+
+CrossCodeEval pool construction
+  1. file_text = prompt + groundtruth + right_context
+  2. Deduplicate by (repo, file path): one copy per key.
+  3. Optional enrichment: pre-retrieved cross-file snippets from examples,
+     excluding any whose path or content comes from a TEST file. Note in the
+     thesis that these were selected by the benchmark authors (mild bias).
+
+RepoBench pool construction
+  1. Per-repo pool keyed by file path from context snippets and the code field.
+  2. Deduplicate by (repo, path, snippet text).
+  3. Pool entries are fragments, not full files (chunk-level fine-tuning).
+
+===========================================================================
+## 4. LEAKAGE ASSERTIONS (automate in preprocessing; must pass before use)
+===========================================================================
+  - No TEST file path appears in the pool, index, or fine-tuning data.
+  - No test groundtruth or next_line string appears in the fine-tuning corpus.
+  - Snippet filtering checked by both path match and content match.
+  - Validation data comes from BASE files only.
+  - NEW files absent from the fine-tuning corpus (for the staleness test).
+  - RepoBench: a test example's target file may appear as snippet source in
+    other examples, so filter by path, not only by example.
+
+===========================================================================
+## 5. SYSTEMS
+===========================================================================
+System A (RAG-only)
+  - Chunk pool files (256 lines, 32 overlap); snippets as chunks for RepoBench.
+  - microsoft/unixcoder-base embeddings, FAISS IndexFlatIP, normalized vectors,
+    per-repo index.
+  - BM25 baseline retriever (Wang et al. found BM25 beat dense embedders).
+  - Top-k sweep (for example 1, 3, 5, 10).
+System B (Fine-tuning only)
+  - Training examples from BASE files with cut points inside lines
+    (prefix to rest of line for CrossCodeEval; prefix to next line for
+    RepoBench).
+  - QLoRA, 4-bit NF4, adapters on attention projection layers.
+  - No retrieval at inference.
+System C (Hybrid)
+  - Fine-tuned model plus retrieval, same retrieval and prompt format as A.
+  - Option: fine-tune with retrieval-formatted prompts (RAFT-style variant).
+  - Fix the missing import in the hybrid pipeline first.
+
+===========================================================================
+## 6. EVALUATION
+===========================================================================
+Completion: exact match, edit similarity, identifier accuracy, CodeBLEU.
+Retrieval: P@k, R@k, MRR (rule per dataset in A3; report dropped share).
+Cost: latency and memory per system; accuracy gain per added latency and per
+  added GB.
+Extra analyses:
+  1. Hit vs miss: accuracy when the relevant file was and was not retrieved.
+  2. Noisy-context injection: irrelevant chunks, compare degradation.
+  3. Staleness test (NEW files, see Section 3).
+  4. Forgetting check: small HumanEval run before and after fine-tuning.
+  5. Cross-file-dependent subset reported separately.
+  6. Top-k sweep.
+Rigor: bootstrap confidence intervals; multiple seeds for fine-tuning if time
+  allows.
+
+===========================================================================
+## 7. HYPOTHESES (write into the thesis BEFORE running experiments)
+===========================================================================
+  H1: hybrid > RAG-only > FT-only on cross-file-dependent examples.
+  H2: the hybrid's gain shrinks when retrieval quality is high.
+  H3: FT-only degrades most on NEW files and unseen code.
+  H4 (low-data): with only a few files per repo, fine-tuning adds little
+      relative to RAG. A legitimate finding either way.
+
+Expected vs Wang et al. (2025) section
+  Record their findings, then your predictions for this setting:
+  - RAG with suitable retrieval beats fine-tuning alone.
+  - Combination gives the best accuracy.
+  - BM25 beat dense embedders (UniXcoder, CodeT5) on C++.
+  - Retrieval greatly increases input length and cuts throughput; fine-tuning
+    costs upfront training but no runtime latency.
+  - Fine-tuning degraded general code generation (forgetting).
+  - Their setting: one company's C++, about 120,000 files, 0.5B to 7B models.
+  - Yours: public Python benchmarks, much smaller per-repo data, 1.5B with
+    QLoRA. State where you expect to match and where you expect to differ.
+
+===========================================================================
+## 8. THESIS WRITING CHANGES
+===========================================================================
+  1. Objective: use the decision question in Section 0.
+  2. Add the application domain paragraph (Section 0).
+  3. Rewrite the research gap table. For Wang et al. replace "does not fully
+     address" with concrete differences:
+       - public, reproducible benchmarks vs proprietary data
+       - Python (benchmarks) vs one company's C++
+       - 1.5B model with QLoRA vs full fine-tuning of larger models
+       - retrieval-quality metrics (P@k, R@k, MRR) and hit/miss analysis
+       - cross-file and internal-API analysis
+       - low-data adaptation regime and staleness test
+  4. Reframe your contribution as the controlled experimental design, the
+     leakage-safe split construction, and the analysis, not the scripts.
+  5. Conclusion format: numeric recommendations, e.g. "Hybrid gains X EM points
+     over RAG-only at Y ms and Z GB extra; when retrieval recall@k exceeds T,
+     RAG-only captures most of the gain; on new files, FT-only loses N%."
+     Avoid "it depends" without thresholds.
+  6. Limitations section (Section 10).
+  7. Tell the supervisor about the scope changes (Section 11).
+
+===========================================================================
+## 9. ORDER OF WORK
+===========================================================================
+  1. Download RepoBench. Get counts for both datasets: repos and distinct files
+     per repo after filtering, and how many repos support the 3-way split.
+  2. Settle the CrossCodeEval retrieval ground-truth rule (A3).
+  3. Fix the missing import in the hybrid pipeline.
+  4. Build CrossCodeEval preprocessing with leakage assertions.
+  5. Pilot: all three systems end to end on about 50 CrossCodeEval test
+     examples (record that the pilot uses a simplified setup).
+  6. Write hypotheses and the expected-vs-Wang section while pilot numbers
+     come in.
+  7. Scale CrossCodeEval to the full filtered test set; add BM25, hit/miss
+     analysis, then the other extras.
+  8. Repeat on RepoBench (smaller sample if GPU time is tight; retrieval-only
+     if counts are poor).
+  9. Draft results, analysis, and numeric recommendations.
+
+===========================================================================
+## 10. LIMITATIONS TO STATE
+===========================================================================
+  - Pools hold only files that appeared in the benchmarks (full files for
+    CrossCodeEval, fragments for RepoBench), not full repositories.
+  - Benchmark-derived setting: evidence under enterprise-style conditions, not
+    a specific company's codebase.
+  - Much smaller scale than Wang et al.
+  - Task formats differ between datasets, so results are reported separately.
+  - CrossCodeEval has no gold retrieval label; the relevance rule is a proxy.
+  - Staleness analysis covers only repos with enough files.
+  - Python only; multilingual left as future work.
+
+===========================================================================
+## 11. SUPERVISOR AND ADMIN
+===========================================================================
+  - Scope changes from the progress report: fine-tuning data derived from
+    benchmark pools split by file; BM25 baseline; extra analyses; objective
+    reframed as a decision question with hypotheses; Python only.
+  - Email to CrossCodeEval authors for repo files already drafted. Follow up
+    after 1 to 2 weeks if no reply.
+  - Optional Plan B (time-boxed, about half a day): try cloning top repos
+    (5+ files) at the hash in the repo name. If it works or the authors reply,
+    add a larger-scale run as a robustness section.
+
+===========================================================================
+## 12. DEFENSE PREP (short answers to the earlier committee concerns)
+===========================================================================
+  - Is it all just AI work? Application domain is developer tooling for
+    private codebases under privacy and GPU constraints (Section 0).
+  - What did you do yourself? Controlled experimental design, leakage-safe
+    split construction, metric design, and analysis. Scripts are
+    implementation.
+  - Closest paper vs your expectations? Wang et al. results and your
+    predictions (Section 7).
+  - Is it just a comparison? It tests explicit hypotheses with extra analyses
+    (hit/miss, noise, staleness, forgetting, cost-normalized gains).
+  - What is the objective and conclusion? The decision question and numeric
+    recommendations (Sections 0 and 8).

@@ -58,3 +58,9 @@ htmlcov/
 .pytest_cache/
 .tox/
 
+
+# Raw benchmark downloads (re-create with data/*/download.py)
+data/crosscodeeval/python/
+data/repobench/cross_file_first/
+data/repobench/cross_file_random/
+data/repobench/in_file/

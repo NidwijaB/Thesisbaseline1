@@ -10,6 +10,10 @@ Given a partial code snippet it:
 """
 
 from __future__ import annotations
+import json
+from pathlib import Path
+
+from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import torch
 
@@ -57,12 +61,16 @@ class HybridPipeline:
             bnb_4bit_use_double_quant=True,
         ) if load_in_4bit else None
 
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model_path,
+        # trainer.py saves only the LoRA adapter, so load the base model it was
+        # trained from (recorded in adapter_config.json) and attach the adapter.
+        adapter_cfg = json.loads((Path(model_path) / "adapter_config.json").read_text())
+        base_model = AutoModelForCausalLM.from_pretrained(
+            adapter_cfg["base_model_name_or_path"],
             trust_remote_code=True,
             quantization_config=bnb_config,
             device_map="auto",
         )
+        self.model = PeftModel.from_pretrained(base_model, model_path)
         self.model.eval()
 
     def complete(self, partial_code: str) -> str:

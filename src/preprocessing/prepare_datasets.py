@@ -132,7 +132,7 @@ def _split_by_group(examples: list, group_key: str) -> dict:
 
 # ── RepoBench ─────────────────────────────────────────────────────────────────
 
-def convert_repobench(configs=("cross_file_first", "cross_file_random", "in_file")) -> list:
+def convert_repobench(configs=("cross_file_first", "cross_file_random")) -> list:
     """Reads every downloaded RepoBench config and maps it to the unified format."""
     from datasets import load_from_disk
 
