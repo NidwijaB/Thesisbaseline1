@@ -5,6 +5,7 @@ LoRA / QLoRA fine-tuning entry point using HuggingFace PEFT + Transformers.
 """
 
 from __future__ import annotations
+import argparse
 from pathlib import Path
 
 import torch
@@ -25,16 +26,19 @@ from src.utils.logger import get_logger
 logger = get_logger(__name__)
 
 
-def run_finetuning(config_path: str = "configs/config.yaml"):
+def run_finetuning(config_path: str = "configs/config.yaml", dataset_name: str = "crosscodeeval"):
     """
     Loads the base model, wraps it with LoRA/QLoRA adapters, trains on
-    data/processed/train.jsonl, and saves the adapted model + tokenizer to
-    finetuning.output_dir (default: experiments/finetuned_model/).
+    data/processed/<dataset_name>/finetune/{train,val}.jsonl (BASE-file corpus,
+    one adapter per dataset), and saves the adapted model + tokenizer to
+    <finetuning.output_dir>/<dataset_name>/.
     All hyperparameters (epochs, batch size, LoRA rank, etc.) come from
     configs/config.yaml -> finetuning.* — edit that file, not this one.
     """
     cfg = load_config(config_path)
     ft = cfg.finetuning
+    corpus_dir = Path("data/processed") / dataset_name / "finetune"
+    output_dir = str(Path(ft.output_dir) / dataset_name)
 
     logger.info(f"Loading tokenizer: {ft.base_model}")
     tokenizer = AutoTokenizer.from_pretrained(ft.base_model, trust_remote_code=True)
@@ -77,22 +81,22 @@ def run_finetuning(config_path: str = "configs/config.yaml"):
 
     # ── Dataset ───────────────────────────────────────────────────────────────
     dataset = build_dataset(
-        train_path="data/processed/train.jsonl",
-        val_path="data/processed/val.jsonl",
+        train_path=str(corpus_dir / "train.jsonl"),
+        val_path=str(corpus_dir / "val.jsonl"),
         tokenizer=tokenizer,
         max_length=ft.max_seq_length,
     )
 
     # ── Training Arguments ────────────────────────────────────────────────────
     training_args = TrainingArguments(
-        output_dir=ft.output_dir,
+        output_dir=output_dir,
         num_train_epochs=ft.epochs,
         per_device_train_batch_size=ft.batch_size,
         gradient_accumulation_steps=ft.gradient_accumulation_steps,
         learning_rate=ft.learning_rate,
         fp16=ft.fp16,
         gradient_checkpointing=getattr(ft, "gradient_checkpointing", False),
-        evaluation_strategy="epoch" if "validation" in dataset else "no",
+        eval_strategy="epoch" if "validation" in dataset else "no",
         save_strategy="epoch",
         logging_steps=50,
         report_to="none",
@@ -108,11 +112,15 @@ def run_finetuning(config_path: str = "configs/config.yaml"):
 
     logger.info("Starting fine-tuning …")
     trainer.train()
-    model.save_pretrained(ft.output_dir)
-    tokenizer.save_pretrained(ft.output_dir)
-    logger.info(f"Model saved to {ft.output_dir}")
+    model.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
+    logger.info(f"Model saved to {output_dir}")
 
 
 if __name__ == "__main__":
-    run_finetuning()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dataset", choices=["crosscodeeval", "repobench"], default="crosscodeeval")
+    parser.add_argument("--config", default="configs/config.yaml")
+    args = parser.parse_args()
+    run_finetuning(args.config, args.dataset)
 

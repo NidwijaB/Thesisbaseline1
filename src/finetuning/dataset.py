@@ -28,7 +28,7 @@ Complete the following code.
 
 def load_jsonl(path: str) -> list:
     import json
-    return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
+    return [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
 def build_dataset(

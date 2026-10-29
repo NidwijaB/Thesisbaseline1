@@ -461,6 +461,79 @@ supplies the numbers behind them.
   (median chunk about 1,045). Plan's 256 lines kept; report it.
 - **Open:**
   - `rank_bm25` is not installed (needed for step 7).
-  - Index build is not yet committed; `chunker.py`, `build_indexes.py`, `embedder.py` and
-    `sanity_check_indexes.py` are uncommitted.
+  - ~~Index build is not yet committed~~ Corrected in Entry 13: `chunker.py`,
+    `build_indexes.py`, `embedder.py` and `sanity_check_indexes.py` are already committed
+    (commit `57cc604`, working tree clean).
   - Next: the pilot (trainer paths, evaluation wiring, seeded 50-example rule).
+
+## Entry 13: Log fix, rank_bm25, and the seeded pilot sample (Section 9, step 5)
+- **Asked:** fix the stale "uncommitted" line in Entry 12, install `rank_bm25`, then do item 3
+  (the seeded rule for the 50 pilot examples).
+- **Done:**
+  - Entry 12's "not yet committed" line corrected: the index files are in commit `57cc604`
+    and the working tree was clean.
+  - Installed `rank_bm25` in `./venv` (import checked). Needed for the BM25 baseline (step 7).
+  - Wrote `src/preprocessing/build_crosscodeeval_pilot.py` and ran it
+    (`python -m src.preprocessing.build_crosscodeeval_pilot`). Candidates = TEST examples with
+    >= 1 relevant file in the BASE pool (A3 rule, Entry 4). Draw = 50 with `random.Random(42)`
+    from the sorted candidates. Output: `data/processed/crosscodeeval/pilot_ids.json`
+    (task_ids, gitignored).
+- **Assertion that passed:** candidate count is exactly 292, matching Entry 7.
+- **Found:** 50 pilot examples from 40 repos; 37 of the 50 are in repos that have NEW files.
+- **Notes:**
+  - The sample is plain random, not stratified. Choosing from the 292 main-condition candidates
+    means retrieval metrics are defined for every pilot example, but the staleness view's extra
+    examples are not selected for.
+  - [writing note] The pilot is a pipeline check, not a result; 50 examples are too few to
+    compare systems.
+  - Seed and N are constants in the script, not `config.yaml`.
+- **Open / next:** point `trainer.py` at `data/processed/crosscodeeval/finetune/{train,val}.jsonl`,
+  then rework evaluation wiring in `experiments/run_comparison.py` (prompt format, adapter
+  loading per Entry 9, per-repo indexes, reading `pilot_ids.json`).
+
+## Entry 14: Metrics review and revised order of work (Sections 6, 9)
+- **Asked:** how a demo would work and how metrics are checked; then add a CodeBLEU check and
+  first-line truncation to the evaluation rewiring, with `demo.py` after the trainer fix.
+- **Done:** read-only review of `src/hybrid/pipeline.py` and `src/evaluation/metrics.py`; no code
+  changed. Order of work recorded here.
+- **Found:**
+  - `code_bleu` in `metrics.py` catches every exception and returns 0.0. Loading
+    `evaluate.load("code_bleu")` fails ("Module 'code_bleu' doesn't exist on the Hugging Face Hub"),
+    so CodeBLEU would currently always be reported as 0.0 without any warning.
+  - No adapter exists yet (no `adapter_config.json` anywhere; `experiments/finetuned_model` absent).
+  - `torch.cuda.is_available()` is False on this machine. `load_in_4bit: true` (config) needs a GPU.
+  - Predictions are not yet truncated to the first line before scoring.
+- **Order of work:** (1) `trainer.py` -> new corpus paths; (2) `demo.py` (base / RAG / FT / hybrid side by
+  side for a repo + snippet); (3) evaluation rewiring in `run_comparison.py`, including a CodeBLEU
+  check that raises instead of returning 0.0 (and a replacement implementation, e.g. the
+  `codebleu` PyPI package, to be chosen with the user) and first-line truncation of predictions.
+- **[writing note]** Say which CodeBLEU implementation was used and that predictions were cut to the
+  first line before scoring.
+
+## Entry 15: Trainer fix and demo script (Section 9, step 5 prep)
+- **Asked:** do the trainer fix, then write the demo.
+- **Done (nothing trained or generated yet):**
+  - `src/finetuning/trainer.py`: reads `data/processed/<dataset>/finetune/{train,val}.jsonl`
+    (new `--dataset crosscodeeval|repobench`, default crosscodeeval); saves to
+    `<finetuning.output_dir>/<dataset>/` (one adapter per dataset). Changed
+    `evaluation_strategy` to `eval_strategy` (transformers 5.15 no longer accepts the old name).
+  - `src/finetuning/dataset.py`: `load_jsonl` now reads UTF-8 explicitly (the Windows default
+    codec would misread the corpus).
+  - Wrote `src/demo.py` (`python -m src.demo`): base / rag / ft / hybrid side by side, using the
+    training prompt format; retrieved chunks are prepended to the input as comments (each cut to
+    1,200 chars). Takes `--task-id` (shows ground truth and the example's split) or `--repo` with
+    `--code`/`--code-file`; `--adapter` enables ft and hybrid (base/rag use `disable_adapter()`).
+    Validates the repo name against existing index folders.
+  - Checked: the corpus loads through `build_dataset` (train 9,378, validation 1,059); `--help` and
+    `build_prompt` work. The model has not been loaded or run.
+- **Found / open (not changed, need your decision):**
+  - `bitsandbytes` is not installed and there is no GPU, so QLoRA training cannot run here.
+  - `dataset.py` tokenization sets labels = the whole prompt (instruction and input as well as the
+    output) and pads to max_length with pad = eos, so the loss includes prompt and padding tokens.
+    Truncation at 512 tokens could also cut the response end. Recommend masking prompt/pad labels
+    with -100 so the model learns only the completion. Not changed yet.
+  - The training format has no end-of-sequence token after the output, and no retrieval context.
+    The hybrid therefore sees a prompt format (context in the input) it was not trained on;
+    the plan's RAFT-style variant (Entry 8) would address this. [writing note]
+  - `HybridPipeline` (src/hybrid/pipeline.py) uses a different prompt format from the demo and
+    from training; to be unified in the evaluation rewiring.
