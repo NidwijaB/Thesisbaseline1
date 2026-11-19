@@ -12,7 +12,7 @@ February at the latest.
 
 Read these files first, in this order, and confirm you have read them:
 1. docs/things_to_do_first         - my plan and framework. Stay close to it; don't deviate a lot.
-2. docs/progress_log.md            - Entries 1-29: everything done, decisions, numbers, caveats, and a
+2. docs/progress_log.md            - Entries 1-30: everything done, decisions, numbers, caveats, and a
                                     "Notes for thesis writing" section. Use it instead of re-deriving anything.
 3. docs/results_summary.md         - every real result so far in one place (retrieval comparisons, training run).
 4. docs/colab_steps.md             - how I run the GPU work on Colab (Parts 0-8). Part 7 is the pilot-session
@@ -42,13 +42,11 @@ State at the end of the last session (2026-11-19):
 - Prompt-length finding (Entry 22): without retrieval 21 of 50 pilot prompts exceed the 512 tokens used in
   training (max 4,411); with retrieval the median is about 2,150 tokens. --max-code-tokens 480 addresses the
   first. A RAFT-style retrain is only worth building if the pilot shows the hybrid is hurt by this.
-- Uncommitted when this was written (I do the commits and pushes myself; ask me to do them and remind me, and
-  check `git status`): new scripts experiments/dry_run_pipeline.py, src/evaluation/analyze_predictions.py,
-  src/evaluation/forgetting_check.py, src/preprocessing/build_repobench_sample.py,
-  src/retrieval/build_repobench_indexes.py, src/retrieval/compare_retrievers_repobench.py, three new test files;
-  changed experiments/run_comparison.py, src/prompting.py, src/evaluation/evaluator.py, tools/colab_setup.py,
-  docs/*; docs/train_results/* shows as deleted on purpose (I moved those files to their real, gitignored places).
-  COLAB CLONES FROM GITHUB, so these must be pushed before the Colab session.
+- Git: I committed and pushed the scripts and docs up to the RepoBench indexes (commit 10d4a53, "repobench
+  indexing done"). Uncommitted after that (I commit myself; remind me, and check `git status`): the repo cleanup of
+  Entry 30 (new README.md and docs/README.md, "superseded/outdated" banners, four loose files moved to
+  docs/archive/, requirements.txt additions, two corrected "Next step" messages in the download scripts). None of
+  it changes how anything runs. COLAB CLONES FROM GITHUB, so anything newer than the last push is not on Colab.
 - This computer: about 8 GB free RAM and over 40 GB free disk on D:. Loading the 1.5B model in 32-bit locally
   (about 8-10 GB) is not safe, so all model runs happen on Colab. No GPU here. The RepoBench indexes were built
   here (about 3 h on CPU).

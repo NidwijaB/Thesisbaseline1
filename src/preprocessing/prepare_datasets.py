@@ -1,6 +1,11 @@
 """
 src/preprocessing/prepare_datasets.py
 ---------------------------------------
+SUPERSEDED (kept for reference, not used by the current study). The 80/10/10 split by repository with both
+datasets mixed was replaced by the file-level BASE/NEW/TEST design: use build_crosscodeeval_split.py,
+build_crosscodeeval_finetune.py, build_repobench_split.py and build_repobench_finetune.py instead
+(docs/progress_log.md, Entries 5 to 11).
+
 Converts the raw RepoBench / CrossCodeEval examples (downloaded via
 data/repobench/download.py and data/crosscodeeval/download.py) into the
 single unified format every other script in this repo expects:

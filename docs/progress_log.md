@@ -1062,3 +1062,35 @@ supplies the numbers behind them.
   validation loss.
 - **Open:** `docs/new_session_prompt.md` still describes the state after Entry 19; update it before the next
   session if you want to use it (not changed here). Nothing committed or pushed.
+
+## Entry 30: Repository cleanup that does not change how anything runs (2026-11-19)
+- **Asked:** go through the repo and make it easier to navigate and understand, without changing how it is run
+  (the Colab work is planned for the next day). The user had committed and pushed up to commit `10d4a53`.
+- **Rule followed:** no code logic, module path, command-line option or output location was changed. Only
+  documentation, docstrings, printed hints and unused loose files.
+- **Done:**
+  - `README.md` rewritten: it described the first design (flat train/val/test, `main.py index/finetune`, a 7B
+    default). Now it has the study summary, where-to-start table, a repository map, the real run order
+    ("Running the study", the commands we use) and the current metrics and datasets.
+  - New `docs/README.md`: index of the docs, split into current, raw output and historical files.
+  - "Outdated / superseded" notes added at the top of `steps.txt`, `docs/thesis_implementation_guide.md`,
+    `docs/session_prompt` and in the docstring of `src/preprocessing/prepare_datasets.py` (kept, not deleted).
+  - Two printed hints in `data/crosscodeeval/download.py` and `data/repobench/download.py` pointed to the
+    superseded `prepare_datasets.py`; they now name the current first step (strings only).
+  - Four unused loose files moved from the project root to `docs/archive/`: `questions.md`,
+    `answers_to_presentation_questions.md`, `embedded_image_0.png`, `embedded_image_1.png` (nothing referenced
+    them; checked by search). `thesis.md` stays at the root because it looks like a draft of the user's own.
+  - `requirements.txt`: added packages the current code imports but the file lacked (`rank_bm25`, `codebleu`,
+    `tree-sitter-python`, `matplotlib`). Colab does not read this file (`tools/colab_setup.py` has its own list).
+  - `docs/new_session_prompt.md` updated (git state, Entry 30).
+- **Checked after the changes:** 27 tests pass; the changed scripts compile; `run_comparison.py --help` works.
+- **Left alone on purpose, suggestions:**
+  - `.idea/` is tracked by git although `.gitignore` lists it; `git rm -r --cached .idea` would stop tracking it
+    (a git change for the user to decide).
+  - `main.py` (`evaluate` stub and the `index` / `finetune` wrappers reflect the old design),
+    `src/retrieval/retriever.py` and `src/hybrid/pipeline.py` still work and are imported by the demo; merging or
+    removing them is a code change, not done.
+  - Scripts could be grouped into subfolders (for example `src/retrieval/` has seven runnable scripts) but moving
+    them would change the `python -m ...` commands that the Colab guide uses.
+  - `docs/first_train_results` is the raw v2 training output (475 lines of progress bars); trimming it is optional.
+  - Seeds and constants are still in the scripts, not `config.yaml` (open item).

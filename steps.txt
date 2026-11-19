@@ -1,3 +1,6 @@
+[OUTDATED - written for the first design. The current run order is in README.md ("Running the study")
+and docs/colab_steps.md. Kept for history.]
+
 ====================================================================
 THESIS PROJECT — STEP-BY-STEP RUN ORDER
 ====================================================================

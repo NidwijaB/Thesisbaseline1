@@ -1,3 +1,6 @@
+> **OUTDATED (kept for history).** Written for the first design (one flat train/val/test split, prepare_datasets.py).
+> The current design and run order: `docs/things_to_do_first`, `README.md` ("Running the study"), `docs/progress_log.md`.
+
 # Thesis Implementation Guide
 ## Proposed Steps → What's Actually Built (and What Still Needs Doing)
 

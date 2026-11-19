@@ -47,7 +47,7 @@ def download():
         print(f"  -> {split_name}: {len(dataset[split_name])} examples saved to {dest}")
 
     print("RepoBench download complete.")
-    print("Next step: run src/preprocessing/prepare_datasets.py")
+    print("Next step: python -m src.preprocessing.build_repobench_split (see README.md, \"Running the study\")")
 
 
 if __name__ == "__main__":

@@ -42,7 +42,7 @@ def download():
     dataset.save_to_disk(str(dest))
     print(f"  -> saved to {dest}")
     print("CrossCodeEval download complete.")
-    print("Next step: run src/preprocessing/prepare_datasets.py")
+    print("Next step: python -m src.preprocessing.build_crosscodeeval_split (see README.md, \"Running the study\")")
 
 
 if __name__ == "__main__":
