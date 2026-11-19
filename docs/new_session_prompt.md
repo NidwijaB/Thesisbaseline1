@@ -1,7 +1,7 @@
 # Prompt to start a new Claude Code session
 
-Paste everything inside the block below into the new session (updated after Entry 29 of the progress log,
-2026-11-19). If the terminal is slow, start a fresh session in the same folder: all work is on disk, nothing
+Paste everything inside the block below into the new session (updated after Entry 30 of the progress log,
+2026-11-19, end of day). If the terminal is slow, start a fresh session in the same folder: all work is on disk, nothing
 depends on the old conversation.
 
 ```
@@ -18,6 +18,7 @@ Read these files first, in this order, and confirm you have read them:
 4. docs/colab_steps.md             - how I run the GPU work on Colab (Parts 0-8). Part 7 is the pilot-session
                                     plan; Part 8 lists the new run options.
 5. docs/reference_paper_comparison.md - analysis of the main reference paper (Wang et al., 2025).
+(README.md has the repository map and run order; docs/README.md indexes the docs. Skim them if you need to find a file.)
 (docs/claude_web_prompt.md is the prompt I use on the Claude web app for the report and presentation.)
 
 State at the end of the last session (2026-11-19):
@@ -42,11 +43,15 @@ State at the end of the last session (2026-11-19):
 - Prompt-length finding (Entry 22): without retrieval 21 of 50 pilot prompts exceed the 512 tokens used in
   training (max 4,411); with retrieval the median is about 2,150 tokens. --max-code-tokens 480 addresses the
   first. A RAFT-style retrain is only worth building if the pilot shows the hybrid is hurt by this.
-- Git: I committed and pushed the scripts and docs up to the RepoBench indexes (commit 10d4a53, "repobench
-  indexing done"). Uncommitted after that (I commit myself; remind me, and check `git status`): the repo cleanup of
-  Entry 30 (new README.md and docs/README.md, "superseded/outdated" banners, four loose files moved to
-  docs/archive/, requirements.txt additions, two corrected "Next step" messages in the download scripts). None of
-  it changes how anything runs. COLAB CLONES FROM GITHUB, so anything newer than the last push is not on Colab.
+- Git: everything up to the repo cleanup is committed and pushed (last commit a00a7ae "organising"; working tree
+  clean when this was written, but check `git status` and `git log origin/main`). So the Colab clone has the new
+  run options, the dry run, the analysis scripts and the stronger setup checks. I commit and push myself; remind
+  me whenever something new is uncommitted, because COLAB CLONES FROM GITHUB.
+- Repo layout after the cleanup (Entry 30, nothing about how things run changed): README.md has the repository
+  map and the real run order; docs/README.md indexes the docs (current vs historical); old or superseded files
+  carry an "outdated" note (steps.txt, docs/thesis_implementation_guide.md, docs/session_prompt,
+  src/preprocessing/prepare_datasets.py); loose notes moved to docs/archive/. Don't move scripts: the
+  `python -m ...` commands in docs/colab_steps.md depend on the current paths.
 - This computer: about 8 GB free RAM and over 40 GB free disk on D:. Loading the 1.5B model in 32-bit locally
   (about 8-10 GB) is not safe, so all model runs happen on Colab. No GPU here. The RepoBench indexes were built
   here (about 3 h on CPU).
