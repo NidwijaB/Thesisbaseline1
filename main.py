@@ -21,9 +21,8 @@ Quick start
   # 2. Fine-tune
   python main.py finetune
 
-  # 3. Full comparative evaluation (all three systems)
-  python main.py compare --benchmark data/processed/test.jsonl \\
-                         --ft-model  experiments/finetuned_model
+  # 3. Comparative evaluation (pilot or full TEST set; see experiments/run_comparison.py)
+  python main.py compare --subset pilot --adapter experiments/finetuned_model/crosscodeeval/v2
 """
 
 import argparse
@@ -84,18 +83,13 @@ def cmd_evaluate(args):
 
 
 def cmd_compare(args):
-    """Run the full comparative study — the main research output."""
-    # Just forwards to experiments/run_comparison.py with the same CLI args,
-    # so `python main.py compare ...` and `python experiments/run_comparison.py ...`
-    # behave identically.
+    """Run the comparative study — the main research output."""
+    # Forwards to experiments/run_comparison.py, so `python main.py compare ...` and
+    # `python -m experiments.run_comparison ...` behave identically.
     import sys
-    sys.argv = [
-        "run_comparison.py",
-        "--benchmark", args.benchmark,
-        "--ft-model",  args.ft_model,
-        "--config",    args.config,
-        "--output-dir", args.output_dir,
-    ]
+    sys.argv = ["run_comparison.py", "--config", args.config, "--subset", args.subset]
+    if args.adapter:
+        sys.argv += ["--adapter", args.adapter]
     if args.systems:
         sys.argv += ["--systems"] + args.systems
 
@@ -137,11 +131,10 @@ def main():
         "compare",
         help="Run all three systems and produce a side-by-side comparison report"
     )
-    p_cmp.add_argument("--benchmark",  required=True, help="Path to test.jsonl")
-    p_cmp.add_argument("--ft-model",   required=True, help="Fine-tuned model directory")
-    p_cmp.add_argument("--output-dir", default="results")
+    p_cmp.add_argument("--adapter",    default=None, help="LoRA adapter folder (for finetuning_only and hybrid)")
+    p_cmp.add_argument("--subset",     choices=["pilot", "test"], default="pilot")
     p_cmp.add_argument("--systems",    nargs="+",
-                       choices=["rag_only", "finetuning_only", "hybrid"],
+                       choices=["base", "rag_only", "finetuning_only", "hybrid"],
                        default=None, help="Subset of systems to run (default: all)")
     p_cmp.set_defaults(func=cmd_compare)
 

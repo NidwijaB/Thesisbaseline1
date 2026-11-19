@@ -23,11 +23,10 @@ import argparse
 import json
 from pathlib import Path
 
-import torch
 from datasets import load_from_disk
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
-from src.finetuning.dataset import PROMPT_TEMPLATE
+from src.generation import complete, load_model
+from src.prompting import build_prompt, retrieval_query
 from src.retrieval.embedder import CodeEmbedder
 from src.retrieval.retriever import Retriever
 from src.retrieval.vector_store import FAISSVectorStore
@@ -36,48 +35,6 @@ from src.utils.config import load_config
 SPLIT_DIR = Path("data/processed/crosscodeeval")
 INDEX_DIR = Path("data/embeddings/crosscodeeval")
 DATASET_DIR = Path("data/crosscodeeval/python")
-QUERY_LINES = 20       # same query as sanity_check_indexes.py
-MAX_CHUNK_CHARS = 1200  # keep the prompt small; chunks are up to 256 lines
-
-
-def build_prompt(code: str, chunks: list | None = None) -> str:
-    """Training prompt format (dataset.PROMPT_TEMPLATE); retrieved chunks, if any,
-    are prepended to the input as comments."""
-    context = ""
-    if chunks:
-        parts = []
-        for c in chunks:
-            body = "\n".join("# " + line for line in c.content[:MAX_CHUNK_CHARS].splitlines())
-            parts.append(f"# --- retrieved from {c.file_path} ---\n{body}")
-        context = "\n".join(parts) + "\n\n"
-    return PROMPT_TEMPLATE.format(input=context + code, output="")
-
-
-def load_model(base_name: str, adapter: str | None, use_4bit: bool):
-    tokenizer = AutoTokenizer.from_pretrained(base_name, trust_remote_code=True)
-    on_gpu = torch.cuda.is_available()
-    bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
-                             bnb_4bit_compute_dtype=torch.float16,
-                             bnb_4bit_use_double_quant=True) if use_4bit else None
-    model = AutoModelForCausalLM.from_pretrained(
-        base_name, trust_remote_code=True, quantization_config=bnb,
-        dtype=torch.float16 if on_gpu else torch.float32,
-        device_map="auto" if on_gpu else None)
-    if adapter:
-        from peft import PeftModel
-        model = PeftModel.from_pretrained(model, adapter)
-    model.eval()
-    return tokenizer, model
-
-
-def complete(tokenizer, model, prompt: str, max_new_tokens: int) -> str:
-    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-    with torch.no_grad():
-        out = model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False,
-                             stop_strings=["\n"], tokenizer=tokenizer,
-                             pad_token_id=tokenizer.eos_token_id)
-    text = tokenizer.decode(out[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True)
-    return text.split("\n")[0]
 
 
 def find_example(task_id: str):
@@ -116,7 +73,7 @@ def main():
     if not repo or "/" in repo or "\\" in repo or not (INDEX_DIR / repo / args.view).is_dir():
         raise SystemExit(f"no {args.view} index for repo {repo!r} under {INDEX_DIR}")
 
-    query = "\n".join(code.split("\n")[-QUERY_LINES:])
+    query = retrieval_query(code)
     retriever = Retriever(CodeEmbedder(cfg.retrieval.embedding_model),
                           FAISSVectorStore.load(str(INDEX_DIR / repo / args.view)), top_k=args.top_k)
     chunks = retriever.retrieve(query)

@@ -6,6 +6,8 @@ LoRA / QLoRA fine-tuning entry point using HuggingFace PEFT + Transformers.
 
 from __future__ import annotations
 import argparse
+import json
+import sys
 from pathlib import Path
 
 import torch
@@ -20,15 +22,34 @@ from transformers import (
 from transformers.trainer_utils import get_last_checkpoint
 from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
 
-from src.finetuning.dataset import build_dataset
+from src.finetuning.dataset import TRAINING_VERSION, build_dataset
 from src.utils.config import load_config
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 
+def check_checkpoints_match(output_dir: str) -> None:
+    """Refuse to continue from, or mix with, checkpoints made by older training code.
+    Version 1 trained on the whole text (prompt and padding included) with no end token."""
+    out = Path(output_dir)
+    marker = out / "training_version.json"
+    has_checkpoints = out.is_dir() and any(out.glob("checkpoint-*"))
+    if has_checkpoints:
+        version = json.loads(marker.read_text())["training_version"] if marker.exists() else 1
+        if version != TRAINING_VERSION:
+            sys.exit(
+                f"{output_dir} holds checkpoints from training-code version {version}; the current "
+                f"version is {TRAINING_VERSION}. Start a separate run with --run-name <name> "
+                f"(for example --run-name v{TRAINING_VERSION}) so old and new runs never mix."
+            )
+    out.mkdir(parents=True, exist_ok=True)
+    if not marker.exists():
+        marker.write_text(json.dumps({"training_version": TRAINING_VERSION}))
+
+
 def run_finetuning(config_path: str = "configs/config.yaml", dataset_name: str = "crosscodeeval",
-                   resume: bool = True):
+                   resume: bool = True, run_name: str | None = None):
     """
     Loads the base model, wraps it with LoRA/QLoRA adapters, trains on
     data/processed/<dataset_name>/finetune/{train,val}.jsonl (BASE-file corpus,
@@ -40,7 +61,8 @@ def run_finetuning(config_path: str = "configs/config.yaml", dataset_name: str =
     cfg = load_config(config_path)
     ft = cfg.finetuning
     corpus_dir = Path("data/processed") / dataset_name / "finetune"
-    output_dir = str(Path(ft.output_dir) / dataset_name)
+    output_dir = str(Path(ft.output_dir) / dataset_name / (run_name or ""))
+    check_checkpoints_match(output_dir)
 
     logger.info(f"Loading tokenizer: {ft.base_model}")
     tokenizer = AutoTokenizer.from_pretrained(ft.base_model, trust_remote_code=True)
@@ -123,14 +145,16 @@ def run_finetuning(config_path: str = "configs/config.yaml", dataset_name: str =
     trainer.train(resume_from_checkpoint=last_checkpoint)
     model.save_pretrained(output_dir)
     tokenizer.save_pretrained(output_dir)
-    logger.info(f"Model saved to {output_dir}")
+    logger.info(f"Adapter saved to {output_dir}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", choices=["crosscodeeval", "repobench"], default="crosscodeeval")
     parser.add_argument("--config", default="configs/config.yaml")
+    parser.add_argument("--run-name", default=None,
+                        help="Sub-folder for this run, e.g. v2. Use a new name after changing the training code.")
     parser.add_argument("--no-resume", action="store_true", help="Start over, ignore checkpoints")
     args = parser.parse_args()
-    run_finetuning(args.config, args.dataset, resume=not args.no_resume)
+    run_finetuning(args.config, args.dataset, resume=not args.no_resume, run_name=args.run_name)
 

@@ -8,7 +8,7 @@ Evaluation metrics for the comparative study:
   - Exact Match (EM)
   - Edit Similarity  (Levenshtein)
   - Identifier Accuracy
-  - CodeBLEU          (requires `evaluate` library)
+  - CodeBLEU          (requires the `codebleu` package; raises if missing)
 
   Retrieval Quality
   -----------------
@@ -63,17 +63,31 @@ def identifier_accuracy(prediction: str, reference: str) -> float:
 
 def code_bleu(predictions: List[str], references: List[str]) -> float:
     """
-    CodeBLEU via the HuggingFace `evaluate` library.
-    Falls back to 0.0 if the metric is unavailable.
+    CodeBLEU (corpus level) from the `codebleu` package (pip install codebleu tree-sitter-python).
+    Raises if the package is missing or fails: a missing metric must never show up as 0.0.
+    Note: the metric needs parseable code, so one-line fragments can score low on its
+    syntax and data-flow parts; report that when quoting it.
     """
     try:
-        import evaluate as hf_evaluate
-        metric = hf_evaluate.load("code_bleu", lang="python")
-        result = metric.compute(predictions=predictions, references=[[r] for r in references])
-        return float(result["code_bleu"])
-    except Exception:
-        # Graceful fallback — install `evaluate` and `sacrebleu` for full support
-        return 0.0
+        from codebleu import calc_codebleu
+    except ImportError as exc:
+        raise ImportError(
+            "CodeBLEU needs the 'codebleu' package: pip install codebleu tree-sitter-python "
+            "(or run with --skip-codebleu to leave it out of the results)."
+        ) from exc
+    result = calc_codebleu(references=list(references), predictions=list(predictions), lang="python")
+    return float(result["codebleu"])
+
+
+def bootstrap_ci(values, n_resamples: int = 1000, seed: int = 42, level: float = 0.95) -> tuple:
+    """Percentile bootstrap confidence interval for the mean of per-example scores."""
+    import numpy as np
+    values = np.asarray(values, dtype=float)
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, len(values), size=(n_resamples, len(values)))
+    means = values[idx].mean(axis=1)
+    tail = (1 - level) / 2 * 100
+    return float(np.percentile(means, tail)), float(np.percentile(means, 100 - tail))
 
 
 # ── Retrieval Quality Metrics ─────────────────────────────────────────────────
@@ -146,10 +160,12 @@ def evaluate_retrieval(
 
 # ── Aggregate Completion Evaluation ──────────────────────────────────────────
 
-def evaluate_completion(predictions: List[str], references: List[str]) -> dict:
+def evaluate_completion(predictions: List[str], references: List[str],
+                        include_codebleu: bool = True) -> dict:
     """
     Returns all code-quality metrics for a list of prediction/reference pairs.
     Used to compare RAG-only, Fine-Tuning-only, and Hybrid systems.
+    With include_codebleu=False the CodeBLEU entry is None (not 0.0).
     """
     em_scores, es_scores, ia_scores = [], [], []
     for pred, ref in zip(predictions, references):
@@ -157,12 +173,14 @@ def evaluate_completion(predictions: List[str], references: List[str]) -> dict:
         es_scores.append(edit_similarity(pred, ref))
         ia_scores.append(identifier_accuracy(pred, ref))
 
-    cb_score = code_bleu(predictions, references)
+    cb_score = code_bleu(predictions, references) if include_codebleu else None
 
     return {
         "exact_match":         round(sum(em_scores) / len(em_scores), 4),
         "edit_similarity":     round(sum(es_scores) / len(es_scores), 4),
         "identifier_accuracy": round(sum(ia_scores) / len(ia_scores), 4),
-        "code_bleu":           round(cb_score, 4),
+        "code_bleu":           None if cb_score is None else round(cb_score, 4),
+        "exact_match_ci95":    [round(v, 4) for v in bootstrap_ci(em_scores)],
+        "edit_similarity_ci95": [round(v, 4) for v in bootstrap_ci(es_scores)],
         "n_samples":           len(predictions),
     }

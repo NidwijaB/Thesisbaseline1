@@ -75,3 +75,22 @@ def test_evaluate_retrieval_aggregate():
     assert "recall@3" in result
     assert result["n_queries"] == 2
 
+
+
+def test_bootstrap_ci_brackets_the_mean():
+    from src.evaluation.metrics import bootstrap_ci
+    values = [1.0] * 30 + [0.0] * 70
+    low, high = bootstrap_ci(values, n_resamples=500, seed=1)
+    assert low < 0.3 < high
+    assert 0.0 <= low <= high <= 1.0
+
+
+def test_code_bleu_never_returns_a_silent_zero():
+    # Either the package is installed and a real score comes back, or it raises.
+    from src.evaluation.metrics import code_bleu
+    try:
+        score = code_bleu(["x = 1"], ["x = 1"])
+    except ImportError as exc:
+        assert "codebleu" in str(exc)
+    else:
+        assert score > 0.0

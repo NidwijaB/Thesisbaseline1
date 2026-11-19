@@ -4,33 +4,21 @@ src/hybrid/pipeline.py
 The Hybrid RAG + Fine-Tuning inference pipeline.
 
 Given a partial code snippet it:
-1. Retrieves relevant repository context via the Retriever.
-2. Builds an augmented prompt.
-3. Generates a completion with the fine-tuned model.
+1. Retrieves relevant repository chunks via the Retriever.
+2. Builds the shared prompt (src/prompting.py), the same one System A uses.
+3. Generates the first line of the completion with the fine-tuned model.
 """
 
 from __future__ import annotations
 import json
 from pathlib import Path
 
-from peft import PeftModel
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-import torch
-
+from src.generation import complete, load_model
+from src.prompting import build_prompt, retrieval_query
 from src.retrieval.retriever import Retriever
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
-
-PROMPT_TEMPLATE = """\
-### Retrieved Context:
-{context}
-
-### Current File:
-{query}
-
-### Response:
-"""
 
 
 class HybridPipeline:
@@ -39,55 +27,20 @@ class HybridPipeline:
         model_path: str,
         retriever: Retriever,
         max_new_tokens: int = 128,
-        temperature: float = 0.2,
-        device: str = "cuda",
         load_in_4bit: bool = True,
     ):
-        # Loads the already-fine-tuned model from disk (see src/finetuning/trainer.py)
-        # and pairs it with a Retriever — this is what makes it "hybrid":
-        # the model itself is project-adapted AND still gets retrieved context per query.
+        # model_path is the LoRA adapter folder written by src/finetuning/trainer.py.
+        # It only holds the adapter, so the base model it was trained from (recorded in
+        # adapter_config.json) is loaded first and the adapter attached to it.
         self.retriever = retriever
-        self.device = device
         self.max_new_tokens = max_new_tokens
-        self.temperature = temperature
 
-        logger.info(f"Loading fine-tuned model from {model_path} (4-bit={load_in_4bit})")
-        self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
-
-        bnb_config = BitsAndBytesConfig(
-            load_in_4bit=load_in_4bit,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype=torch.float16,
-            bnb_4bit_use_double_quant=True,
-        ) if load_in_4bit else None
-
-        # trainer.py saves only the LoRA adapter, so load the base model it was
-        # trained from (recorded in adapter_config.json) and attach the adapter.
-        adapter_cfg = json.loads((Path(model_path) / "adapter_config.json").read_text())
-        base_model = AutoModelForCausalLM.from_pretrained(
-            adapter_cfg["base_model_name_or_path"],
-            trust_remote_code=True,
-            quantization_config=bnb_config,
-            device_map="auto",
-        )
-        self.model = PeftModel.from_pretrained(base_model, model_path)
-        self.model.eval()
+        adapter_cfg = json.loads((Path(model_path) / "adapter_config.json").read_text(encoding="utf-8"))
+        logger.info(f"Loading {adapter_cfg['base_model_name_or_path']} + adapter {model_path} "
+                    f"(4-bit={load_in_4bit})")
+        self.tokenizer, self.model = load_model(adapter_cfg["base_model_name_or_path"], model_path, load_in_4bit)
 
     def complete(self, partial_code: str) -> str:
-        # 1) retrieve similar code from the indexed repo, 2) inject it into the
-        # prompt alongside the partial code, 3) generate with the fine-tuned model.
-        context = self.retriever.build_context_string(partial_code)
-        prompt = PROMPT_TEMPLATE.format(context=context, query=partial_code)
-
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
-        with torch.no_grad():
-            output_ids = self.model.generate(
-                **inputs,
-                max_new_tokens=self.max_new_tokens,
-                temperature=self.temperature,
-                do_sample=self.temperature > 0,
-                pad_token_id=self.tokenizer.eos_token_id,
-            )
-        generated = output_ids[0][inputs["input_ids"].shape[1]:]
-        return self.tokenizer.decode(generated, skip_special_tokens=True)
-
+        chunks = self.retriever.retrieve(retrieval_query(partial_code))
+        prompt = build_prompt(partial_code, chunks)
+        return complete(self.tokenizer, self.model, prompt, self.max_new_tokens)

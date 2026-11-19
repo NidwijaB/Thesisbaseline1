@@ -537,3 +537,119 @@ supplies the numbers behind them.
     the plan's RAFT-style variant (Entry 8) would address this. [writing note]
   - `HybridPipeline` (src/hybrid/pipeline.py) uses a different prompt format from the demo and
     from training; to be unified in the evaluation rewiring.
+
+## Entry 16: Colab GPU setup and trainer resume (Section 9, step 5 prep)
+- **Asked:** set up Colab (used for GPU work only), explain the steps, make progress survive
+  disconnects, and avoid manual uploads. The repo is public (confirmed by the user), so Colab
+  clones it without a token.
+- **Done (nothing run on Colab yet; the two Python files were only syntax-checked locally):**
+  - `tools/colab_setup.py` (new, standard library only): checks Drive and GPU, installs pinned
+    libraries (transformers 5.15.0, peft 0.20.0, accelerate 1.14.0, datasets 5.0.1,
+    sentence-transformers 5.7.0, faiss-cpu 1.15.0, rank_bm25 0.2.2, Levenshtein 0.27.4, plus
+    bitsandbytes unpinned), links `experiments/finetuned_model` and `results/` to
+    `MyDrive/thesis/outputs/`, and gets the data. Data comes from a Drive cache
+    (`MyDrive/thesis/cache/<dataset>_data.tar`) if present; otherwise it downloads the public
+    benchmarks, re-runs the seeded split / corpus / pilot / index scripts, and writes the cache.
+    The tar is written under a temporary name and renamed only when complete; extraction uses
+    the `data` filter. Afterwards it compares corpus sizes with this log and prints `DIFFERS`
+    on a mismatch (warning only).
+  - `src/finetuning/trainer.py`: checkpoints every 100 steps (keeps the last 2) instead of per
+    epoch, and resumes automatically from the latest checkpoint in the output folder. New
+    `--no-resume` flag starts over.
+  - `docs/colab_steps.md` (new): beginner-level guide (Part 0 to 5 plus troubleshooting) for
+    pushing, GPU runtime, the three setup cells, training, saving, and returning later.
+- **Design choices (override if you disagree):**
+  - Data is rebuilt on Colab rather than uploaded, to avoid manual uploads; the cache means the
+    slow build happens once. The alternative is uploading a ~140 MB zip of `data/processed/`
+    and `data/embeddings/` to Drive, which guarantees identical data.
+  - Commits and pushes stay on the local machine; nothing is pushed from Colab, so no GitHub
+    credentials are needed there. No secrets are used anywhere in the setup.
+- **Not verified / risks:**
+  - The rebuilt data is expected to match the local data (fixed seeds), but this is unproven:
+    the benchmark mirrors on Hugging Face could have changed. The size check is the safeguard.
+  - The pinned versions are those installed locally; they have not been tried on Colab and one
+    may need relaxing. Local torch is 2.13.0; the script does not touch Colab's torch.
+  - `bitsandbytes` on a T4 and the 4-bit load have not been run anywhere yet.
+  - Resume has not been exercised. If it works, the checkpoint folder on Drive is the only
+    state needed.
+- **Open / next:**
+  - Commit and push the three files (waiting for the user's go-ahead), then run Part 0 to 2 of
+    `docs/colab_steps.md` and report the data-check output.
+  - Then the code fixes already listed in Entries 14 and 15: mask prompt/padding labels with -100
+    and add EOS in `dataset.py`; unify the prompt format across training, demo and
+    `HybridPipeline` (RAFT-style variant for the hybrid); replace the silent CodeBLEU; rewire
+    `experiments/run_comparison.py`. The first Colab training run is only a smoke test until
+    these are done.
+  - The progress report (.docx, August) is out of date: it describes the 80/10/10 split by
+    repository with both datasets mixed, says the hybrid import was already present (Entry 9
+    found it missing), and calls the remaining work "mostly execution". Plan Section 11 already
+    says to tell the supervisor about scope changes.
+  - `docs/session_prompt` (the new-session prompt) is untracked and not part of this commit.
+  - [writing note] Compute setup for the thesis: Colab T4 (16 GB) for training and evaluation
+    runs, QLoRA 4-bit; state this in the limitations and cost discussion.
+
+
+## Entry 17: Reference-paper analysis, retrieval comparison script, training/evaluation fixes (Sections 5, 6, 7, 9)
+- **Asked:** (1) a comparison with the main reference paper for the committee, (2) a retrieval-only comparison
+  (dense vs BM25) with plots that needs no training, (3) the code fixes listed in Entries 14 and 15, and
+  (4) Colab steps for the training-curve plot, to be done once data exists. Written while the first Colab
+  training run (old code) was still running.
+- **Done (1), `docs/reference_paper_comparison.md`:** read Wang et al. (arXiv 2505.15179) in full from the
+  PDF and wrote a side-by-side table, their findings with numbers, predictions per finding, and a fairness
+  note. Findings that matter for the thesis:
+  - They used 163,746 C++ files in total; 120,000 form the retrieval database and the fine-tuning data;
+    test = 50,000 next-line instances from 20,000 other files. The plan's "about 120,000 files" is the
+    retrieval/fine-tuning subset, not the whole set.
+  - Six models including **Qwen2.5-Coder-1.5B**, the thesis model. Their 1.5B numbers (EM / edit sim / BLEU):
+    base 24.48 / 60.78 / 41.47; BM25 RAG 55.81 / 77.26 / 68.35; UniXcoder RAG 41.47 / 70.08 / 55.77;
+    fine-tuning 44.63 / 74.12 / 60.50.
+  - Full fine-tuning on 8 x A100 80 GB (lr 5e-6), not QLoRA. Metrics are EM, ES, BLEU only: no P@k, R@k,
+    MRR, no identifier accuracy, no staleness test, no per-repository split.
+  - BM25 was the best retriever; CodeBERT embeddings gave almost no gain over no retrieval; RAG + fine-tuning
+    beat either alone (averages over six models, e.g. BM25: EM 53.76 -> 57.43); fine-tuning plateaus beyond
+    about 90,000 files while RAG keeps improving; fine-tuning cut HumanEval pass@1 by 24.1% on average.
+  - Per-model table cells were read from a two-column PDF; alignment cross-checked but marked [CHECK] in the
+    document. Do not compare absolute scores with this thesis (different language, scale, task, metrics).
+- **Done (2):** wrote `src/retrieval/compare_retrievers.py` (dense / BM25 / random over the same chunks,
+  hit@k, P@k, R@k, MRR with 95% bootstrap CIs, paired dense-minus-BM25 differences, a staleness subset of
+  examples whose relevant file is in NEW, leakage abort) and `src/evaluation/plot_retrieval_comparison.py`
+  and `src/evaluation/plot_training.py` (loss curve from `trainer_state.json`). **Not run**: it needs the
+  indexes and was left for your go-ahead. Expected counts when run: 292 main, 327 staleness.
+- **Done (3), code fixes:**
+  - `src/prompting.py` (new): one prompt format for training, demo, hybrid and evaluation (same text as the
+    first training run, so nothing about the prompt changed). `src/generation.py` (new): shared model loading
+    and greedy one-line generation. `src/demo.py` and `src/hybrid/pipeline.py` now use them; the hybrid's
+    separate prompt template and sampling (temperature 0.2) are gone.
+  - `src/finetuning/dataset.py`: loss on the output and an end-of-sequence token only (prompt and padding are
+    -100); the prompt is tokenised as one string as at inference; over-long inputs are cut from the left so
+    the output is never cut; a hard length limit. `TRAINING_VERSION = 2`.
+  - `src/finetuning/trainer.py`: `--run-name`; refuses to resume or mix checkpoints from older training code
+    (the first Colab run is version 1; use `--run-name v2`).
+  - `src/evaluation/metrics.py`: CodeBLEU now comes from the `codebleu` package and raises if it is missing
+    or fails (no silent 0.0); `--skip-codebleu` records null; added `bootstrap_ci`; EM and ES now carry
+    95% CIs. `src/evaluation/evaluator.py`: added the `base` system, n/a for missing values.
+  - `experiments/run_comparison.py` rewritten: pilot_ids.json or all TEST examples, per-repo indexes, shared
+    prompt and generation, one model loaded with the adapter switched off for base and RAG, predictions cut to
+    the first line, A3 retrieval metrics per view, per-example `predictions.jsonl`. `main.py compare` forwards
+    to it (its `evaluate` stub still reflects the old design and was left alone).
+  - `tools/colab_setup.py`: also installs matplotlib and, best effort, `codebleu` and `tree-sitter-python`.
+- **Verified:** 19 tests pass (new `tests/test_dataset.py` with a stub tokenizer, new metric tests); all
+  changed modules import. With the real Qwen tokenizer on the first 400 training examples (max length 512):
+  median 8 tokens carry loss (max 52), the end token is present in all 400, median sequence 330 tokens, and
+  36 of 400 (9%) have their input cut from the left. The earlier code spent the loss on the whole padded
+  512-token sequence, so the first Colab run's loss values are not comparable and its adapter is not a
+  result.
+- **Not verified:** nothing has been run on a GPU; `run_comparison.py` has only been import- and
+  `--help`-checked; the `codebleu` package API and its install next to the pinned tree-sitter are untested.
+- **Open / decisions for you:**
+  - Run `compare_retrievers.py` (CPU, a few minutes) and look at the plots.
+  - Retrain with `--run-name v2` on Colab, then the pilot (`docs/colab_steps.md`, Parts 3 to 3d).
+  - RAFT-style training (retrieval-formatted prompts) is still not built: B trains without context, so C
+    and A see retrieved chunks the adapter never saw in training. It needs a corpus builder that retrieves
+    from BASE excluding the example's own file; decide whether to build it before the pilot or after.
+  - Memory per system is not independent in `run_comparison.py` (one process, adapter stays loaded).
+  - 9% of training inputs are shortened to fit 512 tokens; consider 768 or 1,024 if the T4 allows.
+  - Plan wording: change "about 120,000 files" to "163,746 files, 120,000 as retrieval/fine-tuning corpus".
+  - [writing note] Differences from Wang et al. belong in the research-gap table: retrieval-quality metrics,
+    staleness test, QLoRA on one GPU, per-repository file-level split, public Python. Their forgetting result
+    (-24.1% HumanEval) sets what to compare the thesis forgetting check against.

@@ -20,7 +20,7 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-SYSTEM_NAMES = ("rag_only", "finetuning_only", "hybrid")
+SYSTEM_NAMES = ("base", "rag_only", "finetuning_only", "hybrid")
 
 
 def run_evaluation(
@@ -32,6 +32,8 @@ def run_evaluation(
     retrieved_list: List[List[str]] | None = None,
     relevant_list: List[List[str]] | None = None,
     k_values: List[int] = None,
+    include_codebleu: bool = True,
+    extra: Dict | None = None,
 ) -> Dict:
     """Evaluate one system and persist results.
 
@@ -43,11 +45,12 @@ def run_evaluation(
     """
     assert system_name in SYSTEM_NAMES, f"system_name must be one of {SYSTEM_NAMES}"
 
-    metrics = evaluate_completion(predictions, references)
+    metrics = evaluate_completion(predictions, references, include_codebleu=include_codebleu)
 
     result = {
         "system": system_name,
         **metrics,
+        **(extra or {}),
     }
 
     # Retrieval quality — only applicable for RAG-only and Hybrid
@@ -99,7 +102,7 @@ def compare_systems(results: Dict[str, Dict], output_dir: str = "results") -> No
         "|--------|------------|----------|----------------|----------|",
     ]
     for sys, res in results.items():
-        row = [sys] + [str(res.get(c, "-")) for c in cols]
+        row = [sys] + [("n/a" if res.get(c) is None else str(res[c])) for c in cols]
         lines.append("| " + " | ".join(row) + " |")
 
     # Retrieval quality — only for systems that have retrieval data

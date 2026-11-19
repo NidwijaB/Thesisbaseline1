@@ -114,31 +114,139 @@ When you are ready for RepoBench later, run instead:
 
 ---
 
+## Part 2b. Stop the old training run (do this once, before starting the fixed one)
+
+The run that is going now was started with the earlier training code (version 1). Its loss counted the
+prompt and padding, and it has no end-of-answer token, so its adapter is a smoke test, not a result. It is
+safe to stop it; you lose nothing you need.
+
+1. In the Colab notebook that is training, click the **stop square** on the left of the running cell
+   (or Runtime > Interrupt execution, or press Ctrl+M then I). Wait until the cell stops spinning and
+   the red text `KeyboardInterrupt` appears. Stopping early is normal and safe.
+2. Free the GPU so it is not wasted: Runtime > **Disconnect and delete runtime**. This wipes Colab's local
+   disk only. Everything on Drive stays.
+3. **Do not delete the old folder on Drive.**
+   `My Drive/thesis/outputs/finetuned_model/crosscodeeval/` holds the version-1 checkpoints. Leave it:
+   the new run goes in a separate sub-folder (`v2`), and the trainer refuses to mix the two.
+4. Optional, if the old run already saved at least one epoch (a folder named `checkpoint-<number>` exists in
+   that Drive folder): later, after the new session's setup, you can plot its loss curve for comparison
+   (see Part 3d). It only exists if a checkpoint was saved; the old code saved once per epoch.
+5. Make sure the new code is on GitHub before you start the new run (Part 0). Cell 2 downloads the latest
+   pushed code each session; if the push has not happened, Colab would train with the old code again.
+
+Then do Part 2 (Cells 1 to 3) in a fresh notebook session and start Part 3.
+
+---
+
 ## Part 3. Run training
+
+**Which run is which.** Your first Colab run used the earlier training code (version 1): its loss counted
+the prompt and padding, and it had no end-of-answer token. Keep that folder, but do not reuse it. The fixed
+code (version 2) must go in its own folder, and the trainer refuses to mix them: if you start it in the old
+folder it stops and tells you to use `--run-name`.
+
+Before this step, make sure the latest code is pushed to GitHub and Cell 2 has downloaded it.
 
 In a new cell:
 
 ```python
-!python -m src.finetuning.trainer --dataset crosscodeeval
+!python -m src.finetuning.trainer --dataset crosscodeeval --run-name v2
 ```
 
 What to expect:
 
 - The model downloads from Hugging Face (about 3 GB, a few minutes, first session only).
-- You will see a line like `trainable params: ...` and then a progress bar.
+- A line like `trainable params: ...`, then a progress bar. Loss values will look different from the
+  first run (much higher at the start): now only the answer tokens count, so they are not comparable.
 - A checkpoint is saved to Drive every 100 steps (the last 2 are kept).
 - When it finishes, the adapter is in
-  `My Drive/thesis/outputs/finetuned_model/crosscodeeval/`.
-
-Important: until the training-code fixes in `docs/progress_log.md` (Entry 15: masking the prompt
-in the loss, adding an end-of-answer token) are done, treat this run as a **test that the setup
-works**, not as a result to keep or report.
+  `My Drive/thesis/outputs/finetuned_model/crosscodeeval/v2/`.
 
 ### If Colab disconnects mid-training
 
-Nothing is lost beyond the last 100 steps. Repeat Part 2 (Cells 1 to 3) and run the same
-training command again. It finds the latest checkpoint on Drive and continues. Use
-`--no-resume` only if you deliberately want to start over.
+Nothing is lost beyond the last 100 steps. Repeat Part 2 (Cells 1 to 3) and run the same command
+(same `--run-name v2`). It finds the latest checkpoint on Drive and continues. Use `--no-resume` only if
+you deliberately want to start over.
+
+---
+
+## Part 3b. Retrieval comparison (no GPU needed)
+
+Compares dense (UniXcoder) retrieval with BM25 and a random baseline on the CrossCodeEval TEST examples.
+It only reads the indexes, so it also runs on a CPU runtime or on your own machine.
+
+```python
+!python -m src.retrieval.compare_retrievers
+!python -m src.evaluation.plot_retrieval_comparison
+```
+
+Outputs: `results/retrieval_comparison.json` and pictures in `results/figures/` (on Drive when run on Colab).
+Check that the first lines say "TEST files retrieved (must be 0): 0" and that the example counts are
+292 (main) and 327 (staleness). Read the dense and BM25 scores against the random row: pools are tiny, so even
+random guessing scores high at k=5 and k=10.
+
+## Part 3c. Pilot evaluation of the systems (GPU, after training finishes)
+
+Runs base, RAG, fine-tuned and hybrid on the 50 pilot examples and writes metrics, a comparison table and one
+row per example:
+
+```python
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit
+```
+
+- Output folder: `results/pilot_main/` (`comparison_summary.md`, `predictions.jsonl`, per-system metrics).
+- If the CodeBLEU packages did not install in Part 2, add `--skip-codebleu`. It then shows `n/a`, never 0.
+- Add `--limit 5` for a quick test first. Add `--view staleness` for the staleness index.
+- 50 examples are a pipeline check, not a result: report them as "pilot, n=50".
+
+## Part 3d. Plot the training curve (step 4, after training has produced checkpoints)
+
+```python
+!python -m src.evaluation.plot_training --run experiments/finetuned_model/crosscodeeval/v2
+```
+
+This reads the Trainer's `trainer_state.json` from the latest checkpoint and saves
+`results/figures/training_loss.png` (training loss, plus validation loss each epoch). Validation loss is not
+file-held-out, so it is optimistic: use the picture to show training behaves, not to claim generalisation.
+You can also run it on a finished or interrupted run; no other step has to wait.
+To keep the first (version 1) curve for comparison, run it on the old folder with
+`--run experiments/finetuned_model/crosscodeeval --output results/figures/training_loss_v1.png`,
+and label it "earlier training code".
+
+---
+
+## Part 3e. After EVERY training run (checklist)
+
+Do these in order each time a run ends, whether it finished or was stopped. `<run>` means the folder you
+trained into, for example `experiments/finetuned_model/crosscodeeval/v2`.
+
+1. **Check it really finished.** The last training lines should say `Adapter saved to ...`. In a cell:
+   ```python
+   !ls -la experiments/finetuned_model/crosscodeeval/v2
+   ```
+   You should see `adapter_config.json`, `adapter_model.safetensors` and the `checkpoint-*` folders. If the
+   adapter files are missing, the run stopped early: start the same command again, it resumes (Part 3).
+2. **Look at the numbers printed during training.** Loss should go down over time and never show `nan`.
+   A loss that stays flat or jumps to `nan` means something is wrong: stop and bring the output to Claude Code.
+3. **Plot the training curve** (Part 3d) and keep `results/figures/training_loss.png`.
+4. **Try the adapter on one example** before any long evaluation (about a minute):
+   ```python
+   import json
+   first_id = json.load(open("data/processed/crosscodeeval/pilot_ids.json"))[0]   # a TEST example
+   !python -m src.demo --task-id {first_id} --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit
+   ```
+   It prints base, RAG, fine-tuned and hybrid completions next to the true answer. Check they are one line
+   and look like code. The example comes from the pilot list, so it is a TEST example.
+5. **Run a small evaluation first, then the pilot** (Part 3c): `--limit 5`, and if that works the full 50.
+6. **Record what happened** (this is for your progress log, which you keep on your own computer): which run
+   folder, how many steps, the final training and validation loss, how long it took, any warnings, and the
+   pilot numbers with n=50. Paste the printed output to Claude Code and it will write the log entry.
+7. **Back up.** The Drive folders `thesis/outputs/` and `thesis/cache/` are your saved copy. For an extra
+   copy, right-click the adapter folder in Drive and download it.
+8. **Release the GPU.** Runtime > **Disconnect and delete runtime**. Free Colab limits how much GPU time you
+   get, so do not leave a finished session idling.
+9. **Do not push from Colab.** Any code change is made and committed on your own computer; the next session
+   downloads it in Cell 2.
 
 ---
 
@@ -146,7 +254,7 @@ training command again. It finds the latest checkpoint on Drive and continues. U
 
 | What | Where it is saved | What you do |
 |---|---|---|
-| Trained adapters, checkpoints, results | Google Drive (`thesis/outputs/`) | Nothing, it is automatic |
+| Trained adapters, checkpoints, results, figures | Google Drive (`thesis/outputs/`) | Nothing, it is automatic |
 | Data cache | Google Drive (`thesis/cache/`) | Nothing, it is automatic |
 | Code changes | GitHub | Edit and commit on your own computer, then push |
 | Progress log entries | `docs/progress_log.md` | Written on your own computer |
@@ -174,6 +282,8 @@ Notebooks are gitignored (`*.ipynb`), so a notebook with outputs cannot end up i
 | `No GPU` | Runtime is on CPU | Runtime > Change runtime type > T4 GPU, then start again from Cell 1 |
 | `tools/colab_setup.py: No such file` | Files were not pushed to GitHub | Do Part 0, then re-run Cell 2 |
 | A pip install error naming a version | A pinned library version is not available on Colab | Copy the error to Claude Code; we relax that one pin and note it in the log |
+| Trainer stops saying checkpoints are from training-code version 1 | You pointed the fixed code at the old run's folder | Add `--run-name v2` to the training command; do not delete the old folder |
+| `CodeBLEU needs the 'codebleu' package` | The optional install in Part 2 failed | Add `--skip-codebleu` to the evaluation command (it then shows n/a, never 0) |
 | `out of memory` during training | GPU memory full | Restart the runtime (Runtime > Restart session) and start again from Cell 1 |
 | Session disconnected | Idle too long or the 12-hour limit | Part 5, then resume training |
 | `DIFFERS` in the data check | Rebuilt data does not match your log | Do not train; bring the output to Claude Code |

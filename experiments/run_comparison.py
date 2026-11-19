@@ -1,204 +1,196 @@
 """
 experiments/run_comparison.py
 ------------------------------
-End-to-end orchestration script for the comparative study.
+End-to-end comparison of the systems on CrossCodeEval TEST examples (plan Section 9, step 5 for
+the pilot; step 7 for the full TEST set):
 
-Runs all three systems on the same benchmark split and produces:
-  - results/<system>_metrics.json        (per-system)
-  - results/comparison_summary.json      (side-by-side JSON)
-  - results/comparison_summary.md        (Markdown table for thesis)
+  base    frozen model, no retrieval, no adapter          (reference row, not one of the three)
+  rag     System A: frozen model + retrieved chunks
+  ft      System B: LoRA adapter, no retrieval
+  hybrid  System C: LoRA adapter + retrieved chunks
 
-Usage
------
-python experiments/run_comparison.py \
-    --benchmark data/processed/test.jsonl \
-    --config    configs/config.yaml \
-    --ft-model  experiments/finetuned_model
+One model is loaded once; base and rag run with the adapter switched off. All four use the shared
+prompt (src/prompting.py) and the same greedy one-line generation (src/generation.py). Predictions
+are cut to the first line before scoring.
 
-Research Questions addressed
------------------------------
-  RQ1 — Does retrieval improve over standalone fine-tuning?
-  RQ2 — Does fine-tuning improve use of retrieved context?
-  RQ3 — Does the hybrid outperform both individual baselines?
-  RQ4 — What retrieval strategy best supports enterprise completion?
+Examples: --subset pilot (the 50 ids in data/processed/crosscodeeval/pilot_ids.json) or
+--subset test (all TEST examples). Retrieval metrics use the A3 relevance rule for the chosen
+--view (main = BASE pool, staleness = BASE + NEW pool); examples without a relevant file there
+are left out of the retrieval metrics but still scored on completion.
+
+Outputs in --output-dir (default results/<subset>_<view>):
+  <system>_metrics.json, comparison_summary.{json,md}, predictions.jsonl (one row per example,
+  all systems, retrieved files, hit flag) for hit-vs-miss analysis and bootstrap tests.
+Memory note: all four systems share one process and the adapter stays loaded, so peak GPU memory
+is not an independent per-system measurement; report it as such or run systems separately.
+
+Run from the project root, for example:
+    python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit
 """
 
 from __future__ import annotations
 import argparse
 import json
+import time
+from collections import defaultdict
 from pathlib import Path
 
+from datasets import load_from_disk
+
+from src.evaluation.evaluator import compare_systems, run_evaluation
+from src.evaluation.latency import (LatencyRecord, current_cpu_ram_mb, peak_gpu_memory_mb,
+                                    reset_gpu_memory_stats)
+from src.evaluation.metrics import edit_similarity, exact_match, mean_reciprocal_rank
+from src.generation import complete, load_model
+from src.prompting import build_prompt, retrieval_query
+from src.retrieval.embedder import CodeEmbedder
+from src.retrieval.vector_store import FAISSVectorStore
 from src.utils.config import load_config
 from src.utils.logger import get_logger
-from src.evaluation.evaluator import run_evaluation, compare_systems
 
 logger = get_logger("run_comparison")
 
-
-# ── Helpers ───────────────────────────────────────────────────────────────────
-
-def load_benchmark(path: str):
-    return [json.loads(l) for l in Path(path).read_text().splitlines() if l.strip()]
-
-
-def build_retriever(cfg):
-    from src.retrieval.embedder import CodeEmbedder
-    from src.retrieval.vector_store import FAISSVectorStore
-    from src.retrieval.retriever import Retriever
-
-    embedder = CodeEmbedder(model_name=cfg.retrieval.embedding_model)
-    store = FAISSVectorStore.load(cfg.paths.embeddings)
-    return Retriever(embedder, store, top_k=cfg.retrieval.top_k)
+SPLIT_DIR = Path("data/processed/crosscodeeval")
+INDEX_DIR = Path("data/embeddings/crosscodeeval")
+DATASET_DIR = Path("data/crosscodeeval/python")
+VIEWS = {"main": {"base"}, "staleness": {"base", "new"}}
+# system name used in results files -> (uses adapter, uses retrieval)
+SYSTEMS = {"base": (False, False), "rag_only": (False, True),
+           "finetuning_only": (True, False), "hybrid": (True, True)}
 
 
-def build_generator(model_path: str, device: str):
-    from transformers import AutoModelForCausalLM, AutoTokenizer
-    import torch
-
-    tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_path, trust_remote_code=True, device_map="auto"
-    )
-    model.eval()
-
-    def generate(input_text: str, context: str | None = None, max_new_tokens: int = 128) -> str:
-        prompt = input_text if context is None else f"# Context:\n{context}\n\n{input_text}"
-        inputs = tokenizer(prompt, return_tensors="pt").to(device)
-        with torch.no_grad():
-            out = model.generate(
-                **inputs,
-                max_new_tokens=max_new_tokens,
-                do_sample=False,
-                pad_token_id=tokenizer.eos_token_id,
-            )
-        gen = out[0][inputs["input_ids"].shape[1]:]
-        return tokenizer.decode(gen, skip_special_tokens=True)
-
-    return generate
+def load_examples(subset: str, limit: int | None):
+    """Raw CrossCodeEval rows for the chosen TEST examples, in a fixed order."""
+    split = {e["task_id"]: e["split"]
+             for e in map(json.loads, open(SPLIT_DIR / "examples.jsonl", encoding="utf-8"))}
+    if subset == "pilot":
+        wanted = set(json.loads((SPLIT_DIR / "pilot_ids.json").read_text(encoding="utf-8")))
+    else:
+        wanted = {t for t, s in split.items() if s == "test"}
+    rows = [ex for ex in load_from_disk(str(DATASET_DIR))["train"] if ex["metadata"]["task_id"] in wanted]
+    assert all(split[ex["metadata"]["task_id"]] == "test" for ex in rows), "non-TEST example selected"
+    rows.sort(key=lambda ex: ex["metadata"]["task_id"])
+    if limit:
+        rows = rows[:limit]
+    return rows
 
 
-# ── Per-system runners ────────────────────────────────────────────────────────
+def distinct_files(chunks) -> list[str]:
+    return list(dict.fromkeys(c.file_path for c in chunks))
 
-def run_rag_only(examples, cfg, ft_model_path):
-    logger.info("=== System 1/3: RAG-Only ===")
-    from src.evaluation.latency import measure_system
-
-    retriever = build_retriever(cfg)
-    generate  = build_generator(cfg.llm.model, cfg.project.device)
-
-    retrieve_fn = retriever.build_context_string
-    gen_fn      = lambda inp, ctx: generate(inp, context=ctx)
-
-    latency = measure_system("rag_only", examples, gen_fn, retrieve_fn=retrieve_fn)
-    preds   = [gen_fn(ex["input"], retrieve_fn(ex["input"])) for ex in examples]
-    refs    = [ex["output"] for ex in examples]
-
-    # Retrieval quality: what the retriever actually fetched vs. the
-    # ground-truth "relevant_files" written by src/preprocessing/prepare_datasets.py.
-    # If that field is missing (e.g. a hand-written benchmark without it),
-    # retrieval metrics are skipped gracefully rather than crashing.
-    retrieved_list = [
-        [chunk.file_path for chunk in retriever.retrieve(ex["input"])] for ex in examples
-    ]
-    relevant_list = [ex.get("relevant_files") for ex in examples]
-    if any(r is None for r in relevant_list):
-        logger.warning("Some examples are missing 'relevant_files' — retrieval metrics will be skipped.")
-        retrieved_list = relevant_list = None
-
-    return run_evaluation(
-        "rag_only", preds, refs,
-        latency=latency,
-        retrieved_list=retrieved_list,
-        relevant_list=relevant_list,
-        k_values=cfg.retrieval.top_k_values,
-    ), latency
-
-
-def run_finetuning_only(examples, cfg, ft_model_path):
-    logger.info("=== System 2/3: Fine-Tuning-Only ===")
-    from src.evaluation.latency import measure_system
-
-    generate = build_generator(ft_model_path, cfg.project.device)
-    gen_fn   = lambda inp, ctx: generate(inp, context=None)
-
-    latency = measure_system("finetuning_only", examples, gen_fn, retrieve_fn=None)
-    preds   = [gen_fn(ex["input"], None) for ex in examples]
-    refs    = [ex["output"] for ex in examples]
-    # No retrieval for Fine-Tuning-Only — retrieved_list/relevant_list intentionally None
-    return run_evaluation("finetuning_only", preds, refs, latency=latency), latency
-
-
-def run_hybrid(examples, cfg, ft_model_path):
-    logger.info("=== System 3/3: Hybrid RAG + Fine-Tuning ===")
-    from src.evaluation.latency import measure_system
-
-    retriever = build_retriever(cfg)
-    generate  = build_generator(ft_model_path, cfg.project.device)
-
-    retrieve_fn = retriever.build_context_string
-    gen_fn      = lambda inp, ctx: generate(inp, context=ctx)
-
-    latency = measure_system("hybrid", examples, gen_fn, retrieve_fn=retrieve_fn)
-    preds   = [gen_fn(ex["input"], retrieve_fn(ex["input"])) for ex in examples]
-    refs    = [ex["output"] for ex in examples]
-
-    # Same retrieval-quality wiring as run_rag_only() above.
-    retrieved_list = [
-        [chunk.file_path for chunk in retriever.retrieve(ex["input"])] for ex in examples
-    ]
-    relevant_list = [ex.get("relevant_files") for ex in examples]
-    if any(r is None for r in relevant_list):
-        logger.warning("Some examples are missing 'relevant_files' — retrieval metrics will be skipped.")
-        retrieved_list = relevant_list = None
-
-    return run_evaluation(
-        "hybrid", preds, refs,
-        latency=latency,
-        retrieved_list=retrieved_list,
-        relevant_list=relevant_list,
-        k_values=cfg.retrieval.top_k_values,
-    ), latency
-
-
-# ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Comparative Study: Fine-Tuning vs RAG vs Hybrid — Enterprise Code Completion"
-    )
-    parser.add_argument("--benchmark",  required=True,  help="Path to test.jsonl")
-    parser.add_argument("--ft-model",   required=True,  help="Path to fine-tuned model directory")
-    parser.add_argument("--config",     default="configs/config.yaml")
-    parser.add_argument("--output-dir", default="results")
-    parser.add_argument("--systems",    nargs="+",
-                        choices=["rag_only", "finetuning_only", "hybrid"],
-                        default=["rag_only", "finetuning_only", "hybrid"],
-                        help="Which systems to run (default: all three)")
-    args = parser.parse_args()
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--adapter", help="LoRA adapter folder (needed for finetuning_only and hybrid)")
+    ap.add_argument("--subset", choices=["pilot", "test"], default="pilot")
+    ap.add_argument("--view", choices=list(VIEWS), default="main")
+    ap.add_argument("--systems", nargs="+", choices=list(SYSTEMS), default=list(SYSTEMS))
+    ap.add_argument("--top-k", type=int, default=None, help="chunks in the prompt (default: config retrieval.top_k)")
+    ap.add_argument("--limit", type=int, default=None, help="first N examples only (quick test)")
+    ap.add_argument("--4bit", dest="use_4bit", action="store_true", help="4-bit weights (needs GPU + bitsandbytes)")
+    ap.add_argument("--skip-codebleu", action="store_true", help="leave CodeBLEU out (recorded as null)")
+    ap.add_argument("--output-dir", default=None)
+    ap.add_argument("--config", default="configs/config.yaml")
+    args = ap.parse_args()
 
-    cfg      = load_config(args.config)
-    examples = load_benchmark(args.benchmark)
-    logger.info(f"Benchmark: {args.benchmark} ({len(examples)} examples)")
+    needs_adapter = [s for s in args.systems if SYSTEMS[s][0]]
+    if needs_adapter and not args.adapter:
+        ap.error(f"--adapter is required for: {', '.join(needs_adapter)}")
+    if args.adapter and not (Path(args.adapter) / "adapter_config.json").exists():
+        ap.error(f"no adapter_config.json in {args.adapter}")
 
-    all_results = {}
+    cfg = load_config(args.config)
+    top_k = args.top_k or cfg.retrieval.top_k
+    k_values = list(cfg.retrieval.top_k_values)
+    out_dir = Path(args.output_dir or f"results/{args.subset}_{args.view}")
 
-    if "rag_only" in args.systems:
-        result, _ = run_rag_only(examples, cfg, args.ft_model)
-        all_results["rag_only"] = result
+    manifest = {(m["repo"], m["path"]): m["split"]
+                for m in map(json.loads, open(SPLIT_DIR / "manifest.jsonl", encoding="utf-8"))}
+    examples = load_examples(args.subset, args.limit)
+    logger.info(f"{args.subset}: {len(examples)} examples, view={args.view}, top_k={top_k}")
 
-    if "finetuning_only" in args.systems:
-        result, _ = run_finetuning_only(examples, cfg, args.ft_model)
-        all_results["finetuning_only"] = result
+    embedder = CodeEmbedder(cfg.retrieval.embedding_model)
+    stores: dict[str, FAISSVectorStore] = {}
+    tokenizer, model = load_model(cfg.llm.model, args.adapter, args.use_4bit)
+    max_new_tokens = cfg.generation.max_new_tokens
 
-    if "hybrid" in args.systems:
-        result, _ = run_hybrid(examples, cfg, args.ft_model)
-        all_results["hybrid"] = result
+    # Retrieval is identical for rag_only and hybrid, so do it once per example.
+    records = []
+    retrieval_ms = defaultdict(float)
+    for ex in examples:
+        meta = ex["metadata"]
+        repo, target = meta["repository"], meta["file"]
+        if repo not in stores:
+            stores[repo] = FAISSVectorStore.load(str(INDEX_DIR / repo / args.view))
+        code = ex["prompt"]
+        start = time.perf_counter()
+        ranked_chunks = stores[repo].search(embedder.embed([retrieval_query(code)])[0],
+                                            top_k=max(top_k, stores[repo].index.ntotal))
+        elapsed = (time.perf_counter() - start) * 1000
+        chunks = ranked_chunks[:top_k]
+        files = distinct_files(ranked_chunks)
+        assert all(manifest[(repo, f)] != "test" for f in files), "TEST file retrieved"
+        relevant = sorted({s["filename"] for s in ex["crossfile_context_retrieval"]["list"]} - {target})
+        relevant = [f for f in relevant if manifest.get((repo, f)) in VIEWS[args.view]]
+        records.append({"task_id": meta["task_id"], "repo": repo, "code": code,
+                        "reference": ex["groundtruth"].split("\n")[0], "chunks": chunks,
+                        "retrieved_files": files, "relevant_files": relevant, "retrieval_ms": elapsed})
+        retrieval_ms["total"] += elapsed
 
-    if len(all_results) > 1:
-        compare_systems(all_results, output_dir=args.output_dir)
-        logger.info("Comparison complete. Check results/comparison_summary.md")
+    results, predictions = {}, defaultdict(list)
+    for system in args.systems:
+        uses_adapter, uses_retrieval = SYSTEMS[system]
+        logger.info(f"=== {system} ===")
+        latency = LatencyRecord(system=system, n_samples=len(records))
+        reset_gpu_memory_stats()
+        peak_ram = 0.0
+        for rec in records:
+            prompt = build_prompt(rec["code"], rec["chunks"] if uses_retrieval else None)
+            start = time.perf_counter()
+            if uses_adapter or not args.adapter:
+                pred = complete(tokenizer, model, prompt, max_new_tokens)
+            else:
+                with model.disable_adapter():
+                    pred = complete(tokenizer, model, prompt, max_new_tokens)
+            latency.inference_ms += (time.perf_counter() - start) * 1000
+            if uses_retrieval:
+                latency.retrieval_ms += rec["retrieval_ms"]
+            predictions[system].append(pred)
+            peak_ram = max(peak_ram, current_cpu_ram_mb())
+        latency.total_ms = latency.retrieval_ms + latency.inference_ms
+        latency.peak_gpu_mb = peak_gpu_memory_mb()
+        latency.peak_cpu_ram_mb = peak_ram
+
+        retrieved_list = relevant_list = None
+        if uses_retrieval:
+            keep = [r for r in records if r["relevant_files"]]
+            retrieved_list = [r["retrieved_files"] for r in keep]
+            relevant_list = [r["relevant_files"] for r in keep]
+        results[system] = run_evaluation(
+            system, predictions[system], [r["reference"] for r in records],
+            latency=latency, output_dir=str(out_dir),
+            retrieved_list=retrieved_list, relevant_list=relevant_list, k_values=k_values,
+            include_codebleu=not args.skip_codebleu,
+            extra={"n_examples": len(records),
+                   "n_with_relevant_file": sum(bool(r["relevant_files"]) for r in records),
+                   "subset": args.subset, "view": args.view, "top_k": top_k,
+                   "adapter": args.adapter},
+        )
+
+    compare_systems(results, output_dir=str(out_dir))
+    with open(out_dir / "predictions.jsonl", "w", encoding="utf-8") as f:
+        for i, rec in enumerate(records):
+            row = {"task_id": rec["task_id"], "repo": rec["repo"], "reference": rec["reference"],
+                   "retrieved_files": rec["retrieved_files"], "relevant_files": rec["relevant_files"],
+                   "relevant_in_top_k": bool(set(rec["relevant_files"]) & {c.file_path for c in rec["chunks"]}),
+                   "mrr": mean_reciprocal_rank(rec["retrieved_files"], rec["relevant_files"]) if rec["relevant_files"] else None}
+            for system, preds in predictions.items():
+                row[system] = {"prediction": preds[i],
+                               "exact_match": exact_match(preds[i], rec["reference"]),
+                               "edit_similarity": round(edit_similarity(preds[i], rec["reference"]), 4)}
+            f.write(json.dumps(row) + "\n")
+    logger.info(f"Done. See {out_dir}/comparison_summary.md and predictions.jsonl")
 
 
 if __name__ == "__main__":
     main()
-

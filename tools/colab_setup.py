@@ -47,7 +47,12 @@ PIP_PACKAGES = [
     "nltk",
     "psutil",
     "pyyaml",
+    "matplotlib",
 ]
+# CodeBLEU is installed separately and is not fatal if it fails: it brings its own
+# tree-sitter requirement, which could clash with the pins above. Evaluation raises a clear
+# error if it is missing, or you can run it with --skip-codebleu.
+OPTIONAL_PIP_PACKAGES = ["codebleu", "tree-sitter-python"]
 
 # Steps that rebuild each dataset, in order. All are seeded in the scripts.
 BUILD_STEPS = {
@@ -105,6 +110,10 @@ def check_environment() -> None:
 def install_packages() -> None:
     print("\n[2/5] Installing libraries")
     run([sys.executable, "-m", "pip", "install", "-q", *PIP_PACKAGES])
+    result = subprocess.run([sys.executable, "-m", "pip", "install", "-q", *OPTIONAL_PIP_PACKAGES])
+    if result.returncode != 0:
+        print("  WARNING: CodeBLEU packages did not install. Evaluate with --skip-codebleu, "
+              "or tell Claude Code the pip error.")
 
 
 def check_gpu(allow_cpu: bool) -> None:
