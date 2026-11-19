@@ -741,3 +741,324 @@ supplies the numbers behind them.
   did not run it).
 - **[writing note]** Training cost for the efficiency section: about 3.5 hours and 8.7 GB for QLoRA on a free
   T4; the free GPU quota ran out after one such run, which is a practical constraint worth stating.
+
+## Entry 20: Loss curve and first retrieval comparison, run locally (Sections 5, 6)
+- **Asked:** after the adapter files and `trainer_state.json` were placed locally (adapter in
+  `experiments/finetuned_model/crosscodeeval/v2/`, state in `results/training/`; both gitignored), run the
+  loss plot and the retrieval comparison, update the log. No commits or pushes (user does those).
+- **Done (CPU only):**
+  - `python -m src.evaluation.plot_training --run results/training/trainer_state.json` ->
+    `results/figures/training_loss.png` (35 training points, 2 validation points).
+  - `python -m src.retrieval.compare_retrievers` and `python -m src.evaluation.plot_retrieval_comparison` ->
+    `results/retrieval_comparison.json` and four figures in `results/figures/`.
+- **Checks that passed:** TEST files retrieved = 0 over 543 TEST examples; n = 292 (main), 327 (staleness),
+  68 (staleness, relevant file in NEW). Matches Entries 7 and 12.
+- **Found (dense = UniXcoder, 95% bootstrap CI in brackets; relevance by the A3 rule):**
+
+  | View (n) | System | hit@1 | hit@3 | MRR |
+  |---|---|---|---|---|
+  | main (292) | dense | 0.603 | 0.952 | 0.770 [0.737, 0.804] |
+  | main (292) | BM25 | 0.784 | 0.990 | 0.884 [0.860, 0.908] |
+  | main (292) | random | 0.397 | 0.849 | 0.633 [0.596, 0.672] |
+  | staleness (327) | dense / BM25 / random | 0.532 / 0.771 / 0.355 | 0.896 / 0.963 / 0.728 | 0.720 / 0.870 / 0.572 |
+  | staleness, NEW-relevant (68) | dense / BM25 / random | 0.544 / 0.809 / 0.353 | 0.868 / 0.941 / 0.677 | 0.716 / 0.885 / 0.553 |
+
+  Paired difference dense minus BM25 (main): hit@1 -0.182 [-0.250, -0.113], MRR -0.114 [-0.152, -0.075].
+  Both CIs exclude 0, so BM25 is better here. This agrees in direction with Wang et al. (BM25 > UniXcoder).
+  On the 68 NEW-relevant examples the hit@3 difference's CI includes 0 (-0.074 [-0.162, 0.015]); hit@1 and MRR do not.
+- **Caveats [writing note]:** pools are tiny (3 to about 10 chunks), so random already gets hit@3 0.85 and hit@5
+  0.98; only hit@1, MRR and the gap to random are informative. Dense is above random but not by much at hit@1
+  (0.603 vs 0.397). Possible reasons (untested): UniXcoder truncates about half of each 256-line chunk (Entry 12),
+  and BM25 matches identifiers directly. Retrieval quality is not completion quality; that needs the pilot.
+- **Unexpected, to check:** `trainer_state.json` has global_step 1761 and epoch 3.0 but only two validation
+  points (steps 587 and 1174: 0.6799, 0.6774). The third value (0.6841) in Entry 18 came from the training
+  output, not from this file, so the file was probably saved before the final evaluation. Not a problem for
+  the plot, but the curve shows two validation points, not three.
+- **Not done:** the local CPU smoke test of the evaluation code (needs the free-RAM figure from the user; see
+  Entry 19). Nothing committed or pushed.
+
+## Entry 21: Status check before the first pilot; what is done, what is missing (Sections 6, 9)
+- **Asked:** can the pilot run on Colab once the runtime is back, what to do in the first pilot run, summarise
+  what is done and add anything missing. Also answered: free RAM on this machine is about 8 GB and D: has over
+  40 GB free, so the 32-bit local model test (about 8 to 10 GB) was NOT run (the weights alone are about
+  6.2 GB in 32-bit). Options given to the user: skip, test everything except the model, or bf16 on CPU.
+- **Checked now:** `git status` shows local main equal to `origin/main`; `eval_loss.py`, `run_comparison.py`,
+  `src/prompting.py` and `tools/colab_setup.py` are already pushed, so the earlier "push the newest code" step
+  is no longer needed (Entry 19 listed it; correction). Uncommitted: `docs/new_session_prompt.md`,
+  `docs/progress_log.md`, and the deletion of `docs/train_results/*` (the user moved those files into the
+  gitignored `experiments/finetuned_model/.../v2/` and `results/training/`). 19 tests pass.
+- **Done so far:**
+  - Data: file-level BASE/NEW/TEST splits, leakage assertions, fine-tuning corpora and the pilot sample
+    (50 examples, seed 42) for CrossCodeEval; splits and corpus for RepoBench (Entries 7 to 13).
+  - CrossCodeEval per-repo indexes (206 repos) and a retrieval comparison: BM25 beats UniXcoder at hit@1 and
+    MRR with CIs excluding 0 (Entry 20).
+  - Code: shared prompt and generation modules, label-masked training with an end token, CodeBLEU that raises
+    instead of returning 0.0, bootstrap CIs, rewritten `run_comparison.py`, `demo.py`, `eval_loss.py`,
+    Colab setup (Entries 14 to 19).
+  - Training: v2 QLoRA run on CrossCodeEval finished (Entry 18); adapter and `trainer_state.json` are now
+    local; loss curve plotted (Entry 20).
+  - Reference paper analysis (Entry 17).
+- **Missing / not yet run (nothing here has a result):**
+  1. Any completion number (EM, edit similarity, identifier accuracy, CodeBLEU) for base, RAG, fine-tuned,
+     hybrid. `run_comparison.py` has never run end to end, even on a GPU.
+  2. Base-versus-adapter validation loss (`eval_loss.py` written, not run).
+  3. The `codebleu` package and `bitsandbytes` 4-bit load on Colab are untested (Entry 17).
+  4. BM25 is not a system in `run_comparison.py` (retrieval comparison only); the hybrid and RAG use dense
+     retrieval. The plan's BM25 baseline for completion is therefore not yet covered. Since BM25 won the
+     retrieval comparison, consider adding a `--retriever bm25` option before the full run.
+  5. Plan Section 6 extras not built: noisy-context injection, forgetting check (HumanEval before/after),
+     top-k sweep, cross-file-dependent subset, hit-versus-miss script (data is in `predictions.jsonl`).
+  6. RAFT-style variant, RepoBench fine-tuning run, and RepoBench evaluation. Open decisions unchanged:
+     epochs (2 may be enough), max_seq_length above 512, RepoBench TEST sampling rule.
+  7. Hypotheses and the "expected vs Wang et al." section are in the plan and notes but not yet written into
+     the thesis text; Section 11 supervisor update (scope changes) and the outdated progress-report .docx.
+  8. Seeds and constants are in scripts, not `config.yaml`; memory per system in the evaluation is not
+     independent (one process, adapter stays loaded).
+- **Plan for the first pilot run (Colab T4, one session; order = most important first, see colab_steps Part 7.2):**
+  1. Cells 1 to 3; check the data lines say `ok` and the adapter exists.
+  2. Quick checks: `src.demo` on the first pilot id, then `run_comparison --limit 5 --output-dir results/pipeline_test`.
+     Stop and report if a completion is empty or multi-line, or if CodeBLEU fails (then add `--skip-codebleu`).
+  3. Pilot, main view (50 examples, four systems).
+  4. `src.finetuning.eval_loss` (base vs adapter).
+  5. Pilot, staleness view.
+  6. Download `results/pilot_main`, `results/pilot_staleness`, `results/val_loss_base_vs_adapter.json`, then
+     disconnect. Report as "pilot, n=50", never as findings.
+- **Open:** whether to run a no-model local test of the pipeline (prompts and retrieval for the 50 ids) before
+  the GPU session; recommended, not yet written.
+
+## Entry 22: Model-free dry run of the pilot pipeline, run locally (Section 9, step 5 prep)
+- **Asked:** write and run a local check of the pilot pipeline that does not need the model (free RAM is only
+  about 8 GB, so the 32-bit model test was skipped, Entry 21), and log what it is for.
+- **Purpose:** the first Colab session has limited free GPU time. Everything in `run_comparison.py` that does
+  not depend on generation can be tested on this machine, so plain bugs are found here and not on the GPU clock.
+  It does not test the model load, the 4-bit path, generation quality, or CodeBLEU on a real install.
+- **Done:** wrote `experiments/dry_run_pipeline.py` (run: `python -m experiments.dry_run_pipeline --adapter
+  experiments/finetuned_model/crosscodeeval/v2`). It reuses `load_examples` and the retrieval and prompt code
+  of `run_comparison.py`, loads only UniXcoder and the Qwen tokenizer (not the weights), and writes to
+  `results/dry_run/` (stand-in predictions, not results; gitignored). Checks: adapter base model equals the
+  config; the 50 pilot examples load and are TEST; retrieval in both views with no TEST file; prompt lengths;
+  the scoring and file-writing path with stand-in predictions (reference text, empty, nearly right, and a
+  two-line text cut to its first line); CodeBLEU availability.
+- **Found (passed, no code bug in these paths):**
+  - Adapter base model `Qwen/Qwen2.5-Coder-1.5B` matches `config.yaml`; adapter files present (LoRA r=8, alpha 16).
+  - 50 pilot examples, all TEST, all with a relevant file in the main pool. A relevant file lies in the top-5
+    chunks for 48 of 50 (main) and 46 of 50 (staleness). Dense retrieval on these 50: MRR 0.764, hit-style
+    precision@1 0.62. 0 TEST files retrieved.
+  - Scoring path correct: stand-in EM is 1.0 for exact copies, 0.0 for empty predictions, and the two-line
+    stand-in is cut to one line and scores 1.0; edit similarity 0.98 for the nearly-right stand-in.
+  - Local `codebleu` is not installed; `code_bleu` raises a clear error (does not return 0.0), as designed.
+    On Colab check that the optional install in `colab_setup.py` worked, else use `--skip-codebleu`.
+- **Found (needs a decision, matters for the pilot):** prompt lengths in tokens (Qwen tokenizer):
+  - Without retrieval (base, fine-tuned): median 437, max 4,411; 21 of 50 exceed 512. Training cut inputs from
+    the left to fit 512 tokens (Entry 17), but inference does not cut, so for those 21 examples the adapter sees
+    a longer input than it was trained on.
+  - With retrieval (RAG, hybrid): median 2,152, max 5,919; all 50 exceed 512. Expected (5 chunks of up to 1,200
+    characters), and consistent with Wang et al.'s note that retrieval multiplies input length. It also means
+    these two systems are slower and use more GPU memory; the T4 should cope with about 6,000 tokens in 4-bit,
+    but the `--limit 5` check should confirm it (watch for out-of-memory). [writing note]
+  - Recommendation: run the pilot as is (it is a pipeline check); afterwards consider truncating the code part of
+    the prompt from the left at inference to the same limit as training, and report both variants.
+- **Fix made:** `src/evaluation/evaluator.py` logged messages with the character "→", which the Windows console
+  (cp1252) cannot print, so logging errors appeared on this machine (results were still written). Replaced with
+  "->" in three log messages. Not a problem on Colab (UTF-8) but harmless to fix.
+- **Open:** nothing committed or pushed (user does that). `experiments/dry_run_pipeline.py` and the evaluator
+  change are new local changes that Colab does not need; the pilot will use the version already on GitHub.
+
+## Entry 23: Overall completion estimate, for updating the progress report (as of 2026-11-19)
+- **Asked:** how much of the work is complete, in percent, logged so the progress report can be updated.
+- **Estimate: about 53% (read it as 50 to 55%), project work and research/analysis only.** Thesis writing is
+  deliberately NOT counted (revised at the user's request; the first version, 48.7% including a 12% writing
+  share, is replaced). This is a judgement, not a measurement: the weights are mine, based on effort, and the
+  "done" shares come from Entries 1 to 22.
+
+  | Workstream | Weight | Done | Contribution |
+  |---|---|---|---|
+  | Plan, reference-paper analysis, hypotheses | 5.7% | 100% | 5.7 |
+  | CrossCodeEval data (split, leakage checks, corpus, pilot sample) | 11.4% | 100% | 11.4 |
+  | RepoBench data (split and corpus; no indexes) | 8.0% | 85% | 6.8 |
+  | Pipeline code (prompting, trainer, evaluation, demo, Colab setup, dry run) | 17.0% | 85% | 14.5 |
+  | Retrieval (CrossCodeEval indexes, dense/BM25/random comparison) | 9.1% | 70% | 6.4 |
+  | Fine-tuning (CrossCodeEval v2 done; no RepoBench run, no RAFT variant) | 11.4% | 50% | 5.7 |
+  | Evaluation runs (no completion scores yet; dry run only) | 28.4% | 10% | 2.8 |
+  | Extra analyses (noisy context, staleness, forgetting, hit/miss, top-k) | 9.1% | 0% | 0.0 |
+  | **Total** | 100% | | **53.3** |
+
+- **Reading:** the preparation work (data, code, indexes, one training run) is largely done; the results are
+  not. No system has a completion score (EM, edit similarity), which is why the evaluation share is small.
+  The percentage will rise quickly once the pilot and the full CrossCodeEval evaluation run (roughly +17 points
+  for the full CrossCodeEval comparison and its extra analyses).
+- **For the progress report (what changed since the August report; plan Section 11 says to tell the supervisor):**
+  - Done and new: file-level BASE/NEW/TEST splits with automated leakage assertions for both datasets;
+    per-repository indexes; the reference-paper comparison; the first QLoRA fine-tuning run (3 h 29 min on a
+    T4, about 8.7 GB); the first dense-vs-BM25 retrieval result (BM25 better at hit@1 and MRR, CIs exclude 0).
+  - Corrections to the August report: the split is by file within a repository, not an 80/10/10 split by
+    repository; the two datasets are reported separately, not mixed; the hybrid import was missing (fixed,
+    Entry 9); the remaining work is not only execution (leakage-safe design, hit/miss and staleness analyses
+    were added); Python only.
+  - Still to do: pilot and full CrossCodeEval comparison, extra analyses, RepoBench runs, thesis chapters.
+  - Risks to mention: free Colab GPU quota ran out after one training run; prompts with retrieval are about
+    2,000 tokens against 512 in training (Entry 22); CrossCodeEval staleness sample is small (68 examples).
+
+## Entry 24: Local work while waiting for the GPU (Sections 6, 9)
+- **Asked:** do the local steps suggested while the Colab GPU quota is unavailable. No commits or pushes
+  (the user does those).
+- **Done:**
+  1. **CodeBLEU installed and tested locally** (`codebleu` 0.8.0, `tree-sitter` 0.26.1, `tree-sitter-python` 0.25.0
+     in `./venv`; a dry-run of pip showed only these three packages would change). Identical code scores 1.0,
+     different code 0.14, an empty prediction 0.0 (a real score, no silent failure). Note: Colab installs the
+     same packages unpinned (`tools/colab_setup.py`), so the same versions are expected there; unverified.
+  2. **`run_comparison.py` new options** (defaults unchanged): `--retriever bm25` (BM25 with the same tokeniser as
+     `compare_retrievers.py`, over the same chunks and index views), `--max-code-tokens N` (keeps the last N tokens
+     of the code in every prompt; chunks are not cut; helper `truncate_code_left` in `src/prompting.py`),
+     `--noise-chunks N` (noisy-context test: N chunks from other repositories added at seeded random positions to
+     the RAG and hybrid prompts; retrieval metrics stay on the real chunks). The output folder name gets a suffix
+     (`_bm25`, `_code480`, `_noiseN`) so runs do not overwrite each other; each setting is recorded in the
+     metrics file. `--top-k` already existed (top-k sweep = one run per value).
+  3. **Dry run extended** (`experiments/dry_run_pipeline.py`): BM25 retrieval over the 50 pilot examples (relevant
+     file inside the top-5 chunks for 50 of 50, against 48 of 50 for dense; no TEST file), and prompt lengths with
+     `--max-code-tokens 480`: without retrieval the maximum falls from 4,411 to 494 tokens and none exceeds 512;
+     with retrieval the median falls from 2,152 to 1,983 tokens (chunks dominate, 5 chunks of up to 1,200
+     characters). Small n: not a retrieval result.
+  4. **`src/evaluation/analyze_predictions.py`** (hit vs miss, and paired differences rag-base, ft-base,
+     hybrid-rag, hybrid-ft, rag-ft, each with a 95% bootstrap CI and a flag when the CI excludes 0). Tested with
+     three unit tests and a run on a synthetic `predictions.jsonl` (random numbers, deleted afterwards, not
+     results). It works on the real file from Colab, also locally.
+  5. **`src/evaluation/forgetting_check.py`** (HumanEval pass@1, base vs adapter). Cannot run here: it executes
+     model-generated code, so it refuses to run without `--allow-exec` and the docs say Colab only. The
+     time limit (10 s per program) is not a sandbox. Unit-tested only its cut and run helpers (24 tests pass).
+  6. **RepoBench sampling rule decided and built** (`src/preprocessing/build_repobench_sample.py`): per setting,
+     candidates = TEST examples whose gold file has a BASE fragment and is not the example's own file (4,399 for
+     cross_file_first and 4,298 for cross_file_random, matching Entry 10), then 300 per setting with seed 42.
+     446 distinct repos. This is a compute choice, not from the plan: say so. Plain random, not stratified.
+  7. **RepoBench indexes** (`src/retrieval/build_repobench_indexes.py`, `--sample-repos`): one index per repo,
+     main (BASE) and staleness (BASE + NEW), same A6 assertions (no TEST file). Fragments are cut to 3,000
+     characters for embedding and storage. Started in the background for the 446 sample repos; log in
+     `results/repobench_index_build.log`; restartable (skips finished repos). The 446 repos hold 14,033 fragments; early speed was about
+     1 second per fragment, so expect about 4 hours (unmeasured end to end). Two repos (`16lemoing/dot`, `1in-oos/ccplus`) were built
+     earlier in a 5-repo speed test with a 6,000-character cap, a small inconsistency.
+  8. `docs/colab_steps.md` Part 8 lists the new options and a suggested order for the extra runs.
+- **Not done:** `compare_retrievers` for RepoBench (needs its own query rule: `cropped_code`, gold index) and
+  `run_comparison` support for RepoBench; the hit/miss analysis has not seen real predictions; cross-file-dependent
+  subset (every CrossCodeEval pilot example has a relevant file by construction, so it is the whole pilot);
+  moving seeds and constants into `config.yaml` (risky while indexes build, left for later).
+- **Permission note:** one command was denied (it contained a recursive delete of the RepoBench index folder). I
+  did not retry it; the 5 test repos from the speed test are still there.
+
+## Entry 25: Tests for the new run options and Colab setup hardening (Section 9)
+- **Asked:** do the two small local items (tests for the new `run_comparison` options; check and tidy
+  `tools/colab_setup.py`), and leave anything that needs Colab until the pilot session.
+- **Done:**
+  - `tests/test_run_comparison_options.py` (3 tests): BM25 ranks the chunk sharing identifiers first and keeps
+    all chunks; noise chunks come only from other repositories, are repeatable for the same task id and leave the
+    real chunk in place; `truncate_code_left` keeps the text nearest the cursor and leaves short code and
+    `None` unchanged. All 27 tests pass.
+  - `tools/colab_setup.py`: (a) the RepoBench build now also runs `build_repobench_sample` and
+    `build_repobench_indexes --sample-repos`, and `data/embeddings/repobench` is part of the Drive cache; (b) the
+    data check now also verifies `pilot_ids.json` (50), the number of CrossCodeEval index folders (206) and
+    `examples.jsonl` (2,018 lines), and `sample_repos.json` (446) for RepoBench, printing `ok`/`DIFFERS`/`MISSING`.
+    I ran the check locally against this machine's data: all `ok`. My first expected value for `examples.jsonl`
+    was wrong (2,665 instead of 2,018, which is the number of examples in repos with at least 3 files); the local
+    run caught it before it reached Colab.
+  - `docs/colab_steps.md`: note on the extra checks, and the model-free dry run
+    (`python -m experiments.dry_run_pipeline ...`) added to the quick checks, so a bad cache shows up before GPU
+    time is spent.
+- **Not verified (needs Colab):** that the existing Drive cache passes the new checks (it was written before
+  these checks existed; the local data does), that the RepoBench build steps work on Colab, and that the pinned
+  installs behave. The first Colab cell output will show it.
+- **Open:** the RepoBench index build is still running locally in the background; RepoBench retrieval comparison
+  and RepoBench in `run_comparison` are not written. Nothing committed or pushed.
+
+## Entry 26: RepoBench indexes finished (Sections 5, 9)
+- **Done:** the background build (`build_repobench_indexes --sample-repos`, started 15:46, finished 18:55, about
+  3 hours) completed. Log: `results/repobench_index_build.log`. 444 repos were indexed in this run plus the 2
+  built earlier in the speed test, so all 446 sample repos have both views (checked: 0 missing main, 0 missing
+  staleness). Fragments in this run: main 11,031, staleness 13,984. The A6 assertions passed (no TEST file in any
+  index, one repo per index).
+- **Speed:** about 1.5 to 3 repos per minute on CPU, 446 repos in about 3 hours (fragments cut to 3,000
+  characters for embedding). On the Colab GPU the same step should be much faster; unmeasured.
+- **Not done yet:** a RepoBench retrieval comparison (dense vs BM25 vs random on the 600 sampled examples) and
+  RepoBench in `run_comparison`. Nothing committed or pushed.
+
+## Entry 27: RepoBench retrieval comparison script written, not run (Sections 5, 6)
+- **Asked:** write the RepoBench retrieval comparison (dense vs BM25 vs random) and stop before running it.
+- **Done:** `src/retrieval/compare_retrievers_repobench.py`. It reuses the retrievers, metrics and bootstrap of
+  `compare_retrievers.py` (CrossCodeEval) and reads the Entry 26 indexes and the Entry 24 sample (300 examples per
+  setting, settings reported separately). Query = last 20 lines of `cropped_code`; relevant file = the gold snippet
+  file; fragments collapse to a ranked list of distinct files; views main (BASE) and staleness (BASE + NEW).
+  Output `results/repobench_retrieval_comparison.json`, including the pool sizes (distinct files per pool) so that
+  the random floor can be read against them.
+- **Checks built in:** each sampled row must be a TEST example matching `examples.jsonl` (same repo and path); the
+  gold file must be in both pools; a retrieved TEST file aborts the run.
+- **Limitation to state:** the sample was drawn from examples whose gold file is in BASE, so the staleness view
+  here shows NEW files only as extra distractors. It has no examples whose gold file is in NEW (the RepoBench
+  staleness sample would need a separate draw: not built). The existing retrieval plots read the CrossCodeEval
+  result file only; no RepoBench plot yet.
+- **Verified:** syntax and `--help` only. **Not run**; expected runtime a few minutes on CPU (600 queries).
+
+## Entry 28: RepoBench retrieval comparison, run locally (Sections 5, 6)
+- **Done:** ran `python -m src.retrieval.compare_retrievers_repobench` (CPU, about 3 minutes, 600 queries; 300 per
+  setting). Output `results/repobench_retrieval_comparison.json` (gitignored).
+- **Checks passed:** all 600 sampled rows matched the split file as TEST examples; gold file in every pool;
+  TEST files retrieved: 0.
+- **Found** (hit@1 / hit@3 / MRR; 95% CI of MRR in brackets; one relevant file per example):
+
+  | Setting, view (n=300) | Median pool files | dense | BM25 | random |
+  |---|---|---|---|---|
+  | cross_file_first, main | 9 | 0.247 / 0.563 / 0.446 [0.406, 0.485] | 0.260 / 0.593 / 0.466 [0.427, 0.503] | 0.127 / 0.393 / 0.323 [0.291, 0.357] |
+  | cross_file_first, staleness | 12 | 0.223 / 0.490 / 0.409 | 0.240 / 0.527 / 0.431 | 0.097 / 0.360 / 0.283 |
+  | cross_file_random, main | 11 | 0.290 / 0.593 / 0.484 [0.442, 0.528] | 0.337 / 0.670 / 0.535 [0.495, 0.579] | 0.110 / 0.423 / 0.319 [0.288, 0.349] |
+  | cross_file_random, staleness | 14 | 0.240 / 0.527 / 0.431 | 0.297 / 0.613 / 0.494 | 0.140 / 0.320 / 0.298 |
+
+  Paired dense minus BM25 (95% CI):
+  - cross_file_first: main MRR -0.020 [-0.062, 0.020], staleness MRR -0.022 [-0.061, 0.013]. Both CIs include 0, so
+    no evidence of a difference in this setting.
+  - cross_file_random: main MRR -0.051 [-0.086, -0.014], staleness MRR -0.063 [-0.098, -0.028]; hit@3 also
+    excludes 0 in both views. BM25 is better here.
+- **Reading:**
+  - Both real retrievers beat random on MRR (CIs do not overlap in main view), but by much less than on CrossCodeEval
+    (dense MRR 0.45 to 0.48 against random 0.32, versus 0.77 against 0.63 there), and absolute hit@1 is low (0.22 to
+    0.34): the gold file is found first in only about a quarter to a third of cases. Retrieval is harder here than on
+    CrossCodeEval, which fits RepoBench's fragment pools and its single gold file; unexplained in detail.
+  - BM25 is better than dense in all four cells; the gap is clear in cross_file_random and not significant in
+    cross_file_first. Same direction as CrossCodeEval and Wang et al. (BM25 > UniXcoder). [writing note]
+  - Adding NEW files lowers every system (pool grows by about 3 files), most for dense: staleness adds distractors.
+    Not a test of NEW gold files (see Entry 27 limitation).
+  - Pools are small (median 9 to 14 files), so read hit@3 and above against random (0.32 to 0.42 at hit@3).
+- **Not done:** a RepoBench retrieval plot; RepoBench completion (needs `run_comparison` support and a RepoBench
+  fine-tuning run). Nothing committed or pushed.
+
+## Entry 29: Results collected in one place; completion estimate updated (as of 2026-11-19)
+- **Asked:** add the new findings to the log, set the results up somewhere else if not already, and say how much
+  of the project is complete.
+- **Done:**
+  - The findings are in this log as Entry 20 (CrossCodeEval retrieval comparison, loss curve) and Entry 28
+    (RepoBench retrieval comparison); Entry 26 has the RepoBench index build.
+  - New file `docs/results_summary.md`: every real result in one place (both retrieval comparisons with CIs,
+    the v2 fine-tuning run, data facts, the dry-run facts marked as not results, and a list of what is still
+    missing), with the command and file that regenerate each.
+  - `docs/claude_web_prompt.md` (the prompt for the report and presentation) was out of date (it said the
+    retrieval comparison was not run and the fixed training not started). Updated: file list (log Entries 1 to 28,
+    `results_summary.md`, both result JSON files), Part B (new items 16 to 19), "Not done yet", a new section D4b with
+    the real retrieval numbers, chart notes for retrieval and the loss curve, the status/timeline part, and the
+    remaining-plan order.
+- **Completion estimate (project work and research/analysis only; thesis writing not counted): about 60%**
+  (read as 57 to 62%; was about 53% in Entry 23). A judgement, same weights as Entry 23:
+
+  | Workstream | Weight | Done now | Contribution | Was |
+  |---|---|---|---|---|
+  | Plan, reference-paper analysis, hypotheses | 5.7% | 100% | 5.7 | 5.7 |
+  | CrossCodeEval data | 11.4% | 100% | 11.4 | 11.4 |
+  | RepoBench data (split, corpus, sample) | 8.0% | 90% | 7.2 | 6.8 |
+  | Pipeline code (adds BM25 / prompt-length / noise options, analysis, forgetting script, dry run) | 17.0% | 95% | 16.2 | 14.5 |
+  | Retrieval (both datasets indexed and compared; no RepoBench plot, no NEW-gold RepoBench sample) | 9.1% | 88% | 8.0 | 6.4 |
+  | Fine-tuning (CrossCodeEval v2 only) | 11.4% | 50% | 5.7 | 5.7 |
+  | Evaluation runs (still no completion score; dry run only) | 28.4% | 12% | 3.4 | 2.8 |
+  | Extra analyses (code written, none run on model outputs) | 9.1% | 20% | 1.8 | 0.0 |
+  | **Total** | 100% | | **59.4** | 53.3 |
+
+- **Reading:** the increase comes from the RepoBench indexes and retrieval results and from analysis code being
+  written. The largest block, evaluation runs (28% of the weight), is still almost empty, so the next jump
+  (about +15 to 20 points) comes only from the GPU runs: pilot, full CrossCodeEval comparison, base-versus-adapter
+  validation loss.
+- **Open:** `docs/new_session_prompt.md` still describes the state after Entry 19; update it before the next
+  session if you want to use it (not changed here). Nothing committed or pushed.

@@ -1,66 +1,107 @@
 # Prompt to start a new Claude Code session
 
-Paste everything inside the block below into the new session.
+Paste everything inside the block below into the new session (updated after Entry 29 of the progress log,
+2026-11-19). If the terminal is slow, start a fresh session in the same folder: all work is on disk, nothing
+depends on the old conversation.
 
 ```
 I'm continuing a thesis project in D:\Users\nidwija.bhatta\Documents\Automation\Thesisbaseline1
 (RAG vs fine-tuning vs hybrid for repository-level code completion, Qwen2.5-Coder-1.5B,
-CrossCodeEval + RepoBench, Python only).
+CrossCodeEval + RepoBench, Python only). I plan to submit in January if possible, earlier if realistic,
+February at the latest.
 
-Read these two files first, in this order, and confirm you have read them:
-1. docs/things_to_do_first  - my plan and framework. Stay close to it; don't deviate a lot
-   and don't rely on raw repo data beyond the benchmarks.
-2. docs/progress_log.md     - everything done so far (Entries 1-11), the decisions made,
-   and a "Notes for thesis writing" section. Use it instead of re-deriving anything.
+Read these files first, in this order, and confirm you have read them:
+1. docs/things_to_do_first         - my plan and framework. Stay close to it; don't deviate a lot.
+2. docs/progress_log.md            - Entries 1-29: everything done, decisions, numbers, caveats, and a
+                                    "Notes for thesis writing" section. Use it instead of re-deriving anything.
+3. docs/results_summary.md         - every real result so far in one place (retrieval comparisons, training run).
+4. docs/colab_steps.md             - how I run the GPU work on Colab (Parts 0-8). Part 7 is the pilot-session
+                                    plan; Part 8 lists the new run options.
+5. docs/reference_paper_comparison.md - analysis of the main reference paper (Wang et al., 2025).
+(docs/claude_web_prompt.md is the prompt I use on the Claude web app for the report and presentation.)
 
-State at the end of the last session:
-- Plan Sections 1-3 are implemented for both datasets: split manifests, pools, and
-  leakage-checked fine-tuning corpora are in data/processed/{crosscodeeval,repobench}/.
-  Scripts: src/preprocessing/build_{crosscodeeval,repobench}_{split,finetune}.py.
-- A3 (CrossCodeEval relevance rule) is settled (Entry 4). RepoBench uses both cross-file
-  settings with one shared split (Entries 6, 10). Hybrid pipeline peft import is fixed (Entry 9).
-- I was in the middle of Section 9, step 5 prep: the per-repo retrieval index. I wrote
-  src/preprocessing/chunker.py::chunk_text and src/retrieval/build_indexes.py
-  (per-repo FAISS, "main" = BASE and "staleness" = BASE+NEW views, TEST asserted absent).
-  They have NOT been run yet and are NOT yet in the progress log (this would be Entry 12)
-  and NOT yet committed.
-- Sizing facts for the index: 931 chunks (806 BASE, 125 NEW) at 256 lines / 32 overlap;
-  median chunk is about 1,045 UniXcoder tokens, and the model window is 1,026, so roughly
-  half of each chunk's tokens are cut. Keep the plan's 256 lines and report this as a
-  limitation. rank_bm25 is not installed (needed for the BM25 baseline, Section 9, step 7).
+State at the end of the last session (2026-11-19):
+- Data work is done for both datasets (splits, leakage checks, fine-tuning corpora, pilot sample). Indexes
+  exist for all 206 CrossCodeEval repos and for the 446 repos of the RepoBench evaluation sample
+  (300 TEST examples per setting, seed 42).
+- Fine-tuning v2 (QLoRA, CrossCodeEval) finished on a Colab T4 (1,761 steps, 3 h 29 min, about 8.7 GB;
+  validation loss flat at about 0.68, not file-held-out). The adapter and trainer_state.json are now on this
+  computer (experiments/finetuned_model/crosscodeeval/v2/ and results/training/, both gitignored). Loss curve:
+  results/figures/training_loss.png.
+- Retrieval results exist (Entries 20 and 28): BM25 beats dense UniXcoder on CrossCodeEval (MRR 0.884 vs 0.770,
+  n=292, CI excludes 0) and on RepoBench cross_file_random (significant) but not clearly on cross_file_first.
+- NOT available: any completion score (EM, edit similarity, identifier accuracy, CodeBLEU) for any system, any
+  pilot result, the base-versus-adapter validation loss. These all need the Colab GPU. Colab's free GPU quota ran
+  out after the v2 run; I am considering the paid plan (100 compute units/month, expire after 90 days). I will
+  tell you when a GPU runtime is available and paste outputs.
+- Written and tested locally (27 tests pass: python -m pytest tests), NOT yet run with a model:
+  experiments/run_comparison.py (new options --retriever bm25, --max-code-tokens, --noise-chunks, existing
+  --top-k and --view), src/finetuning/eval_loss.py, src/evaluation/analyze_predictions.py (hit vs miss, paired
+  differences), src/evaluation/forgetting_check.py (HumanEval; executes model-generated code, Colab only, needs
+  --allow-exec), experiments/dry_run_pipeline.py (model-free check; passed). CodeBLEU works locally.
+- Prompt-length finding (Entry 22): without retrieval 21 of 50 pilot prompts exceed the 512 tokens used in
+  training (max 4,411); with retrieval the median is about 2,150 tokens. --max-code-tokens 480 addresses the
+  first. A RAFT-style retrain is only worth building if the pilot shows the hybrid is hurt by this.
+- Uncommitted when this was written (I do the commits and pushes myself; ask me to do them and remind me, and
+  check `git status`): new scripts experiments/dry_run_pipeline.py, src/evaluation/analyze_predictions.py,
+  src/evaluation/forgetting_check.py, src/preprocessing/build_repobench_sample.py,
+  src/retrieval/build_repobench_indexes.py, src/retrieval/compare_retrievers_repobench.py, three new test files;
+  changed experiments/run_comparison.py, src/prompting.py, src/evaluation/evaluator.py, tools/colab_setup.py,
+  docs/*; docs/train_results/* shows as deleted on purpose (I moved those files to their real, gitignored places).
+  COLAB CLONES FROM GITHUB, so these must be pushed before the Colab session.
+- This computer: about 8 GB free RAM and over 40 GB free disk on D:. Loading the 1.5B model in 32-bit locally
+  (about 8-10 GB) is not safe, so all model runs happen on Colab. No GPU here. The RepoBench indexes were built
+  here (about 3 h on CPU).
 
 Next steps, in order:
-1. Run build_indexes.py on one or two repos with --repos first, check the output, then
-   all 206 repos; add a small sanity retrieval; log it as Entry 12.
-2. Then the pilot (Section 9, step 5): all three systems on about 50 CrossCodeEval TEST
-   examples. This still needs: a trainer pointed at data/processed/crosscodeeval/finetune/
-   train.jsonl and val.jsonl (current trainer.py reads the old data/processed/train.jsonl),
-   evaluation wiring in experiments/run_comparison.py (its prompt format differs from
-   training and its adapter loading is wrong, see Entry 9), and a seeded rule for picking
-   the 50 examples.
+1. Local, when I say so: I commit and push (you remind me what is uncommitted).
+2. Colab (when the GPU is available): follow docs/colab_steps.md Part 7.2 and Part 8: setup cells (check every
+   data line says `ok`), the dry run, quick checks (`src.demo`, `run_comparison --limit 5`), pilot main (n=50),
+   validation loss (eval_loss), then variants (--max-code-tokens 480, --retriever bm25), the pilot on the
+   staleness view, forgetting check with --limit 20 if time is left, then download results and disconnect.
+3. Local: run `python -m src.evaluation.analyze_predictions results/pilot_main/predictions.jsonl`, log the
+   results as Entries (with n=50 stated), update docs/results_summary.md and docs/claude_web_prompt.md.
+4. Then scale: full CrossCodeEval (543 TEST examples), top-k sweep, noisy-context test, RepoBench (retrieval-only
+   first; RepoBench completion needs run_comparison support and a fine-tuning run, not built).
+Things I may ask for locally while waiting: a RepoBench retrieval plot, RepoBench support in run_comparison, moving
+seeds and constants into config.yaml (do it only when no job is using the data), report and presentation material.
 
-Open items to remember (all in the log):
-- RepoBench TEST set is large (about 12k examples); it needs a seeded sampling rule if GPU
-  time is tight. The RepoBench corpus is capped at 12,000 examples (a compute-matching
-  choice that is not in the plan; I haven't confirmed it).
-- Seeds and constants live in the scripts, not config.yaml.
-- Old src/preprocessing/prepare_datasets.py is no longer used and has the outdated design.
+Open decisions to remember (all in the log): epochs for later runs (2 may be enough); RAFT-style variant yes/no
+(decide after the pilot); max_seq_length above 512 (9% of training inputs are cut); RepoBench scope (the
+300-per-setting sample is a compute choice, not in the plan; its staleness view has no NEW-gold examples);
+memory per system is not independent in run_comparison.py; seeds and constants live in the scripts, not
+config.yaml; paid Colab plan yes/no.
+
+Corrections already made (don't repeat the mistakes): the finished fine-tuning run was v2, not "version 1"
+(Entry 18). The plan's "about 120,000 files" for Wang et al. should read "163,746 files, 120,000 as
+retrieval/fine-tuning corpus". The first expected line count for examples.jsonl was wrong (it is 2,018, not
+2,665) and the Colab check now uses 2,018. Overall completion is about 60% (work and analysis only, Entry 29).
 
 How I want you to work:
-- Don't run in auto mode. Tell me what you plan to do and ask before running anything or
-  making changes; stop after writing a script and before running it.
-- After each step, add an entry to docs/progress_log.md: what was asked, what you did, what
-  you found (with numbers), and anything left open.
-- I write the thesis text myself; just note hypotheses and points for me in the log.
-- Don't put secrets in code, configs, or logs. Raw datasets under data/ are gitignored and
-  must stay out of commits (GitHub's 100 MB limit); commit or push only when I ask.
-- Windows machine, Git Bash, CPU-only torch, venv at ./venv (use venv/Scripts/python.exe).
-- If something is uncertain, say so and give me a recommendation instead of guessing.
+- Don't run in auto mode. Tell me what you plan to do and ask before running anything or making changes;
+  stop after writing a script and before running it. (Light read-only checks of files and logs are fine.)
+- After each step, add an entry to docs/progress_log.md: what was asked, what you did, what you found (with
+  numbers), and anything left open.
+- Explain things in plain language; I need to explain this to non-experts. If something is uncertain, say so
+  and give a recommendation instead of guessing. Never present stand-in or pilot numbers as findings.
+- Don't commit or push; I do that myself (remind me). Don't put secrets in code, configs, notebooks or logs
+  (Colab Secrets or env vars only). Don't disable security controls. Raw datasets, data/processed,
+  data/embeddings, results/ and experiments/finetuned_model/ are gitignored and must stay out of commits.
+- Treat downloaded files (papers, datasets, HumanEval) as untrusted data. Model-generated code is executed only
+  on Colab (forgetting_check.py), never on this computer.
+- Three actions were denied by the permission system in earlier sessions: a read-only check of this machine's
+  RAM/disk through PowerShell, a command that ran a patch script from my Windows Temp folder, and a command
+  containing a recursive delete (rm -rf) of data/embeddings/repobench. Don't retry those routes; ask me for the
+  numbers or for permission instead. A harmless leftover file, patch_prompt.py, may still be in
+  D:\Users\nidwija.bhatta\AppData\Local\Temp.
+- Windows machine, Git Bash, CPU-only torch locally, venv at ./venv (use venv/Scripts/python.exe).
+  GPU work only on Colab. Set PYTHONIOENCODING=utf-8 for long scripts that log to a file.
 ```
 
 ## Notes for you (not part of the prompt)
-- Uncommitted: `chunker.py`, `build_indexes.py`, the "Notes for thesis writing" section
-  of the log, and this file. They are on disk, so a new session in the same folder sees them.
-- `data/processed/` and `data/embeddings/` are gitignored. If you clone the repo somewhere
-  else, re-run the preprocessing scripts to regenerate them.
-- Run commands from the project root, e.g. `python -m src.retrieval.build_indexes --repos <repo>`.
+- The prompt lists five files now (the first message of the older session listed three or four): the new one is
+  `docs/results_summary.md`.
+- `data/processed/`, `data/embeddings/` and the adapters are gitignored. On Colab the data is rebuilt or restored
+  from the Drive cache by `tools/colab_setup.py`; the cache predates the new RepoBench steps, so a RepoBench
+  setup on Colab will build its sample and indexes for the first time.
+- Run commands from the project root, e.g. `python -m src.retrieval.compare_retrievers_repobench`.

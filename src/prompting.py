@@ -50,3 +50,14 @@ def retrieval_query(code: str) -> str:
 def first_line(text: str) -> str:
     """Completions are scored on the first line only (the benchmarks ask for one line)."""
     return text.split("\n")[0]
+
+
+def truncate_code_left(code: str, tokenizer, max_tokens: int | None) -> str:
+    """Keep the last `max_tokens` tokens of the code (the text nearest the cursor), as training did
+    for over-long inputs. Retrieved chunks are not cut. None leaves the code unchanged."""
+    if not max_tokens:
+        return code
+    ids = tokenizer(code, add_special_tokens=False).input_ids
+    if len(ids) <= max_tokens:
+        return code
+    return tokenizer.decode(ids[-max_tokens:])

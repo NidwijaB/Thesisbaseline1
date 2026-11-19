@@ -35,16 +35,21 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
+import random
+import re
+
+import numpy as np
 from datasets import load_from_disk
+from rank_bm25 import BM25Okapi
 
 from src.evaluation.evaluator import compare_systems, run_evaluation
 from src.evaluation.latency import (LatencyRecord, current_cpu_ram_mb, peak_gpu_memory_mb,
                                     reset_gpu_memory_stats)
 from src.evaluation.metrics import edit_similarity, exact_match, mean_reciprocal_rank
 from src.generation import complete, load_model
-from src.prompting import build_prompt, retrieval_query
+from src.prompting import build_prompt, retrieval_query, truncate_code_left
 from src.retrieval.embedder import CodeEmbedder
-from src.retrieval.vector_store import FAISSVectorStore
+from src.retrieval.vector_store import FAISSVectorStore, RetrievedChunk
 from src.utils.config import load_config
 from src.utils.logger import get_logger
 
@@ -75,6 +80,45 @@ def load_examples(subset: str, limit: int | None):
     return rows
 
 
+TOKEN_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+
+
+def bm25_tokens(text: str) -> list[str]:
+    """Same tokeniser as src/retrieval/compare_retrievers.py (identifier tokens, lowercased)."""
+    return [t.lower() for t in TOKEN_RE.findall(text)]
+
+
+def bm25_search(store: FAISSVectorStore, bm25: BM25Okapi, query: str) -> list[RetrievedChunk]:
+    """All chunks of the repo's pool ranked by BM25 (stable sort, ties keep chunk order)."""
+    scores = bm25.get_scores(bm25_tokens(query))
+    order = np.argsort(-scores, kind="stable")
+    return [RetrievedChunk(content=store._chunks[i].content, file_path=store._chunks[i].file_path,
+                           score=float(scores[i]), metadata=store._chunks[i].metadata) for i in order]
+
+
+def add_noise(chunks: list, n_noise: int, repo: str, task_id: str, repos: list[str], view: str,
+              stores: dict, seed: int = 42) -> list:
+    """Noisy-context test (plan Section 6, extra 2): put n_noise chunks from OTHER repositories
+    (never the example's own) among the real chunks, at seeded random positions. They are
+    irrelevant by construction. Same noise for rag_only and hybrid."""
+    rng = random.Random(f"{seed}:{task_id}")
+    noise = []
+    while len(noise) < n_noise:
+        other = rng.choice(repos)
+        if other == repo:
+            continue
+        key = f"{other}/{view}"
+        if key not in stores:
+            stores[key] = FAISSVectorStore.load(str(INDEX_DIR / other / view))
+        pool = stores[key]._chunks
+        c = rng.choice(pool)
+        noise.append(RetrievedChunk(content=c.content, file_path=f"[noise from {other}] {c.file_path}",
+                                    score=0.0, metadata=c.metadata))
+    mixed = list(chunks) + noise
+    rng.shuffle(mixed)
+    return mixed
+
+
 def distinct_files(chunks) -> list[str]:
     return list(dict.fromkeys(c.file_path for c in chunks))
 
@@ -86,6 +130,14 @@ def main():
     ap.add_argument("--view", choices=list(VIEWS), default="main")
     ap.add_argument("--systems", nargs="+", choices=list(SYSTEMS), default=list(SYSTEMS))
     ap.add_argument("--top-k", type=int, default=None, help="chunks in the prompt (default: config retrieval.top_k)")
+    ap.add_argument("--retriever", choices=["dense", "bm25"], default="dense",
+                    help="how rag_only and hybrid find chunks (same chunks and index views either way)")
+    ap.add_argument("--max-code-tokens", type=int, default=None,
+                    help="keep only the last N tokens of the code in every prompt (training cut inputs to "
+                         "512 tokens in total; about 480 matches it). Default: no cut. Chunks are not cut.")
+    ap.add_argument("--noise-chunks", type=int, default=0,
+                    help="noisy-context test: add N irrelevant chunks from other repositories to the "
+                         "prompts of rag_only and hybrid (seeded). Retrieval metrics are not affected.")
     ap.add_argument("--limit", type=int, default=None, help="first N examples only (quick test)")
     ap.add_argument("--4bit", dest="use_4bit", action="store_true", help="4-bit weights (needs GPU + bitsandbytes)")
     ap.add_argument("--skip-codebleu", action="store_true", help="leave CodeBLEU out (recorded as null)")
@@ -102,15 +154,21 @@ def main():
     cfg = load_config(args.config)
     top_k = args.top_k or cfg.retrieval.top_k
     k_values = list(cfg.retrieval.top_k_values)
-    out_dir = Path(args.output_dir or f"results/{args.subset}_{args.view}")
+    suffix = "" if args.retriever == "dense" else f"_{args.retriever}"
+    suffix += f"_code{args.max_code_tokens}" if args.max_code_tokens else ""
+    suffix += f"_noise{args.noise_chunks}" if args.noise_chunks else ""
+    out_dir = Path(args.output_dir or f"results/{args.subset}_{args.view}{suffix}")
 
+    all_repos = sorted(p.name for p in INDEX_DIR.iterdir() if p.is_dir())
     manifest = {(m["repo"], m["path"]): m["split"]
                 for m in map(json.loads, open(SPLIT_DIR / "manifest.jsonl", encoding="utf-8"))}
     examples = load_examples(args.subset, args.limit)
     logger.info(f"{args.subset}: {len(examples)} examples, view={args.view}, top_k={top_k}")
 
-    embedder = CodeEmbedder(cfg.retrieval.embedding_model)
+    embedder = CodeEmbedder(cfg.retrieval.embedding_model) if args.retriever == "dense" else None
     stores: dict[str, FAISSVectorStore] = {}
+    bm25s: dict[str, BM25Okapi] = {}
+    noise_stores: dict[str, FAISSVectorStore] = {}
     tokenizer, model = load_model(cfg.llm.model, args.adapter, args.use_4bit)
     max_new_tokens = cfg.generation.max_new_tokens
 
@@ -122,18 +180,26 @@ def main():
         repo, target = meta["repository"], meta["file"]
         if repo not in stores:
             stores[repo] = FAISSVectorStore.load(str(INDEX_DIR / repo / args.view))
-        code = ex["prompt"]
+        full_code = ex["prompt"]
         start = time.perf_counter()
-        ranked_chunks = stores[repo].search(embedder.embed([retrieval_query(code)])[0],
-                                            top_k=max(top_k, stores[repo].index.ntotal))
+        if args.retriever == "dense":
+            ranked_chunks = stores[repo].search(embedder.embed([retrieval_query(full_code)])[0],
+                                                top_k=max(top_k, stores[repo].index.ntotal))
+        else:
+            if repo not in bm25s:
+                bm25s[repo] = BM25Okapi([bm25_tokens(c.content) for c in stores[repo]._chunks])
+            ranked_chunks = bm25_search(stores[repo], bm25s[repo], retrieval_query(full_code))
+        code = truncate_code_left(full_code, tokenizer, args.max_code_tokens)   # after retrieval: query unchanged
         elapsed = (time.perf_counter() - start) * 1000
         chunks = ranked_chunks[:top_k]
+        prompt_chunks = (add_noise(chunks, args.noise_chunks, repo, meta["task_id"], all_repos,
+                                   args.view, noise_stores) if args.noise_chunks else chunks)
         files = distinct_files(ranked_chunks)
         assert all(manifest[(repo, f)] != "test" for f in files), "TEST file retrieved"
         relevant = sorted({s["filename"] for s in ex["crossfile_context_retrieval"]["list"]} - {target})
         relevant = [f for f in relevant if manifest.get((repo, f)) in VIEWS[args.view]]
         records.append({"task_id": meta["task_id"], "repo": repo, "code": code,
-                        "reference": ex["groundtruth"].split("\n")[0], "chunks": chunks,
+                        "reference": ex["groundtruth"].split("\n")[0], "chunks": chunks, "prompt_chunks": prompt_chunks,
                         "retrieved_files": files, "relevant_files": relevant, "retrieval_ms": elapsed})
         retrieval_ms["total"] += elapsed
 
@@ -145,7 +211,7 @@ def main():
         reset_gpu_memory_stats()
         peak_ram = 0.0
         for rec in records:
-            prompt = build_prompt(rec["code"], rec["chunks"] if uses_retrieval else None)
+            prompt = build_prompt(rec["code"], rec["prompt_chunks"] if uses_retrieval else None)
             start = time.perf_counter()
             if uses_adapter or not args.adapter:
                 pred = complete(tokenizer, model, prompt, max_new_tokens)
@@ -174,7 +240,9 @@ def main():
             extra={"n_examples": len(records),
                    "n_with_relevant_file": sum(bool(r["relevant_files"]) for r in records),
                    "subset": args.subset, "view": args.view, "top_k": top_k,
-                   "adapter": args.adapter},
+                   "adapter": args.adapter, "retriever": args.retriever,
+                          "max_code_tokens": args.max_code_tokens,
+                          "noise_chunks": args.noise_chunks},
         )
 
     compare_systems(results, output_dir=str(out_dir))

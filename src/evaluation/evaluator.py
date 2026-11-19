@@ -74,7 +74,7 @@ def run_evaluation(
     out.mkdir(parents=True, exist_ok=True)
     result_path = out / f"{system_name}_metrics.json"
     result_path.write_text(json.dumps(result, indent=2))
-    logger.info(f"Results saved → {result_path}")
+    logger.info(f"Results saved -> {result_path}")
     return result
 
 
@@ -89,7 +89,7 @@ def compare_systems(results: Dict[str, Dict], output_dir: str = "results") -> No
     # ── JSON summary ──────────────────────────────────────────────────────────
     combined_path = out / "comparison_summary.json"
     combined_path.write_text(json.dumps(results, indent=2))
-    logger.info(f"Combined results → {combined_path}")
+    logger.info(f"Combined results -> {combined_path}")
 
     # ── Markdown table ────────────────────────────────────────────────────────
     cols = ["exact_match", "edit_similarity", "identifier_accuracy", "code_bleu"]
@@ -142,4 +142,4 @@ def compare_systems(results: Dict[str, Dict], output_dir: str = "results") -> No
 
     md_path = out / "comparison_summary.md"
     md_path.write_text("\n".join(lines) + "\n")
-    logger.info(f"Markdown comparison → {md_path}")
+    logger.info(f"Markdown comparison -> {md_path}")

@@ -450,3 +450,35 @@ examples the numbers have wide error bars, so report them as "pilot, n=50", neve
 - Keep the browser tab open while training.
 - Do not paste passwords, tokens or API keys into any cell or file. None are needed for this
   setup.
+
+---
+
+## Part 8. New options added locally (Entry 24), for the pilot session
+
+All of these default to the old behaviour, so the Part 7.2 commands still work unchanged.
+
+| Option / script | What it does | When to use |
+|---|---|---|
+| `run_comparison ... --retriever bm25` | RAG and hybrid use BM25 instead of UniXcoder (same chunks, same views) | After the dense pilot; BM25 won the retrieval comparison. Output folder gets a `_bm25` suffix |
+| `run_comparison ... --max-code-tokens 480` | Keeps only the last 480 tokens of the code in every prompt (training cut inputs to 512 tokens in total). Retrieved chunks are not cut | Second pilot variant; 21 of 50 pilot prompts exceed 512 tokens without it. Output folder gets `_code480` |
+| `run_comparison ... --noise-chunks 3` | Adds 3 irrelevant chunks from other repositories to RAG and hybrid prompts (noisy-context test) | After the main pilot. Output folder gets `_noise3` |
+| `run_comparison ... --top-k 1` (or 3, 10) | Number of chunks in the prompt (top-k sweep). Note: this existed before | Run once per value; compare the folders |
+| `python -m src.evaluation.analyze_predictions results/pilot_main/predictions.jsonl` | Hit vs miss and paired system differences with bootstrap CIs; writes `analysis.json` next to the file. No GPU needed | After any run; can be run locally on the downloaded file |
+| `python -m src.evaluation.forgetting_check --adapter ... --4bit --allow-exec` | HumanEval pass@1, base vs fine-tuned. **Executes model-generated code: Colab only, never on your computer.** Try `--limit 20` first | After the pilot, if GPU time is left |
+
+Suggested order of extra runs in one session, most useful first: pilot (dense), pilot with `--max-code-tokens 480`,
+pilot with `--retriever bm25`, validation loss, forgetting check with `--limit 20`. Disconnect afterwards.
+
+### Extra checks added to Cell 3 (Entry 25)
+The "Checking data" list at the end of `colab_setup.py` now also shows `pilot_ids.json: 50`,
+`data/embeddings/crosscodeeval: 206` (repos) and `examples.jsonl: 2018`. All must say `ok`; `DIFFERS` or `MISSING`
+means the Drive cache is stale or incomplete, so do not start the pilot (send the output to Claude Code).
+With `--datasets crosscodeeval repobench` the first RepoBench setup also builds the 300-per-setting sample
+(446 repos) and its indexes; on a GPU this is much faster than the local CPU build, but it has not been run on Colab.
+
+Add this to the quick checks (before the pilot): it needs no model and takes about a minute, so it catches a
+missing file or a bad cache without spending GPU time:
+```python
+!python -m experiments.dry_run_pipeline --adapter experiments/finetuned_model/crosscodeeval/v2
+```
+It should end with `DRY RUN PASSED`. (The CodeBLEU line then also tells you whether the optional install worked.)

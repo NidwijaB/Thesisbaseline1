@@ -67,6 +67,8 @@ BUILD_STEPS = {
         ["data/repobench/download.py"],
         ["-m", "src.preprocessing.build_repobench_split"],
         ["-m", "src.preprocessing.build_repobench_finetune"],
+        ["-m", "src.preprocessing.build_repobench_sample"],
+        ["-m", "src.retrieval.build_repobench_indexes", "--sample-repos"],
     ],
 }
 
@@ -82,6 +84,7 @@ CACHE_PATHS = {
         "data/repobench/cross_file_random",
         "data/repobench/in_file",
         "data/processed/repobench",
+        "data/embeddings/repobench",
     ],
 }
 
@@ -91,6 +94,19 @@ EXPECTED_LINES = {
     "data/processed/crosscodeeval/finetune/val.jsonl": 1059,
     "data/processed/repobench/finetune/train.jsonl": 10800,
     "data/processed/repobench/finetune/val.jsonl": 1200,
+}
+
+
+# Other facts from the log that a stale or partial cache would break. (path, what to count, expected)
+EXPECTED_OTHER = {
+    "crosscodeeval": [
+        ("data/processed/crosscodeeval/pilot_ids.json", "json_list", 50),       # Entry 13
+        ("data/embeddings/crosscodeeval", "subfolders", 206),                    # Entry 12
+        ("data/processed/crosscodeeval/examples.jsonl", "lines", 2018),         # Entries 3, 7: examples in repos with >= 3 files
+    ],
+    "repobench": [
+        ("data/processed/repobench/sample_repos.json", "json_list", 446),       # Entry 24
+    ],
 }
 
 
@@ -182,6 +198,21 @@ def verify_data(names: list[str]) -> None:
             count = sum(1 for _ in f)
         status = "ok     " if count == expected else "DIFFERS"
         print(f"  {status} {rel}: {count} (log says {expected})")
+    for name in names:
+        for rel, kind, expected in EXPECTED_OTHER.get(name, []):
+            path = Path(rel)
+            if not path.exists():
+                print(f"  MISSING  {rel}")
+                continue
+            if kind == "json_list":
+                count = len(json.loads(path.read_text(encoding="utf-8")))
+            elif kind == "subfolders":
+                count = sum(1 for p in path.iterdir() if p.is_dir())
+            else:
+                with path.open(encoding="utf-8") as f:
+                    count = sum(1 for _ in f)
+            status = "ok     " if count == expected else "DIFFERS"
+            print(f"  {status} {rel}: {count} (log says {expected})")
 
 
 def main() -> None:

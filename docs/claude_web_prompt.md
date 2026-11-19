@@ -15,14 +15,16 @@ Must attach:
    The new deck should look like a continuation of it.
 3. `docs/things_to_do_first` - the experiment plan (the framework that replaced the report's
    original design). Authoritative for what the study does.
-4. `docs/progress_log.md` - Entries 1 to 17: every decision, number and caveat so far.
+4. `docs/progress_log.md` - Entries 1 to 28: every decision, number and caveat so far.
+4b. `docs/results_summary.md` - every real result so far in one place (retrieval comparison for both
+   datasets, the fine-tuning run, what is still missing). Use its numbers for tables and charts.
 5. `docs/figure2_data_pipeline.png` - the OLD data pipeline figure (it is outdated; the new one
    must replace it).
 5b. `docs/reference_paper_comparison.md` - analysis of the main reference paper (Wang et al., 2025):
    what they did, their numbers, side-by-side table, predictions. Use it for the comparison section
    and slide.
-5c. If it exists by then: `results/retrieval_comparison.json` and the PNGs in `results/figures/`
-   (dense vs BM25 vs random retrieval, the first real results). Attach them so the charts use the
+5c. `results/retrieval_comparison.json`, `results/repobench_retrieval_comparison.json`, `results/figures/*.png`
+   (dense vs BM25 vs random retrieval for CrossCodeEval and RepoBench, and the training loss curve; these exist now). Attach them so the charts use the
    real numbers instead of placeholders.
 
 Attach if you have them (the web app cannot guess these):
@@ -124,16 +126,30 @@ matches the real GitHub files" is NOT verified.
     95% bootstrap confidence intervals, plus the staleness subset) with plot scripts, including a training
     loss plot. NOT RUN yet; it needs no GPU and no training, so it is the first real result to come.
 
+16. Retrieval-only comparison RUN on CrossCodeEval (Entry 20): BM25 beats UniXcoder (main view MRR 0.884 vs
+    0.770, n=292, paired difference CI excludes 0); numbers in `docs/results_summary.md` section 1.
+17. First valid fine-tuning run (v2, fixed code) finished on a Colab T4: 1,761 steps, 3 h 29 min, about 8.7 GB;
+    training loss 0.78 / 0.67 / 0.62 per epoch, validation loss flat at about 0.68 (not file-held-out). No
+    comparison with the base model yet, so no evidence that it helps (Entry 18).
+18. RepoBench: seeded evaluation sample (300 per setting), per-repo indexes for its 446 repositories, and a
+    retrieval comparison (Entries 24, 26, 28): BM25 better than dense in all four cells, significantly in
+    cross_file_random; both beat random by less than on CrossCodeEval.
+19. Evaluation tooling added: BM25 and prompt-length options for the system comparison, noisy-context option,
+    hit-versus-miss and paired-difference analysis script, forgetting check (HumanEval) script, a model-free
+    dry run of the pilot pipeline, stronger Colab setup checks (27 automated tests pass). Written and tested
+    locally; none has produced a model result yet.
+
 ### Not done yet (be explicit about this in both documents)
-No reportable model has been trained and no evaluation has been run. A first fine-tuning run on Colab used
-the older training code and is a smoke test only; its adapter and loss values are not results. The fixed
-training (version 2) has not been started. The retrieval comparison has not been run. No pilot has been run.
-Still to do: retrain with the fixed code on Colab; run the retrieval comparison; pilot (50 examples) of
-base / RAG / fine-tuned / hybrid; decide whether to build the RAFT-style variant (training on
-retrieval-formatted prompts, so the hybrid sees in training what it sees at inference); a seeded
-sampling rule for the large RepoBench test set; move seeds and constants into the config file;
-per-system GPU memory is not independent in the current evaluation script (one process, shared model).
-The truncated-input and loss details are implementation facts, not results; do not present them as results.
+No completion score exists for any system (no exact match, edit similarity, identifier accuracy or CodeBLEU),
+no pilot has been run, and the base-versus-fine-tuned validation loss has not been computed. The pilot needs
+the Colab GPU, whose free quota ran out after the v2 run. Still to do: pilot (50 examples) of base / RAG /
+fine-tuned / hybrid; full CrossCodeEval evaluation (543 TEST examples) with BM25 and hit/miss analysis; extra
+analyses (noisy context, top-k sweep, forgetting check, staleness effect on completion); RepoBench fine-tuning
+and completion evaluation; whether to build the RAFT-style variant (the hybrid sees retrieved context at
+inference that it never saw in training; prompts with retrieval are about 2,000 tokens against 512 in
+training); moving seeds and constants into the config file; per-system GPU memory is not independent in the
+current evaluation script (one process, shared model). The truncated-input and loss details are
+implementation facts, not results.
 
 ## Part C. Method details to describe (current design)
 
@@ -287,10 +303,21 @@ Smoke test (query = last 20 lines of each TEST prompt; file-level hit@k against 
 |---|---|---|---|---|---|
 | main | 292 | 0.603 | 0.932 | 0.983 | 1.000 |
 | staleness | 327 | 0.532 | 0.893 | 0.960 | 0.997 |
-CAVEAT to print next to this table: repositories are tiny (3 to about 10 chunks per pool), so top-5 and
+CAVEAT to print next to this table (the retrieval comparison in section D4b below supersedes it): repositories are tiny (3 to about 10 chunks per pool), so top-5 and
 top-10 cover nearly the whole pool and these rates are inflated. This is a smoke test, not a retrieval
 result. The staleness hit rates being lower (NEW files add competing candidates) is a hypothesis for
 H3, not a finding.
+
+### D4b. Retrieval comparison results (real; use these, they replace the PENDING templates)
+See `docs/results_summary.md` sections 1 and 2 for the full tables. Headlines:
+- CrossCodeEval main (n=292), MRR with 95% CI: dense 0.770 [0.737, 0.804], BM25 0.884 [0.860, 0.908], random
+  0.633 [0.596, 0.672]; hit@1 0.603 / 0.784 / 0.397. Paired dense minus BM25 MRR -0.114 [-0.152, -0.075].
+  Staleness (n=327): MRR 0.720 / 0.870 / 0.572; relevant-file-in-NEW subset (n=68): 0.716 / 0.885 / 0.553.
+- RepoBench sample (n=300 per setting), MRR dense / BM25 / random: cross_file_first main 0.446 / 0.466 / 0.323;
+  cross_file_random main 0.484 / 0.535 / 0.319. Differences dense vs BM25: not significant in cross_file_first,
+  significant in cross_file_random. Right file ranked first only 22 to 34% of the time.
+- Caveats: small pools (random already scores high at hit@3 and above); RepoBench sample has no NEW-gold
+  examples, so its staleness view shows NEW files only as distractors.
 
 ### D5. Pilot
 50 CrossCodeEval TEST examples drawn with a seeded random draw (seed 42) from the 292 main-condition
@@ -333,14 +360,14 @@ Charts must use ONLY the real numbers above. Label axes and sample sizes.
 7. Reference chart from the main paper: grouped bars of Wang et al.'s published Qwen2.5-Coder-1.5B EM for
    base, fine-tuning, RAG-UniXcoder, RAG-BM25 (24.48, 44.63, 41.47, 55.81), titled "Wang et al. (2025),
    C++, published results: not comparable in absolute terms to this thesis".
-8. Retrieval comparison (dense UniXcoder vs BM25 vs random): grouped bars of hit@1, hit@3, MRR with 95%
+8. Retrieval comparison (dense UniXcoder vs BM25 vs random; REAL numbers exist now, use `results/*.json`): grouped bars of hit@1, hit@3, MRR with 95%
    confidence intervals for the main pool (n expected 292) and the staleness pool (n expected 327), and a
    subset chart for the staleness sample (examples whose relevant file is in NEW, n expected 68). If
    `results/retrieval_comparison.json` is attached, use ITS numbers; otherwise draw empty templates marked
    "PENDING". Always show the random baseline: pools are tiny, so hit@5 and hit@10 are high even for
    random guessing.
-9. Training loss curve (training and validation loss against step) as a template marked "PENDING: fixed
-   training run not yet done". Validation loss is not file-held-out, so it is optimistic: say so.
+9. Training loss curve (training and validation loss against step): `results/figures/training_loss.png` exists
+   (v2 run); redraw it from `trainer_state.json` and say that the validation loss is not file-held-out. Validation loss is not file-held-out, so it is optimistic: say so.
 10. Empty results template charts, clearly watermarked "PENDING - no results yet": EM / edit similarity by
    system A/B/C with confidence-interval whiskers; hit vs miss accuracy; accuracy vs latency scatter;
    top-k sweep line; staleness bar (A, B, C on NEW files).
@@ -349,18 +376,18 @@ Charts must use ONLY the real numbers above. Label axes and sample sizes.
 
 Status key: Done / In progress / Not started.
 - Done: literature review; dataset download and inspection; relevance rule; splits and leakage checks
-  for both datasets; fine-tuning corpora; CrossCodeEval indexes and smoke test; hybrid import fix;
-  pilot sample; demo script; Colab setup written; reference paper analysed; code fixes (training loss,
-  shared prompt, CodeBLEU, evaluation script) written and tested; retrieval comparison written.
-- In progress: first Colab fine-tuning run (older code, smoke test only); next: run the retrieval comparison,
-  then retrain with the fixed code.
-- Not started: reportable training run; pilot of the systems; BM25 results (the script is written, not run); full CrossCodeEval
-  evaluation (543 TEST examples); extra analyses; RepoBench indexes and evaluation; results writing.
-- My own estimate of overall thesis completion: about 30 to 35%.
-Remaining plan, in order: (1) fix known code issues; (2) train adapters on Colab; (3) 50-example pilot of
-A/B/C; (4) full CrossCodeEval TEST set with BM25 and hit/miss analysis; (5) RepoBench (seeded smaller
-sample if GPU time is tight); (6) extra analyses (staleness, noisy context, forgetting, bootstrap CIs);
-(7) numeric recommendations and writing; (8) revise the timeline with the supervisor.
+  for both datasets; fine-tuning corpora; CrossCodeEval and RepoBench indexes; retrieval comparison for both
+  datasets (BM25 > dense); hybrid import fix; pilot sample; demo script; Colab setup; reference paper analysed;
+  code fixes and evaluation tooling written and tested; first valid fine-tuning run (v2) finished.
+- In progress / waiting: the pilot and all model evaluations wait for the Colab GPU quota (or a paid plan).
+- Not started: any completion score; full CrossCodeEval evaluation (543 TEST examples); extra analyses run on
+  model outputs; RepoBench fine-tuning and completion; results writing.
+- My own estimate of project completion (work and analysis only, not writing): about 60% (Entry 29). The
+  earlier "30 to 35%" is out of date.
+Remaining plan, in order: (1) pilot (50 examples) of base/RAG/fine-tuned/hybrid on Colab; (2) full CrossCodeEval
+evaluation, with a RAFT-style retrain only if the pilot shows the hybrid suffers from the prompt mismatch; (3) BM25 and hit/miss analysis on the full set; (4) RepoBench (seeded smaller
+sample, retrieval-only first); (5) extra analyses (staleness, noisy context, forgetting, bootstrap CIs);
+(6) numeric recommendations and writing; (7) revise the timeline with the supervisor.
 Produce a revised timeline table with [YOU FILL IN] dates for each stage, and keep a contingency period.
 
 ## Part G. Risks, limitations, and defense points
