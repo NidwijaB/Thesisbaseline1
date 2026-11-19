@@ -17,6 +17,7 @@ from transformers import (
     DataCollatorForSeq2Seq,
     BitsAndBytesConfig,
 )
+from transformers.trainer_utils import get_last_checkpoint
 from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
 
 from src.finetuning.dataset import build_dataset
@@ -26,7 +27,8 @@ from src.utils.logger import get_logger
 logger = get_logger(__name__)
 
 
-def run_finetuning(config_path: str = "configs/config.yaml", dataset_name: str = "crosscodeeval"):
+def run_finetuning(config_path: str = "configs/config.yaml", dataset_name: str = "crosscodeeval",
+                   resume: bool = True):
     """
     Loads the base model, wraps it with LoRA/QLoRA adapters, trains on
     data/processed/<dataset_name>/finetune/{train,val}.jsonl (BASE-file corpus,
@@ -97,7 +99,9 @@ def run_finetuning(config_path: str = "configs/config.yaml", dataset_name: str =
         fp16=ft.fp16,
         gradient_checkpointing=getattr(ft, "gradient_checkpointing", False),
         eval_strategy="epoch" if "validation" in dataset else "no",
-        save_strategy="epoch",
+        save_strategy="steps",   # frequent saves so a Colab disconnect loses little
+        save_steps=100,
+        save_total_limit=2,
         logging_steps=50,
         report_to="none",
     )
@@ -110,8 +114,13 @@ def run_finetuning(config_path: str = "configs/config.yaml", dataset_name: str =
         data_collator=DataCollatorForSeq2Seq(tokenizer, model=model, padding=True),
     )
 
+    last_checkpoint = None
+    if resume and Path(output_dir).is_dir():
+        last_checkpoint = get_last_checkpoint(output_dir)
+    if last_checkpoint:
+        logger.info(f"Resuming from {last_checkpoint}")
     logger.info("Starting fine-tuning …")
-    trainer.train()
+    trainer.train(resume_from_checkpoint=last_checkpoint)
     model.save_pretrained(output_dir)
     tokenizer.save_pretrained(output_dir)
     logger.info(f"Model saved to {output_dir}")
@@ -121,6 +130,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", choices=["crosscodeeval", "repobench"], default="crosscodeeval")
     parser.add_argument("--config", default="configs/config.yaml")
+    parser.add_argument("--no-resume", action="store_true", help="Start over, ignore checkpoints")
     args = parser.parse_args()
-    run_finetuning(args.config, args.dataset)
+    run_finetuning(args.config, args.dataset, resume=not args.no_resume)
 

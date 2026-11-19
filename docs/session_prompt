@@ -1,0 +1,34 @@
+ I am doing a thesis: "Comparative Study of Fine-Tuning, RAG, and Hybrid Models for Code Completion in Enterprise Repositories." Repo: github.com/NidwijaB/Thesisbaseline1 (local: Documents/Automation/Thesisbaseline1). Read these first,
+  in order:
+  1. docs/things_to_do_first (the experiment plan; stay close to it, don't deviate much)
+  2. docs/progress_log.md (entries 1-15: what was done and found)
+  3. docs/Nidwija_081MSCSK010_progress_report.docx (abstract/objectives; its "work remaining" understates the remaining effort)
+
+  PROJECT: Compare System A (RAG-only), B (QLoRA fine-tuning-only), C (hybrid) on Qwen2.5-Coder-1.5B, same prompts/metrics/knowledge, no test leakage. Datasets: CrossCodeEval + RepoBench (Python). Decision question: given a private repo
+  and a single-GPU budget, which strategy should a team choose, and when does the hybrid pay off?
+
+  DONE: both datasets downloaded; file-level BASE/NEW/TEST splits with passing leakage assertions; fine-tuning corpora from BASE files only (CCE 9,378 train / 1,059 val; RepoBench 10,800 / 1,200); per-repo UniXcoder FAISS indexes for all
+  206 CCE repos (smoke-tested, no TEST chunks retrieved); trainer repointed to the new corpora; hybrid peft import fixed; src/demo.py written; seeded 50-example pilot set (data/processed/crosscodeeval/pilot_ids.json). My estimate:
+  ~30-35% of the thesis complete.
+
+  NOT DONE: nothing has been trained or evaluated. No adapter, no results. No GPU in my AWS workspace (torch.cuda False, no bitsandbytes).
+
+  KNOWN ISSUES TO FIX BEFORE TRAINING/EVAL:
+  - dataset.py: labels include prompt and padding tokens (mask with -100); no EOS after output.
+  - Hybrid sees retrieved context in a format it wasn't trained on (consider RAFT-style variant).
+  - code_bleu in metrics.py silently returns 0.0 (HF module missing); replace and make it raise.
+  - experiments/run_comparison.py needs rewiring: training prompt format, adapter loading (PeftModel), per-repo indexes, pilot_ids.json, first-line truncation of predictions.
+  - HybridPipeline prompt differs from demo/training format.
+  - RepoBench TEST sampling rule undefined; seeds/constants live in scripts, not config.yaml; rank_bm25 baseline not yet added.
+
+  NEXT STEPS: (1) run on a GPU (Colab T4 for the pilot; AWS g4dn/g5 by the hour for full runs) with outputs symlinked to Google Drive and checkpoint/resume in the trainer; (2) fix the issues above; (3) train adapters; (4) 50-example
+  pilot of A/B/C; (5) full CCE TEST set (543) + BM25 + hit/miss analysis, then RepoBench; (6) extras (staleness, noisy context, forgetting check, bootstrap CIs); (7) write results and numeric recommendations; (8) revise timeline with
+  supervisor.
+
+  DEMO/DEFENSE PRODUCT: a results table A vs B vs C with confidence intervals (accuracy, retrieval quality, latency, memory), a leakage-safe benchmark protocol, numeric decision rules, and a live `python -m src.demo --task-id <id>`
+  side-by-side demo.
+
+  CONSTRAINTS: org security rules apply. Never put secrets/tokens in code, notebooks or logs (use env vars or Colab Secrets). Don't disable security controls.
+  Ask before commits/pushes. Explain things in plain language, since I need to explain this to non-experts.
+
+  Start by confirming you've read the three docs, then ask me what I want to tackle first.
