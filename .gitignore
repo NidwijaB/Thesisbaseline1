@@ -41,6 +41,8 @@ data/processed/
 *.pth
 *.bin
 *.ckpt
+*.safetensors
+experiments/finetuned_model/
 
 # Results & logs
 results/

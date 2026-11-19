@@ -224,7 +224,8 @@ trained into, for example `experiments/finetuned_model/crosscodeeval/v2`.
    ```python
    !ls -la experiments/finetuned_model/crosscodeeval/v2
    ```
-   You should see `adapter_config.json`, `adapter_model.safetensors` and the `checkpoint-*` folders. If the
+   This only works in a session where Cells 1 to 3 have run (Cell 3 creates the link to Drive). In a fresh
+   session, use the Drive path from Part 7.0 instead. You should see `adapter_config.json`, `adapter_model.safetensors` and the `checkpoint-*` folders. If the
    adapter files are missing, the run stopped early: start the same command again, it resumes (Part 3).
 2. **Look at the numbers printed during training.** Loss should go down over time and never show `nan`.
    A loss that stays flat or jumps to `nan` means something is wrong: stop and bring the output to Claude Code.
@@ -270,6 +271,160 @@ Notebooks are gitignored (`*.ipynb`), so a notebook with outputs cannot end up i
 2. Run Cell 1, Cell 2, Cell 3 (about 3 to 5 minutes).
 3. Run the training or evaluation command.
 4. Your earlier results are still in `My Drive/thesis/outputs/`.
+
+---
+
+## Part 6. Order of work (status: the fixed v2 run is training on the pushed code)
+
+Each step says where it runs. Parts 2b, 3 to 3e hold the detailed commands. Do not skip the "stop and
+check" lines: they protect your limited GPU time.
+
+Done: the old run was stopped or finished (Part 2b), the fixed code was pushed, and v2 was started with
+`--run-name v2`. That `--run-name` worked, so the new training code is the one running.
+
+**While v2 is training (Colab), do NOT:**
+- re-run Cell 2 or Cell 3 in that session (Cell 2 deletes the code folder the training is using);
+- open a second GPU notebook (it competes for the same limited free GPU time);
+- start any other command in the same notebook.
+If you change code on your own computer in the meantime, that is fine: the running session keeps the code it
+already has. Those changes only matter from step B below.
+
+**Step A. Watch v2 (Colab).** Send Claude Code the first progress-bar lines (seconds per step) and, each
+epoch, the `loss` and `eval_loss` values. If the free GPU time runs out or Colab disconnects, nothing is lost
+beyond the last 100 steps: when the GPU is available again, repeat Cells 1 to 3 and run the SAME command
+(`--run-name v2`); it resumes. If v2 ends early without `Adapter saved to`, that is the same case: run the
+command again.
+
+**Step B. Before the pilot: make sure Colab has the latest code (your computer, then Colab).** If you
+changed any code after starting v2 (for example evaluation fixes), commit and push it first. After v2 has
+finished, run Cells 1, 2, 3 again; this fetches the latest push. Check the code is current:
+```python
+!python -m src.finetuning.trainer --help
+```
+The list must include `--run-name`. If you pushed something newer, check that file is present
+(for example `!ls src`). Never do this while v2 is still training.
+
+**Step C. After v2 finishes: check the adapter (Colab).** Part 3e steps 1 to 3: the adapter files exist in
+`experiments/finetuned_model/crosscodeeval/v2`, the loss never showed `nan`, and you note the final training and
+validation loss and the run time.
+
+**Step D. Test the v2 adapter on a few examples before the full pilot (Colab, about 10 minutes).**
+```python
+import json
+first_id = json.load(open("data/processed/crosscodeeval/pilot_ids.json"))[0]
+!python -m src.demo --task-id {first_id} --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --limit 5 --output-dir results/pipeline_test
+```
+This is a quick check that generation works and the completions are single lines of code. Stop and bring the
+output to Claude Code if either command errors or prints empty completions. Add `--skip-codebleu` to the
+second command if CodeBLEU did not install (Part 2). `results/pipeline_test` is only for this check.
+
+**Step E. The pilot (Colab, after step D worked).** Run these in this order (Part 3c has the details):
+1. Pilot on the main index (50 examples):
+   ```python
+   !python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit
+   ```
+2. Pilot on the staleness index (BASE plus NEW files in the index only):
+   ```python
+   !python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --view staleness
+   ```
+3. Training curve: Part 3d.
+4. Finish the rest of the Part 3e checklist (record the numbers, back up), then disconnect the runtime.
+
+Outputs land in `results/pilot_main/`, `results/pilot_staleness/` and `results/figures/` on Drive.
+
+**Step F. Bring the results back (your computer).** In your browser, open My Drive > thesis > outputs and
+download these into your project's `results/` folder (it is gitignored, so nothing is committed by accident):
+- `pilot_main/` and `pilot_staleness/`: `comparison_summary.md`, the `*_metrics.json` files, `predictions.jsonl`
+- `figures/*.png`
+- `trainer_state.json` from the newest `checkpoint-*` folder inside `finetuned_model/crosscodeeval/v2/`
+Do not download or copy any tokens or `.env` files; none are involved. If downloading is awkward, paste the
+printed output into Claude Code instead.
+
+**Step G. Local analysis (your computer, with Claude Code).** Retrieval comparison (dense vs BM25 vs random;
+it needs no Colab), the hit-versus-miss analysis from `predictions.jsonl`, plots, the progress-log entry, and
+updating the prompt for the presentation. State in every table that the pilot has n=50.
+
+**Step H. Only after the pilot works: scale up (Colab).** The full CrossCodeEval TEST set (543 examples) with
+`--subset test`. Test with `--limit 10` first and look at the time it takes before the full run; free GPU time
+is limited. RepoBench needs `python tools/colab_setup.py --datasets crosscodeeval repobench` first and a
+sampling rule for its large test set, which is not decided yet.
+
+What is not available yet, so do not expect it in these steps: BM25 inside the system comparison (it is
+only in the retrieval comparison for now), the noisy-context test, the forgetting check, and a
+retrieval-formatted (RAFT-style) training variant.
+
+---
+
+## Part 7. The v2 run has finished and the free GPU time is used up (current situation)
+
+### 7.0 Why `ls experiments/finetuned_model/crosscodeeval/v2` said "No such file or directory"
+That path is only a shortcut. Cell 3 (the setup script) creates `experiments/finetuned_model` as a link to
+Drive, and Colab's local disk is wiped whenever a session resets. In the new CPU session Cells 1 to 3 have not
+run, so the shortcut does not exist. The adapter itself is on Drive. Check it there (Colab, CPU session, 2 minutes):
+```python
+from google.colab import drive
+drive.mount("/content/drive")
+!ls -la /content/drive/MyDrive/thesis/outputs/finetuned_model/crosscodeeval/v2
+```
+You want to see `adapter_config.json`, `adapter_model.safetensors` and `checkpoint-*` folders.
+- If the folder is missing, also run `!ls /content/drive/MyDrive/thesis/outputs/finetuned_model` and
+  `!ls /content/drive/MyDrive/thesis`, and send the output to Claude Code. A missing folder would mean the Drive
+  link was not in place when the adapter was saved and the adapter was lost with the session; that is a
+  different problem and needs a decision from you (it would mean training again).
+- To run later Cells on a CPU session, the setup script needs `python tools/colab_setup.py --allow-cpu`;
+  without it Cell 3 stops with "No GPU".
+
+### 7.1 What to do NOW, without a GPU
+| # | Where | What |
+|---|---|---|
+| 1 | Colab (CPU session) | Check the adapter on Drive (7.0). |
+| 2 | Your computer, browser | Download from Drive `My Drive/thesis/outputs/finetuned_model/crosscodeeval/v2/`: `adapter_config.json`, `adapter_model.safetensors` (about 4 MB), and from the newest `checkpoint-*` folder inside it, `trainer_state.json`. Save the adapter files in your project at `experiments/finetuned_model/crosscodeeval/v2/` and `trainer_state.json` at `results/training/trainer_state.json`. Both folders are gitignored. |
+| 3 | Your computer | Training-loss plot: `python -m src.evaluation.plot_training --run results/training/trainer_state.json` (writes `results/figures/training_loss.png`). |
+| 4 | Your computer | Retrieval comparison, dense vs BM25 vs random: `python -m src.retrieval.compare_retrievers` then `python -m src.evaluation.plot_retrieval_comparison`. No GPU, no adapter. |
+| 5 | Your computer | Push the newest code to GitHub (the validation-loss script `src/finetuning/eval_loss.py` and `.gitignore` are new). The GPU session needs it. |
+| 6 | Your computer, with Claude Code | Progress log, presentation and report updates using the plots and tables that exist. |
+| 7 | Optional, your computer | A tiny CPU test of the evaluation code only (`--limit 2 --systems finetuning_only`, no `--4bit`). It downloads the 3 GB base model and loads it in 32-bit, so it needs about 8 GB of free memory and is slow (not timed). Tell Claude Code your free RAM and disk first. The aim is only to catch a bug before the GPU session. |
+
+### 7.2 When the GPU is available again (Colab, T4), one short session
+GPU quota returns by itself after a while (hours, sometimes about a day); nothing needs to be bought. Only
+start the session when step 5 above is done and you are ready to run everything in one go, in this order
+(most important first, in case the quota ends early):
+1. Runtime > Change runtime type > T4 GPU. Run Cells 1, 2, 3 (Part 2). Check the adapter exists:
+   `!ls -la experiments/finetuned_model/crosscodeeval/v2` (it works now because Cell 3 creates the link).
+2. Quick checks, about 10 minutes:
+   ```python
+   import json
+   first_id = json.load(open("data/processed/crosscodeeval/pilot_ids.json"))[0]
+   !python -m src.demo --task-id {first_id} --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit
+   !python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --limit 5 --output-dir results/pipeline_test
+   ```
+   Add `--skip-codebleu` to the second command if the CodeBLEU install failed. Stop and send the output if either
+   errors or prints empty completions.
+3. **The pilot, main index** (50 examples, all four systems):
+   ```python
+   !python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit
+   ```
+4. **Base-versus-adapter validation loss** (answers whether fine-tuning lowered the loss at all):
+   ```python
+   !python -m src.finetuning.eval_loss --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit
+   ```
+5. **The pilot, staleness index** (new files in the retrieval index only):
+   ```python
+   !python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --view staleness
+   ```
+6. Then the rest of the Part 3e checklist: record the numbers, download `results/pilot_main/`,
+   `results/pilot_staleness/` and `results/val_loss_base_vs_adapter.json` from Drive into your project's
+   `results/` folder, and **disconnect the runtime**.
+The session length for steps 2 to 5 has not been measured. Training took 3.5 hours; evaluation passes are much
+shorter (the Trainer's validation pass took under 2 minutes).
+
+### 7.3 What "the pilot" means, so you can explain it
+The pilot is a rehearsal on 50 examples picked by a fixed random draw (seed 42) from the CrossCodeEval TEST
+examples. It runs four systems on the same 50 questions: the plain model (base), the plain model plus retrieved
+code (RAG, System A), the fine-tuned model alone (System B) and the fine-tuned model plus retrieved code
+(hybrid, System C). It proves the whole pipeline works end to end and gives first, rough numbers. With only 50
+examples the numbers have wide error bars, so report them as "pilot, n=50", never as findings.
 
 ---
 

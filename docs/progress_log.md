@@ -653,3 +653,91 @@ supplies the numbers behind them.
   - [writing note] Differences from Wang et al. belong in the research-gap table: retrieval-quality metrics,
     staleness test, QLoRA on one GPU, per-repository file-level split, public Python. Their forgetting result
     (-24.1% HumanEval) sets what to compare the thesis forgetting check against.
+
+## Entry 18: First v2 fine-tuning run (CrossCodeEval), output analysed (Sections 5, 9; training)
+- **Asked:** analyse the output of the first complete v2 run (`docs/first_train_results`) and give next steps.
+- **Correction to earlier replies:** the run described in earlier replies as "the old run (version 1)" was this
+  v2 run (adapter folder `v2`, identical numbers). The advice to stop it was wrong; the statement that the v2
+  loss would start higher than v1 was also wrong. Nothing in the repo was affected.
+- **Run facts (read from the output):** Qwen2.5-Coder-1.5B, QLoRA 4-bit, 1,089,536 trainable parameters
+  (0.0705% of 1,544,803,840), 9,378 training and 1,059 validation examples, 3 epochs, 1,761 steps, effective
+  batch 16. Started 2026-11-19 08:59, adapter saved 12:29. Training time 12,570 s (3 h 29 min), about 5.1 s/step
+  and 2.24 samples/s on a Colab T4; GPU memory about 8.7 GB as shown by Colab (peak was not measured by the
+  code). Adapter: `experiments/finetuned_model/crosscodeeval/v2` on Drive.
+- **Loss (loss is now on the answer tokens and the end token only):** logged every 50 steps. Mean of the
+  logged values: epoch 1 about 0.78 (1.14 at step 50, 0.80 at step 100), epoch 2 about 0.67, epoch 3 about 0.62;
+  mean over the whole run 0.688. Validation loss at the end of each epoch: 0.6799, 0.6774, 0.6841.
+  grad_norm stayed between about 0.65 and 2.1, no spikes, no nan. Learning rate decayed linearly from 2e-4 to
+  about 1e-6.
+- **Reading:** most of the learning happens in the first 100 to 200 steps. Training loss keeps falling in
+  epochs 2 and 3 but validation loss is flat (0.680, 0.677, 0.684; differences of 0.003 to 0.007 are probably
+  noise) and is slightly higher after epoch 3 than epoch 2. So epochs 2 and 3 add little, and the data may be
+  starting to be memorised. Validation is NOT file-held-out (Entries 8, 11), so it is optimistic: a flat
+  validation loss on this easier set suggests little to gain from more epochs on this corpus. This fits H4
+  (low data, little gain from fine-tuning) but is not evidence for it yet. [writing note]
+- **Missing for a conclusion:** the base model's loss on the same validation set. Without it there is no
+  proof that fine-tuning improved anything; the pilot comparison and a base-versus-adapter validation loss are
+  the way to find out.
+- **Warnings in the output:**
+  - Out-of-memory message during the first evaluation (tried to allocate 2.49 GB with 1.12 GB free of
+    15.6 GB). PyTorch recovered; evaluation finished all 133 steps and training continued. Cause is the large
+    default evaluation batch (8 sequences of up to 512 tokens against a 151k-token vocabulary). Not a failure,
+    but lower `per_device_eval_batch_size` (for example 2) if it ever turns into a crash.
+  - "Unauthenticated requests to the HF Hub": harmless here (public models). If a token is ever used it must
+    be kept in Colab Secrets, never in code or logs.
+- **Cost figures for the thesis (efficiency section):** QLoRA fine-tuning of the 1.5B model on one T4:
+  about 3.5 hours, about 8.7 GB. Wang et al. report 4.6 hours and 31.5 GB for full fine-tuning of the same
+  model on 8 x A100 80 GB, with a far larger training set, so compare memory, not hours.
+- **Open / next:** check the adapter files on Drive; plot the loss curve from `trainer_state.json`; demo on
+  one pilot example; `run_comparison --limit 5`; pilot (main and staleness); base-versus-adapter validation
+  loss (script not written yet); decide on the number of epochs for later runs (2 would save about a third of
+  the training time).
+
+## Entry 19: GPU quota used up after v2; plan for the pilot; validation-loss script (Sections 6, 9)
+- **Asked:** after the v2 run the free Colab GPU time ran out and `ls experiments/finetuned_model/crosscodeeval/v2`
+  failed; write the next steps (local versus Colab, including the pilot), save the findings so far, and say what
+  to do next.
+- **Cause of the `ls` error (explained, not yet confirmed on Drive):** the path is a link that
+  `tools/colab_setup.py` creates to `MyDrive/thesis/outputs/` in each session; the new CPU session had not run
+  it, so the link did not exist. The adapter should be at
+  `/content/drive/MyDrive/thesis/outputs/finetuned_model/crosscodeeval/v2`. **Not yet verified.** If it is not
+  there, the adapter may have been lost with the session and training would have to be repeated; the steps to
+  check this are in `docs/colab_steps.md`, Part 7.0.
+- **Done:**
+  - `docs/colab_steps.md`, new Part 7: why the error happened, what can be done now without a GPU (local versus
+    Colab table), the one-session order for when the GPU returns (quick checks, pilot main, validation loss,
+    pilot staleness, results download, disconnect), and a plain-language description of the pilot.
+  - `src/finetuning/eval_loss.py` (new): validation loss of the base model and of the adapter on the same
+    validation set, loss on answer tokens only, small batch (2) to avoid the out-of-memory message seen in
+    training evaluation, writes `results/val_loss_base_vs_adapter.json`. Only `--help` was checked; it has not
+    been run (needs a GPU, or a very slow CPU run).
+  - `.gitignore`: `*.safetensors` and `experiments/finetuned_model/` added so that adapters and checkpoints
+    cannot be committed by accident (the adapter is about 4 MB; the checkpoints are larger).
+- **Findings so far (summary for the thesis; all from Entries 3 to 18):**
+  - Data: file-level BASE/NEW/TEST splits with passing leakage checks for CrossCodeEval and RepoBench;
+    CrossCodeEval TEST 543 examples, 292 (53.8%) with a relevant file in the main pool, 327 (60.2%) in the
+    staleness pool, only 68 with a relevant file in NEW; RepoBench TEST 6,276 + 6,035 examples with the gold file
+    in the main pool for about 70%.
+  - Index smoke test (inflated, small pools): hit@1 0.603 (main), 0.532 (staleness) against the A3 rule.
+  - Reference paper (Wang et al.): their numbers for Qwen2.5-Coder-1.5B and the differences from this thesis are
+    in `docs/reference_paper_comparison.md`.
+  - Fine-tuning v2 (CrossCodeEval, QLoRA 1.5B): 3 epochs, 1,761 steps, 3 h 29 min on a T4, about 8.7 GB;
+    training loss about 0.78 / 0.67 / 0.62 per epoch, validation loss 0.680 / 0.677 / 0.684 (flat; not
+    file-held-out). No evidence yet that fine-tuning helps; that needs the base-versus-adapter comparison and the
+    pilot.
+  - Not yet available: any completion-quality number (EM, edit similarity) for any system, any retrieval
+    comparison (dense versus BM25) result, any staleness or hit/miss result.
+- **Next (in order; where each runs is in `docs/colab_steps.md`, Part 7):**
+  1. Colab CPU session: check the adapter on Drive.
+  2. Local: download the adapter files and `trainer_state.json`; plot the loss curve; run the retrieval
+     comparison (dense / BM25 / random) and its plots.
+  3. Local: push the newest code (`eval_loss.py`, `.gitignore`).
+  4. Colab T4 when the quota returns: quick checks, pilot (main), validation-loss comparison, pilot (staleness),
+     download results, disconnect.
+  5. Local: analyse results, update the log, presentation and report prompt.
+- **Open:** the number of epochs for later runs (2 may be enough); whether to build the RAFT-style variant;
+  memory per system is not independent in the evaluation script; a local CPU test of the evaluation code
+  would need the free RAM and disk figures of this machine (a read-only check of them was not permitted, so I
+  did not run it).
+- **[writing note]** Training cost for the efficiency section: about 3.5 hours and 8.7 GB for QLoRA on a free
+  T4; the free GPU quota ran out after one such run, which is a practical constraint worth stating.
