@@ -482,3 +482,70 @@ missing file or a bad cache without spending GPU time:
 !python -m experiments.dry_run_pipeline --adapter experiments/finetuned_model/crosscodeeval/v2
 ```
 It should end with `DRY RUN PASSED`. (The CodeBLEU line then also tells you whether the optional install worked.)
+
+---
+
+## Part 9. Next phase: the GPU session after the quota returned (2026-11-21)
+
+This is the current plan. It replaces Part 7.2 as the order to follow (Part 7.2 and Part 8 stay as the source of the
+commands and options). Everything is in one session, most important first, in case the quota ends early.
+The goal is the first completion scores (exact match, edit similarity, identifier accuracy, CodeBLEU) for base, RAG,
+fine-tuned and hybrid. Report them as "pilot, n=50", never as findings.
+
+Not yet run on Colab (may fail, so stop and report instead of working around it): the 4-bit model load,
+generation, the `codebleu` install, `run_comparison.py` end to end.
+
+### 9.1 Setup (every session)
+1. Runtime > Change runtime type > T4 GPU.
+2. Run Cell 1, Cell 2, Cell 3 (Part 2).
+3. Every line of "Checking data" must say `ok` (including `pilot_ids.json: 50`, 206 index folders,
+   `examples.jsonl: 2018`). On `DIFFERS` or `MISSING`, **do not continue**; send the output to Claude Code.
+4. Check the adapter exists: `!ls -la experiments/finetuned_model/crosscodeeval/v2`
+
+### 9.2 Quick checks (about 10 minutes)
+```python
+!python -m experiments.dry_run_pipeline --adapter experiments/finetuned_model/crosscodeeval/v2
+import json
+first_id = json.load(open("data/processed/crosscodeeval/pilot_ids.json"))[0]
+!python -m src.demo --task-id {first_id} --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --limit 5 --output-dir results/pipeline_test
+```
+- The dry run must end with `DRY RUN PASSED`.
+- Stop and send the output if a command errors or a completion is empty or has several lines.
+- If CodeBLEU fails, add `--skip-codebleu` (it then shows n/a, never 0).
+
+### 9.3 Main runs (in this order)
+1. **Pilot, main index** (50 examples, four systems):
+   `!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit`
+2. **Base-versus-adapter validation loss** (is there any evidence fine-tuning helped?):
+   `!python -m src.finetuning.eval_loss --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit`
+3. **Pilot, staleness index** (NEW files in the retrieval index only):
+   `!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --view staleness`
+
+### 9.4 Extra runs, only if GPU time is left (most useful first)
+| Run | Command (add to the pilot command) | Why |
+|---|---|---|
+| Shorter code input | `--max-code-tokens 480` | 21 of 50 pilot prompts exceed the 512 tokens used in training |
+| BM25 retrieval | `--retriever bm25` | BM25 won the retrieval comparison |
+| Forgetting check | `!python -m src.evaluation.forgetting_check --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --allow-exec --limit 20` | HumanEval pass@1, base vs adapter. **Runs model-generated code: Colab only, never on your computer** |
+
+### 9.5 What to watch
+- **Memory:** RAG and hybrid prompts are about 2,000 tokens (up to about 6,000) against 512 in training. If you see
+  `out of memory`, restart the session and rerun from Cell 1; report which system failed.
+- **Hybrid mismatch:** the hybrid sees retrieved context it never saw in training. A weak hybrid result may mean the
+  RAFT-style retrain is needed; do not decide that from 50 examples.
+- Keep the tab open; checkpoints and results are on Drive, not in the Colab session.
+
+### 9.6 Before you disconnect
+1. Download from Drive into your local `results/`: `pilot_main/`, `pilot_staleness/`,
+   `val_loss_base_vs_adapter.json`, plus any extra run folders (`_code480`, `_bm25`).
+2. Locally, run `python -m src.evaluation.analyze_predictions results/pilot_main/predictions.jsonl` (hit vs miss and
+   paired differences with bootstrap CIs; no GPU needed).
+3. Disconnect the runtime (Runtime > Disconnect and delete runtime).
+4. Bring the outputs to Claude Code: they go into the progress log as Entry 32, and the completion estimate
+   (about 58%, Entry 31) is revised.
+
+### 9.7 What comes after this session
+Full CrossCodeEval evaluation (543 TEST examples, BM25 and hit/miss on the full set), remaining extra analyses
+(noisy context `--noise-chunks 3`, top-k sweep `--top-k 1/3/10`), the RAFT-style decision, then RepoBench fine-tuning
+and completion (`--datasets crosscodeeval repobench` in Cell 3).

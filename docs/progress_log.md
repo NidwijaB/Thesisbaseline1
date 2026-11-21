@@ -1094,3 +1094,281 @@ supplies the numbers behind them.
     them would change the `python -m ...` commands that the Colab guide uses.
   - `docs/first_train_results` is the raw v2 training output (475 lines of progress bars); trimming it is optional.
   - Seeds and constants are still in the scripts, not `config.yaml` (open item).
+
+## Entry 31: Completion estimate with completed-vs-remaining table, for the report and presentation (2026-11-20)
+- **Asked:** independent review of how much of the project work is done (thesis writing not counted), and a
+  table of work completed versus work left, to be reused in the progress report and the presentation.
+- **Estimate: about 58% (read as 55 to 60%).** A judgement, not a measurement. Same weights as Entries 23 and 29
+  (Entry 29 gave 59.4%); rounded down because `experiments/run_comparison.py` has never run end to end, so the
+  "pipeline code" share is credited at about 92% and not 95%. Based on reading the log, plan and results summary
+  and listing the repo files; no code was re-run for this entry.
+
+| Workstream | Weight | Done | Contribution | Status |
+|---|---|---|---|---|
+| Plan, reference-paper analysis, hypotheses | 5.7% | 100% | 5.7 | Finished |
+| CrossCodeEval data (split, leakage checks, corpus, pilot sample) | 11.4% | 100% | 11.4 | Finished |
+| RepoBench data (split, corpus, 300-per-setting sample) | 8.0% | 90% | 7.2 | Nearly finished |
+| Pipeline code (prompting, trainer, evaluation, demo, Colab setup, dry run, 27 tests) | 17.0% | 92% | 15.6 | Written; never run end to end on a GPU |
+| Retrieval (indexes for both datasets; dense vs BM25 vs random with CIs) | 9.1% | 87% | 7.9 | Done; no RepoBench plot, no NEW-gold RepoBench sample |
+| Fine-tuning (CrossCodeEval v2 only) | 11.4% | 50% | 5.7 | No RepoBench run, no RAFT-style variant, no base-vs-adapter loss |
+| Evaluation runs (EM, edit similarity, identifier accuracy, CodeBLEU for base / RAG / FT / hybrid) | 28.4% | 11% | 3.1 | Not run (needs GPU) |
+| Extra analyses (hit/miss, noisy context, staleness effect, forgetting, top-k) | 9.1% | 17% | 1.5 | Code written; none run on model output |
+| **Total** | 100% | | **58.1** | |
+
+**Completed (summary for slides):**
+- Both datasets downloaded and inspected; file-level BASE/NEW/TEST splits with passing leakage assertions.
+- Fine-tuning corpora for both datasets (CrossCodeEval 9,378 + 1,059; RepoBench 10,800 + 1,200).
+- Per-repo indexes: 206 CrossCodeEval repos, 446 RepoBench sample repos.
+- Retrieval comparison on both datasets: BM25 better than UniXcoder dense (CrossCodeEval main MRR 0.884 vs 0.770,
+  n=292, CI of the difference excludes 0).
+- One QLoRA fine-tuning run (CrossCodeEval v2): 3 h 29 min on a T4, about 8.7 GB, validation loss flat at about 0.68.
+- Shared prompt format, label-masked training, CodeBLEU that raises, bootstrap CIs, evaluation and analysis scripts,
+  Colab setup, model-free dry run, hybrid PEFT import fix, reference-paper analysis.
+
+**Left to do (summary for slides):**
+1. 50-example pilot of base / RAG / fine-tuned / hybrid on a Colab GPU (free quota ran out after the v2 run).
+2. Base-versus-adapter validation loss (`eval_loss.py`, written, not run): without it there is no evidence that
+   fine-tuning helped.
+3. Full CrossCodeEval evaluation (543 TEST examples) with BM25 and hit/miss analysis.
+4. Extra analyses on model output: noisy context, top-k sweep, forgetting check (HumanEval, Colab only), staleness
+   effect on completion.
+5. RepoBench fine-tuning and completion evaluation.
+6. Decide on the RAFT-style variant (hybrid sees about 2,000-token retrieval prompts, trained on 512 without context).
+7. Housekeeping: seeds and constants into `config.yaml`; independent per-system memory measurement.
+8. Numeric recommendations (the decision-question answer) once results exist.
+
+- **Reading:** the groundwork is largely done; the results are not. Evaluation runs carry 28% of the weight and are
+  almost empty, so the next jump (about +15 to 20 points) comes only from GPU runs. Risks: GPU quota; retrieval prompts
+  about 2,000 tokens vs 512 in training; CrossCodeEval staleness sample is only 68 examples; `bitsandbytes` 4-bit and
+  Colab `codebleu` installs untested on Colab.
+- **Not changed:** `docs/Nidwija_081MSCSK010_progress_report.docx` (binary, still the August version). Use this
+  entry and `docs/claude_web_prompt.md` to produce the updated report. Nothing committed or pushed.
+
+## Entry 32: First GPU session on Colab, setup to 5-example pipeline test (2026-11-21; raw output in `docs/results_output_gpu_day2`)
+- **Asked:** log the results of Colab steps A to B3 (`docs/colab_steps_part2.md`) before the pilot (C1) finishes.
+- **Setup (Cell 3):** passed. Tesla T4, `cuda: True`, bitsandbytes 0.50.2. Data restored from the Drive cache and
+  every check was `ok` (train 9,378, val 1,059, pilot 50, 206 index folders, examples.jsonl 2,018). Adapter v2 is on
+  Drive (`adapter_model.safetensors` 4.4 MB, written 2026-11-19 12:29, plus checkpoint-1700 and checkpoint-1761).
+  The pinned installs worked on Colab (no pip error). No CodeBLEU install warning appeared.
+  An earlier `No module named 'rank_bm25'` error came from running the dry run before Cell 3 had completed in that
+  runtime (Cell 3 does install it); the fix used is [YOU: re-ran Cells 1-3 / pip install - fill in].
+- **Dry run (B1), on Colab:** `DRY RUN PASSED`. Adapter base model matches the config; 50 pilot examples load; no
+  TEST file retrieved in either view; relevant file in top-5 for 48 of 50 (main) and 46 of 50 (staleness) with dense,
+  50 of 50 with BM25. Prompt tokens identical to Entry 22/24 (no retrieval median 437, max 4,411, 21 of 50 over 512;
+  with retrieval median 2,152, max 5,919; with `--max-code-tokens 480` max 494, none over 512). **`codebleu` package
+  works on Colab** (this was listed as untested in Entry 17). Generation limit `max_new_tokens = 128`.
+- **5-example test (B3), the first end-to-end run of `run_comparison.py` with the real model:** it finished and wrote
+  `results/pipeline_test/` (metrics per system, `comparison_summary.*`, `predictions.jsonl`). The 4-bit load and
+  generation worked, no out-of-memory. **This is a pipeline check, n=5, not a result** (CIs span most of the range).
+
+  | System | EM | Edit sim. | Identifier acc. | CodeBLEU | Avg ms/example | Peak GPU MB |
+  |---|---|---|---|---|---|---|
+  | base | 0.0 | 0.156 | 0.10 | 0.000 | 3,796 | 1,698 |
+  | rag_only | 0.0 | 0.176 | 0.10 | 0.000 | 2,372 (395 ms retrieval for all 5) | 1,823 |
+  | finetuning_only | 0.2 | 0.584 | 0.35 | 0.144 | 1,599 | 1,698 |
+  | hybrid | 0.2 | 0.658 | 0.55 | 0.149 | 2,151 | 1,823 |
+
+  Retrieval on these 5: MRR 0.633, P@1 0.4, R@3 1.0 (tiny pools; not informative).
+- **Observations to check (not conclusions):**
+  - Base and RAG edit similarity (0.16 to 0.18) are very low, far below the fine-tuned systems. The base model is
+    prompted in the format the adapter was trained on; if the base model does not follow it, base and RAG are being
+    handicapped by the prompt, not by lacking the repository knowledge. **Read the base and rag_only rows of
+    `results/pipeline_test/predictions.jsonl` before trusting any base/RAG vs FT comparison.** If the base outputs
+    are junk or run on, consider a base-friendly prompt for A (plan: "same prompts" for all systems, so this needs a
+    decision, and must be stated in the thesis either way).
+  - Latency is confounded: the fine-tuned model was trained with an end-of-sequence token, so it stops early; base
+    and RAG probably run to the 128-token limit before the first line is cut. The base ran first, so it also
+    includes CUDA warm-up. Do not report latency per system from this run.
+  - CodeBLEU is a warning-heavy score here: "no reference data-flows ... the data-flow match score degenerates to
+    0". For one-line targets the data-flow component is always 0, which caps CodeBLEU. Report it with that caveat or
+    lean on EM, edit similarity and identifier accuracy.
+  - Peak GPU memory is small (1.7 to 1.8 GB for the 1.5B model in 4-bit, including prompts of about 2,000 tokens),
+    so the T4 has plenty of room. Peak memory is reported per system (1,698 after 1,823), so the "not independent"
+    concern in Entry 21 is partly resolved; the adapter is still loaded for base and RAG.
+- **Timing estimate for the runs:** about 48 s of generation for 5 examples x 4 systems, so roughly 10 s per example
+  across all four systems: the 50-example pilot should take about 8 to 9 minutes per view, and the full 543-example
+  CrossCodeEval comparison about 1.5 hours per view (upper estimate, includes warm-up). Unmeasured end to end.
+- **Not in the output file:** the demo run (B2) completions; fill in when available.
+- **Next:** pilot main (C1), base-vs-adapter validation loss (C2), pilot staleness (C3), then the predictions check
+  above. The completion estimate (about 58%, Entry 31) is not revised until C1 to C3 have results.
+
+## Entry 33: Pilot, main view, 50 CrossCodeEval TEST examples, four systems (2026-11-21; raw output in `docs/results_output_gpu_day2`)
+- **Asked:** log the C1 pilot run (`run_comparison --adapter .../v2 --4bit`, output `results/pilot_main/`).
+- **Run facts:** 50 examples (seed-42 pilot set), view=main, top_k=5, dense retrieval (UniXcoder), adapter v2,
+  4-bit, Colab T4. Whole run 08:55:05 to 09:02:05 (7 minutes, four systems, no out-of-memory, no errors).
+  **This is the pilot: report as "pilot, n=50", not as findings.** Predictions cut to the first line before scoring.
+
+  | System | EM [95% CI] | Edit sim. [95% CI] | Identifier acc. | CodeBLEU | Avg ms/example | Peak GPU MB |
+  |---|---|---|---|---|---|---|
+  | base | 0.00 [0.00, 0.00] | 0.236 [0.212, 0.262] | 0.018 | 0.068 | 1,798 | 2,009 |
+  | rag_only (A) | 0.00 [0.00, 0.00] | 0.226 [0.205, 0.248] | 0.042 | 0.121 | 2,277 (+1,183 ms retrieval for all 50) | 2,146 |
+  | finetuning_only (B) | 0.08 [0.02, 0.16] | 0.613 [0.549, 0.680] | 0.414 | 0.213 | 1,959 | 2,009 |
+  | hybrid (C) | 0.14 [0.06, 0.24] | 0.644 [0.570, 0.715] | 0.490 | 0.214 | 2,232 | 2,146 |
+
+  Retrieval (identical for A and C, dense): MRR 0.764, P@1 0.62, R@1 0.51, R@3 0.893, R@5 0.97, R@10 1.0. These
+  equal the model-free dry run (Entry 22 and Entry 32), a consistency check on the retrieval path.
+- **Reading (pilot only):**
+  - The fine-tuned systems score far above base and RAG on edit similarity: the CIs do not overlap (B 0.55 to 0.68
+    and C 0.57 to 0.72, against base 0.21 to 0.26 and RAG 0.20 to 0.25). RAG did not beat fine-tuning here, the
+    opposite of Wang et al. and of H1's ordering for RAG vs fine-tuning. Do not state this as a finding yet: see the
+    caveat next.
+  - **Caveat, likely a prompt-format effect:** base and RAG get exact match 0 of 50 and identifier accuracy 0.02 to
+    0.04, which is implausibly low for a 1.5B code model on single-line completion (Wang et al. report base EM
+    24% on 1.5B, a different task). The adapter was trained on this prompt format and learned to emit one short
+    completion and stop; the base model was not. The B-and-C gain over base and A may be mostly format learning,
+    not repository knowledge. **Read the base and rag_only rows of `results/pilot_main/predictions.jsonl`
+    before using any base/RAG vs fine-tuned comparison**, and decide whether A needs a base-friendly prompt (plan:
+    "same prompts" for all systems, so state the choice in the thesis either way).
+  - Hybrid vs fine-tuned-only: hybrid is higher (EM 0.14 vs 0.08, edit sim. 0.644 vs 0.613, identifier 0.49 vs
+    0.41) but the CIs overlap heavily; no evidence of a difference at n=50. The paired comparison
+    (`analyze_predictions`) will say more, still at n=50.
+  - RAG vs base: edit similarity is the same (0.226 vs 0.236); CodeBLEU and identifier accuracy are higher with
+    retrieval (0.121 vs 0.068, 0.042 vs 0.018). Weak, and again confounded by the prompt format.
+  - Exact match is low everywhere (best 0.14), so edit similarity and identifier accuracy carry the comparison.
+- **Correction to Entry 32:** it said base and RAG latency might be inflated by running to the token limit, and
+  that base was slow in the 5-example test because of warm-up. In the 50-example run base (1,798 ms) is not slower than
+  fine-tuned (1,959 ms), so there is no evidence of that effect; the 5-example latency was warm-up. Latency from
+  this pilot is usable as a rough figure: retrieval adds about 24 ms per example (1,183 ms for 50) plus longer prompts
+  (RAG 2,277 vs base 1,798 ms; hybrid 2,232 vs fine-tuned 1,959 ms). Still one T4, one process, n=50.
+- **Memory:** peak GPU 2.0 GB without retrieval and 2.1 GB with retrieval prompts of about 2,000 tokens (up to
+  about 6,000). The T4 has ample room, so memory is not a constraint for these runs; the memory cost of retrieval
+  is about 0.14 GB here (for the efficiency section).
+- **Timing:** 50 examples x 4 systems took 7 minutes, so the full 543-example CrossCodeEval comparison is about
+  75 to 80 minutes per view (revised from Entry 32's 1.5 hours; unmeasured end to end).
+- **Still to do from the session:** C2 (base-vs-adapter validation loss), C3 (staleness pilot), the predictions
+  check above, then `analyze_predictions` (hit vs miss, paired differences with CIs). Completion estimate (about
+  58%, Entry 31) is revised after C2 and C3.
+
+## Entry 34: Base-vs-adapter validation loss (C2) and staleness pilot (C3) (2026-11-21; raw output in `docs/results_output_gpu_day2`)
+- **Asked:** check the results so far and log what was done and found.
+- **Done on Colab:** C2 `src.finetuning.eval_loss` (09:10) and C3 `run_comparison --view staleness` (09:14 to 09:21,
+  7 minutes, no errors). Also `!cat results/pilot_main/comparison_summary.md`: its table matches Entry 33 exactly.
+  `results/` on Drive now holds `dry_run`, `pilot_main`, `pilot_staleness`, `pipeline_test`,
+  `val_loss_base_vs_adapter.json`. **Not yet downloaded locally** (checked: `results/pilot_*` absent on this
+  machine), so `predictions.jsonl` has not been read and `analyze_predictions` has not been run.
+
+### C2. Validation loss, base vs adapter (1,059 validation examples, 9,320 answer tokens, 4-bit, max length 512)
+| Model | Loss on answer tokens + end token |
+|---|---|
+| base (adapter off) | 2.735 |
+| adapter v2 | 0.6887 |
+| difference | 2.046 |
+- The adapter's loss (0.689) is close to the last training-time validation loss (0.684, Entry 18), so the two
+  evaluation paths agree. Fine-tuning lowered the loss a great deal, so this is the first evidence that it did
+  something. **Caveats [writing note]:** (1) validation is not file-held-out (Entries 8, 18), so the adapter's
+  number is optimistic; (2) the loss includes the end-of-answer token and the output format, which the base model was
+  never trained to produce, so much of the 2.0 drop is probably format learning, not repository knowledge. This
+  matches the pilot (Entry 33), where the base model's completions score very low. It does not show that
+  fine-tuning helps on held-out files; the held-out comparison is the pilot / full run on TEST examples.
+
+### C3. Staleness pilot (NEW files added to the retrieval index only; same 50 examples, n=50, not findings)
+| System | EM | Edit sim. [95% CI] | Identifier acc. | CodeBLEU | Avg ms | Main view (Entry 33) edit sim. |
+|---|---|---|---|---|---|---|
+| base | 0.00 | 0.236 [0.212, 0.262] | 0.018 | 0.068 | 1,860 | 0.236 |
+| RAG (A) | 0.00 | 0.213 [0.191, 0.237] | 0.028 | 0.067 | 2,485 | 0.226 |
+| fine-tuned (B) | 0.08 | 0.613 [0.549, 0.680] | 0.414 | 0.213 | 1,955 | 0.613 |
+| hybrid (C) | 0.16 | 0.657 [0.582, 0.728] | 0.507 | 0.288 | 2,326 | 0.644 |
+
+Retrieval, staleness vs main (dense): MRR 0.750 vs 0.764; R@1 0.477 vs 0.510; R@3 0.783 vs 0.893; R@5 0.915 vs 0.970;
+P@1 0.62 in both. Peak GPU 2.0 GB (no retrieval) and 2.1 GB (retrieval), same as main.
+- **Consistency checks that passed:** base and fine-tuned give exactly the same scores in both views (they use no
+  retrieval and decoding is greedy), so the runs are repeatable and the view only changes A and C.
+- **Reading (pilot only):**
+  - Adding NEW files lowered retrieval slightly (R@3 0.89 to 0.78): more candidates compete. Caveat: the relevant
+    set can also grow with NEW files (A3 rule), so recall is not strictly like for like.
+  - Completion barely moved: RAG edit similarity 0.226 to 0.213; hybrid 0.644 to 0.657 (EM 0.14 to 0.16). These
+    shifts are well inside the CIs. The hybrid CodeBLEU rise (0.214 to 0.288) is large for such a small change in the
+    other metrics and has no CI; treat it as noise until the full run.
+  - **This pilot cannot test the staleness claim (H3).** The 50 examples were drawn from examples whose relevant file
+    is in BASE (Entry 13), so NEW files act only as distractors here. The real test needs examples whose relevant file
+    is in NEW (68 in CrossCodeEval), where B cannot know the file and A/C can retrieve it. Not yet run: use
+    `--subset test` on those 68 (a filter is not built yet).
+  - B is unchanged by construction between views; so "B degrades on NEW" can only be shown on the NEW-relevant subset.
+
+### Status after C1 to C3
+- Done: pilot main (Entry 33), base-vs-adapter loss, pilot staleness; all ran end to end on a T4 (4-bit load,
+  generation, CodeBLEU, retrieval, hybrid), with repeatable results. Whole GPU session so far about 35 minutes of
+  compute. The estimate for the full 543-example run stays at about 75 to 80 minutes per view.
+- Not done: read the predictions (base/RAG prompt-format question in Entry 33 still open); `analyze_predictions` (hit vs
+  miss, paired differences with CIs); optional extras (D1 `--max-code-tokens 480`, D2 `--retriever bm25`, D3 forgetting
+  check); full 543-example run; NEW-relevant subset run; RepoBench completion; RAFT-style decision.
+- **Completion estimate revised:** about 65% (read as 62 to 68%; was 58%, Entry 31). Same weights: evaluation runs
+  from 11% to about 30% done (pilot complete for main and staleness, no full set), extra analyses from 17% to about 25%
+  (base-vs-adapter loss and a staleness view run; hit/miss and the rest pending), pipeline code to 97% (now run end to
+  end), fine-tuning to 60% (the loss comparison exists). Contribution: 5.7 + 11.4 + 7.2 + 16.5 + 7.9 + 6.8 + 8.5 +
+  2.3 = 66.3, rounded down to about 65 because the pilot is n=50 and the base/RAG comparison is unresolved.
+
+## Entry 35: Extra pilot runs: shorter code input, BM25 retrieval, HumanEval forgetting check (2026-11-21; raw output in `docs/results_output_gpu_day2`)
+- **Asked:** check the newer results and log what was done and found.
+- **Done on Colab (all n=50, main view, adapter v2, 4-bit, T4; each about 7 minutes):**
+  D1 `--max-code-tokens 480` (09:25 to 09:32, `results/pilot_main_code480/`), D2 `--retriever bm25`
+  (09:34 to 09:41, `results/pilot_main_bm25/`), D3 `forgetting_check --limit 20` (`results/forgetting_humaneval.json`).
+  No errors. Not yet downloaded locally.
+
+### D1. Code cut to the last 480 tokens (Entry 22: 21 of 50 prompts exceeded the 512-token training length)
+| System | EM | Edit sim. | Identifier acc. | CodeBLEU | Edit sim., full code (Entry 33) |
+|---|---|---|---|---|---|
+| base | 0.00 | 0.256 | 0.042 | 0.111 | 0.236 |
+| RAG | 0.00 | 0.216 | 0.019 | 0.107 | 0.226 |
+| fine-tuned | 0.10 | 0.611 | 0.420 | 0.213 | 0.613 |
+| hybrid | 0.16 | 0.649 | 0.496 | 0.213 | 0.644 |
+- Reading: no meaningful change (fine-tuned 0.613 to 0.611, hybrid 0.644 to 0.649; all inside the CIs). So the
+  mismatch between the 512-token training length and longer inference prompts is **not** what drives the pilot
+  scores. Peak GPU memory drops to 1.7 GB (from 2.0).
+
+### D2. BM25 instead of UniXcoder for RAG and hybrid
+| Retrieval metric (n=50) | dense (Entry 33) | BM25 |
+|---|---|---|
+| MRR | 0.764 | 0.840 |
+| P@1 / R@1 | 0.62 / 0.51 | 0.70 / 0.59 |
+| R@3 / R@5 | 0.893 / 0.970 | 0.977 / 1.000 |
+| retrieval time, all 50 | 1,183 ms | 203 ms |
+
+| System | EM | Edit sim. | Identifier acc. | CodeBLEU |
+|---|---|---|---|---|
+| RAG (A), BM25 | 0.00 | 0.224 | 0.021 | 0.097 |
+| hybrid (C), BM25 | 0.12 | 0.640 | 0.469 | 0.209 |
+(base and fine-tuned are unchanged: 0.236 and 0.613.)
+- Reading: BM25 retrieves the right file better (agrees with Entries 20 and 28: MRR 0.84 vs 0.76 and about 6x faster
+  retrieval) but **better retrieval did not improve completion**: RAG 0.226 to 0.224, hybrid 0.644 to 0.640 (EM
+  0.14 to 0.12), all within noise. At n=50 this says retrieval quality is not the bottleneck for completion here, or
+  that the models are not using the retrieved text. This bears on H2 (hybrid gain vs retrieval quality) but is not a
+  test of it. [writing note] Together with RAG ≈ base in every run, it points at how the model uses context (the
+  prompt), not at which retriever is used.
+
+### D3. Forgetting check, HumanEval, first 20 problems, greedy
+| Model | Passed | pass@1 |
+|---|---|---|
+| base (adapter off) | 0 / 20 | 0.00 |
+| fine-tuned | 5 / 20 | 0.25 |
+`relative_change` is `None` because the base score is 0 (division by zero).
+- **This result is not usable as a forgetting measure, and it must not be reported as one.** (1) Base 0 of 20 is
+  implausible for a 1.5B code model (Qwen2.5-Coder-1.5B base is reported at roughly 40% on HumanEval; check the
+  Qwen report before citing). (2) The script wraps the HumanEval stub in the **training prompt format**
+  (`src/prompting.py`), which only the adapter was trained on, so the base is penalised by the format, exactly as in the
+  pilot (base and RAG exact match 0 of 50). (3) n=20 first problems only. The fine-tuned model beating the base
+  is the opposite of forgetting and is explained by the format, not by better coding.
+  Fix before relying on it: add an option that gives both models the plain HumanEval stub (no instruction wrapper),
+  rerun on all 164 problems on Colab, and report that as the forgetting measure. Not built yet.
+- **Memory note for the efficiency section:** peak GPU for systems without retrieval depends on whether UniXcoder
+  is loaded in that run (base/fine-tuned: 2.0 GB with dense, 1.5 GB with BM25, which does not load the embedder). Compare
+  systems within one run, not across runs. Added cost of retrieval prompts within a run: about 0.15 GB.
+
+### What this adds up to (pilot, n=50; with Entries 33 and 34)
+- Four systems now run end to end, with repeatable numbers. Fine-tuned and hybrid are far above base and RAG
+  (edit similarity about 0.61 to 0.66 vs 0.21 to 0.26); hybrid vs fine-tuned and dense vs BM25 are within noise;
+  more files in the index (staleness), shorter code and a better retriever do not move completion.
+- **Everything points to one open question that must be settled before any comparison is reported: is the
+  base/RAG deficit real or a prompt-format artifact?** Evidence for the artifact: base EM 0 of 50, base HumanEval 0 of 20,
+  RAG equal to base regardless of retriever. Test (cheap): read `predictions.jsonl` for base and rag_only; then rerun
+  base and RAG with a base-friendly prompt (the plain code prefix, or a few-shot prompt) on the same 50. If scores jump,
+  the thesis needs a fairer prompt for A (and the forgetting prompt), and the plan's "same prompt" rule has to be
+  restated as "same task, best format per system" with the choice documented.
+- **Completion estimate revised: about 67%** (read as 64 to 70%; 65% in Entry 34). Evaluation runs about 33% done
+  (pilot, three variants, still no full set and an unresolved base prompt), extra analyses about 40% (loss
+  comparison, staleness view, shorter code, BM25 run done; forgetting needs a rerun; hit/miss, noisy context and
+  top-k sweep not run). Rounded down from 68.5 because the base/RAG comparison and the forgetting check are not yet valid.
+- **Next:** (1) download `results/` from Drive and read the base and RAG predictions; run `analyze_predictions`;
+  (2) decide on the base-friendly prompt and the plain-stub forgetting option; (3) full 543-example run only after (2),
+  since a full run with a handicapped base wastes about 80 minutes per view; (4) the 68-example NEW-relevant staleness
+  subset; (5) RepoBench completion and fine-tuning.
