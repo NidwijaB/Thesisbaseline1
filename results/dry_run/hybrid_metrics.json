@@ -1,0 +1,29 @@
+{
+  "system": "hybrid",
+  "exact_match": 0.0,
+  "edit_similarity": 0.9804,
+  "identifier_accuracy": 0.9908,
+  "code_bleu": null,
+  "exact_match_ci95": [
+    0.0,
+    0.0
+  ],
+  "edit_similarity_ci95": [
+    0.9758,
+    0.9844
+  ],
+  "n_samples": 50,
+  "stand_in_predictions": true,
+  "retrieval": {
+    "mrr": 0.7642,
+    "precision@1": 0.62,
+    "recall@1": 0.51,
+    "precision@3": 0.3933,
+    "recall@3": 0.8933,
+    "precision@5": 0.26,
+    "recall@5": 0.97,
+    "precision@10": 0.134,
+    "recall@10": 1.0,
+    "n_queries": 50
+  }
+}

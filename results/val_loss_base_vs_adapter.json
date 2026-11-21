@@ -1,0 +1,11 @@
+{
+  "dataset": "crosscodeeval",
+  "n_examples": 1059,
+  "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+  "four_bit": true,
+  "max_length": 512,
+  "adapter_loss": 0.6887,
+  "answer_tokens": 9320,
+  "base_loss": 2.735,
+  "difference_base_minus_adapter": 2.0463
+}

@@ -1,0 +1,17 @@
+{
+  "system": "finetuning_only",
+  "exact_match": 1.0,
+  "edit_similarity": 1.0,
+  "identifier_accuracy": 1.0,
+  "code_bleu": null,
+  "exact_match_ci95": [
+    1.0,
+    1.0
+  ],
+  "edit_similarity_ci95": [
+    1.0,
+    1.0
+  ],
+  "n_samples": 50,
+  "stand_in_predictions": true
+}

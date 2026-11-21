@@ -1,0 +1,162 @@
+{
+  "base": {
+    "system": "base",
+    "exact_match": 0.0,
+    "edit_similarity": 0.2363,
+    "identifier_accuracy": 0.018,
+    "code_bleu": 0.068,
+    "exact_match_ci95": [
+      0.0,
+      0.0
+    ],
+    "edit_similarity_ci95": [
+      0.2118,
+      0.2624
+    ],
+    "n_samples": 50,
+    "n_examples": 50,
+    "n_with_relevant_file": 50,
+    "subset": "pilot",
+    "view": "main",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "bm25",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "efficiency": {
+      "system": "base",
+      "retrieval_latency_ms": 0.0,
+      "inference_latency_ms": 92611.66,
+      "total_latency_ms": 92611.66,
+      "avg_total_ms": 1852.23,
+      "peak_gpu_mb": 1517.81,
+      "peak_cpu_ram_mb": 2315.9
+    }
+  },
+  "rag_only": {
+    "system": "rag_only",
+    "exact_match": 0.0,
+    "edit_similarity": 0.2241,
+    "identifier_accuracy": 0.0207,
+    "code_bleu": 0.0971,
+    "exact_match_ci95": [
+      0.0,
+      0.0
+    ],
+    "edit_similarity_ci95": [
+      0.2006,
+      0.2501
+    ],
+    "n_samples": 50,
+    "n_examples": 50,
+    "n_with_relevant_file": 50,
+    "subset": "pilot",
+    "view": "main",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "bm25",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "retrieval": {
+      "mrr": 0.84,
+      "precision@1": 0.7,
+      "recall@1": 0.59,
+      "precision@3": 0.4267,
+      "recall@3": 0.9767,
+      "precision@5": 0.268,
+      "recall@5": 1.0,
+      "precision@10": 0.134,
+      "recall@10": 1.0,
+      "n_queries": 50
+    },
+    "efficiency": {
+      "system": "rag_only",
+      "retrieval_latency_ms": 202.53,
+      "inference_latency_ms": 120168.08,
+      "total_latency_ms": 120370.61,
+      "avg_total_ms": 2407.41,
+      "peak_gpu_mb": 1667.92,
+      "peak_cpu_ram_mb": 2387.34
+    }
+  },
+  "finetuning_only": {
+    "system": "finetuning_only",
+    "exact_match": 0.08,
+    "edit_similarity": 0.613,
+    "identifier_accuracy": 0.4142,
+    "code_bleu": 0.213,
+    "exact_match_ci95": [
+      0.02,
+      0.16
+    ],
+    "edit_similarity_ci95": [
+      0.5485,
+      0.6802
+    ],
+    "n_samples": 50,
+    "n_examples": 50,
+    "n_with_relevant_file": 50,
+    "subset": "pilot",
+    "view": "main",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "bm25",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "efficiency": {
+      "system": "finetuning_only",
+      "retrieval_latency_ms": 0.0,
+      "inference_latency_ms": 97281.1,
+      "total_latency_ms": 97281.1,
+      "avg_total_ms": 1945.62,
+      "peak_gpu_mb": 1517.81,
+      "peak_cpu_ram_mb": 2391.61
+    }
+  },
+  "hybrid": {
+    "system": "hybrid",
+    "exact_match": 0.12,
+    "edit_similarity": 0.6398,
+    "identifier_accuracy": 0.4692,
+    "code_bleu": 0.2093,
+    "exact_match_ci95": [
+      0.04,
+      0.2
+    ],
+    "edit_similarity_ci95": [
+      0.5647,
+      0.7108
+    ],
+    "n_samples": 50,
+    "n_examples": 50,
+    "n_with_relevant_file": 50,
+    "subset": "pilot",
+    "view": "main",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "bm25",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "retrieval": {
+      "mrr": 0.84,
+      "precision@1": 0.7,
+      "recall@1": 0.59,
+      "precision@3": 0.4267,
+      "recall@3": 0.9767,
+      "precision@5": 0.268,
+      "recall@5": 1.0,
+      "precision@10": 0.134,
+      "recall@10": 1.0,
+      "n_queries": 50
+    },
+    "efficiency": {
+      "system": "hybrid",
+      "retrieval_latency_ms": 202.53,
+      "inference_latency_ms": 111412.99,
+      "total_latency_ms": 111615.52,
+      "avg_total_ms": 2232.31,
+      "peak_gpu_mb": 1667.92,
+      "peak_cpu_ram_mb": 2391.73
+    }
+  }
+}

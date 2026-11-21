@@ -1,0 +1,34 @@
+{
+  "system": "finetuning_only",
+  "exact_match": 0.2,
+  "edit_similarity": 0.5836,
+  "identifier_accuracy": 0.35,
+  "code_bleu": 0.1438,
+  "exact_match_ci95": [
+    0.0,
+    0.6
+  ],
+  "edit_similarity_ci95": [
+    0.3041,
+    0.863
+  ],
+  "n_samples": 5,
+  "n_examples": 5,
+  "n_with_relevant_file": 5,
+  "subset": "pilot",
+  "view": "main",
+  "top_k": 5,
+  "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+  "retriever": "dense",
+  "max_code_tokens": null,
+  "noise_chunks": 0,
+  "efficiency": {
+    "system": "finetuning_only",
+    "retrieval_latency_ms": 0.0,
+    "inference_latency_ms": 7996.59,
+    "total_latency_ms": 7996.59,
+    "avg_total_ms": 1599.32,
+    "peak_gpu_mb": 1698.01,
+    "peak_cpu_ram_mb": 2384.34
+  }
+}
