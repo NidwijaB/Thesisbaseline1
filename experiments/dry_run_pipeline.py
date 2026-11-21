@@ -31,7 +31,7 @@ from experiments.run_comparison import (INDEX_DIR, SPLIT_DIR, SYSTEMS, VIEWS, bm
                                         distinct_files, load_examples)
 from src.evaluation.evaluator import compare_systems, run_evaluation
 from src.evaluation.metrics import code_bleu
-from src.prompting import build_prompt, first_line, retrieval_query, truncate_code_left
+from src.prompting import build_plain_prompt, build_prompt, first_line, retrieval_query, truncate_code_left
 from src.retrieval.embedder import CodeEmbedder
 from src.retrieval.vector_store import FAISSVectorStore
 from src.utils.config import load_config
@@ -71,6 +71,7 @@ def main():
     max_len = cfg.finetuning.max_seq_length
     rows = {v: [] for v in VIEWS}
     n_prompt_tokens = {"no_retrieval": [], "retrieval": []}
+    plain_tokens = {"no_retrieval": [], "retrieval": []}
 
     for view in VIEWS:
         for ex in examples:
@@ -93,6 +94,8 @@ def main():
             if view == "main":
                 n_prompt_tokens["no_retrieval"].append(len(tok(build_prompt(code)).input_ids))
                 n_prompt_tokens["retrieval"].append(len(tok(build_prompt(code, chunks)).input_ids))
+                plain_tokens["no_retrieval"].append(len(tok(build_plain_prompt(code)).input_ids))
+                plain_tokens["retrieval"].append(len(tok(build_plain_prompt(code, chunks)).input_ids))
 
     # 3. retrieval summary
     for view in VIEWS:
@@ -111,6 +114,12 @@ def main():
         print(f"info    prompt tokens, {name}: median {vals[len(vals) // 2]}, max {vals[-1]}, "
               f"over training limit {max_len}: {sum(v > max_len for v in vals)} of {len(vals)}")
     print(f"info    generation limit max_new_tokens = {cfg.generation.max_new_tokens}")
+    for name, vals in plain_tokens.items():          # --base-prompt plain (base and RAG only)
+        vals = sorted(vals)
+        print(f"info    with --base-prompt plain, prompt tokens, {name}: median {vals[len(vals) // 2]}, "
+              f"max {vals[-1]}")
+    check(all(len(tok(build_plain_prompt(r["code"])).input_ids) < len(tok(build_prompt(r["code"])).input_ids)
+              for r in rows["main"][:5]), "plain prompt is shorter than the instruction prompt (no wrapper)", problems)
 
     # 4b. new run_comparison options: --retriever bm25 and --max-code-tokens 480
     bm25s, bm25_hit, bm25_with, cut_tokens = {}, 0, 0, {"no_retrieval": [], "retrieval": []}

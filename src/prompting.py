@@ -13,6 +13,10 @@ src/finetuning/dataset.py), so B sees at inference what it saw in training. C an
 add retrieved chunks, which the adapter has not seen in training (the RAFT-style
 variant that would train on retrieval-formatted prompts is not built yet).
 
+Option added after the first pilot (progress log Entry 36): the frozen model (base, RAG) can be given a
+plain continuation prompt instead (`build_plain_prompt`), because it does not follow the instruction
+wrapper. The adapter systems (B, C) keep the training format either way.
+
 No torch import here, so the corpus builders and tests can use it.
 """
 
@@ -41,6 +45,29 @@ def format_context(chunks: list | None) -> str:
 def build_prompt(code: str, chunks: list | None = None) -> str:
     """Prompt that ends right where the model should start writing."""
     return HEADER + format_context(chunks) + code + FOOTER
+
+
+def build_plain_prompt(code: str, chunks: list | None = None) -> str:
+    """Plain continuation prompt, no instruction wrapper: retrieved chunks as comments (if any) then the
+    code, ending right at the cursor so the model simply continues the line. This is how a model that was
+    not fine-tuned on the instruction format is normally asked to complete code."""
+    return format_context(chunks) + code
+
+
+# How the models without the adapter (base, RAG) are prompted. "instruction" is the wrapper the adapter
+# was trained on (the first pilot used it; the frozen model does not follow it, see progress log Entry 36);
+# "plain" is a raw continuation. Models with the adapter always use the instruction format.
+BASE_PROMPTS = ("instruction", "plain")
+
+
+def build_system_prompt(code: str, chunks: list | None, uses_adapter: bool, base_prompt: str = "instruction") -> str:
+    """The prompt for one system. Adapter systems (B, C): instruction format. Frozen model (base, A):
+    `base_prompt`. Retrieved chunks are passed in only for the systems that use retrieval."""
+    if base_prompt not in BASE_PROMPTS:
+        raise ValueError(f"base_prompt must be one of {BASE_PROMPTS}, got {base_prompt!r}")
+    if uses_adapter or base_prompt == "instruction":
+        return build_prompt(code, chunks)
+    return build_plain_prompt(code, chunks)
 
 
 def retrieval_query(code: str) -> str:

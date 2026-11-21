@@ -71,11 +71,11 @@ Model-free dry run on the 50 pilot examples: no TEST file retrieved; a relevant 
 for 48 of 50 (dense) and 50 of 50 (BM25) in the main view; prompt length median 437 tokens without retrieval
 and 2,152 with it (training used 512). These are pipeline facts, not evaluation results.
 
-## 5b. Overall completion (Entry 35, 2026-11-21; 58% in Entry 31, 65% in Entry 34)
+## 5b. Overall completion (Entry 36, 2026-11-21; 58% Entry 31, 65% Entry 34, 67% Entry 35)
 
-About 67% of the project work (64 to 70%; thesis writing not counted; a weighted judgement, not a measurement).
+About 65% of the project work (62 to 68%; thesis writing not counted; a weighted judgement, not a measurement).
 Groundwork done (data, code, indexes, retrieval results, one training run); evaluation runs (28% of the weight)
-are about 33% done (pilot and three variants, no full set). Weights and the original completed-versus-remaining table:
+are about 25% done (pilot and variants; base and RAG rows invalid until rerun, Entry 36). Weights and the original completed-versus-remaining table:
 `docs/progress_log.md`, Entry 31; the revision: Entry 34.
 
 ## 5c. Pilot, main view, n=50 (Entry 33; pilot only, not findings)

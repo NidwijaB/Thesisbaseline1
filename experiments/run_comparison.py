@@ -10,11 +10,17 @@ the pilot; step 7 for the full TEST set):
   hybrid  System C: LoRA adapter + retrieved chunks
 
 One model is loaded once; base and rag run with the adapter switched off. All four use the shared
-prompt (src/prompting.py) and the same greedy one-line generation (src/generation.py). Predictions
+prompts (src/prompting.py) and the same greedy one-line generation (src/generation.py). Predictions
 are cut to the first line before scoring.
 
-Examples: --subset pilot (the 50 ids in data/processed/crosscodeeval/pilot_ids.json) or
---subset test (all TEST examples). Retrieval metrics use the A3 relevance rule for the chosen
+Prompts: the adapter systems (ft, hybrid) always get the instruction format they were trained on.
+--base-prompt chooses what base and rag get: "instruction" (default, the format of the first pilot,
+which the frozen model does not follow, progress log Entry 36) or "plain" (retrieved chunks as comments
++ the code, no wrapper; the model just continues the line; the recommended setting).
+
+Examples: --subset pilot (the 50 ids in data/processed/crosscodeeval/pilot_ids.json),
+--subset test (all TEST examples) or --subset new_relevant (the TEST examples whose relevant file,
+by the A3 rule, is a NEW file: the staleness test; run it with --view main and --view staleness). Retrieval metrics use the A3 relevance rule for the chosen
 --view (main = BASE pool, staleness = BASE + NEW pool); examples without a relevant file there
 are left out of the retrieval metrics but still scored on completion.
 
@@ -47,7 +53,7 @@ from src.evaluation.latency import (LatencyRecord, current_cpu_ram_mb, peak_gpu_
                                     reset_gpu_memory_stats)
 from src.evaluation.metrics import edit_similarity, exact_match, mean_reciprocal_rank
 from src.generation import complete, load_model
-from src.prompting import build_prompt, retrieval_query, truncate_code_left
+from src.prompting import BASE_PROMPTS, build_system_prompt, retrieval_query, truncate_code_left
 from src.retrieval.embedder import CodeEmbedder
 from src.retrieval.vector_store import FAISSVectorStore, RetrievedChunk
 from src.utils.config import load_config
@@ -64,15 +70,36 @@ SYSTEMS = {"base": (False, False), "rag_only": (False, True),
            "finetuning_only": (True, False), "hybrid": (True, True)}
 
 
+def new_relevant_ids(rows, manifest: dict, split: dict) -> set[str]:
+    """TEST examples with at least one relevant file (A3 rule: distinct files named in the example's
+    cross-file snippets, minus the example's own file) that is a NEW file. These are the examples on
+    which fine-tuning cannot know the relevant file and retrieval can (staleness test)."""
+    ids = set()
+    for ex in rows:
+        meta = ex["metadata"]
+        if split.get(meta["task_id"]) != "test":
+            continue
+        files = {s["filename"] for s in ex["crossfile_context_retrieval"]["list"]} - {meta["file"]}
+        if any(manifest.get((meta["repository"], f)) == "new" for f in files):
+            ids.add(meta["task_id"])
+    return ids
+
+
 def load_examples(subset: str, limit: int | None):
     """Raw CrossCodeEval rows for the chosen TEST examples, in a fixed order."""
     split = {e["task_id"]: e["split"]
              for e in map(json.loads, open(SPLIT_DIR / "examples.jsonl", encoding="utf-8"))}
+    all_rows = load_from_disk(str(DATASET_DIR))["train"]
     if subset == "pilot":
         wanted = set(json.loads((SPLIT_DIR / "pilot_ids.json").read_text(encoding="utf-8")))
+    elif subset == "new_relevant":
+        manifest = {(m["repo"], m["path"]): m["split"]
+                    for m in map(json.loads, open(SPLIT_DIR / "manifest.jsonl", encoding="utf-8"))}
+        wanted = new_relevant_ids(all_rows, manifest, split)
+        logger.info(f"new_relevant subset: {len(wanted)} TEST examples with a relevant NEW file (expected 68)")
     else:
         wanted = {t for t, s in split.items() if s == "test"}
-    rows = [ex for ex in load_from_disk(str(DATASET_DIR))["train"] if ex["metadata"]["task_id"] in wanted]
+    rows = [ex for ex in all_rows if ex["metadata"]["task_id"] in wanted]
     assert all(split[ex["metadata"]["task_id"]] == "test" for ex in rows), "non-TEST example selected"
     rows.sort(key=lambda ex: ex["metadata"]["task_id"])
     if limit:
@@ -126,7 +153,10 @@ def distinct_files(chunks) -> list[str]:
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--adapter", help="LoRA adapter folder (needed for finetuning_only and hybrid)")
-    ap.add_argument("--subset", choices=["pilot", "test"], default="pilot")
+    ap.add_argument("--subset", choices=["pilot", "test", "new_relevant"], default="pilot")
+    ap.add_argument("--base-prompt", choices=list(BASE_PROMPTS), default="instruction",
+                    help="prompt for base and rag_only (the adapter systems always use the instruction format): "
+                         "instruction = first-pilot format (default); plain = chunks as comments + code, no wrapper")
     ap.add_argument("--view", choices=list(VIEWS), default="main")
     ap.add_argument("--systems", nargs="+", choices=list(SYSTEMS), default=list(SYSTEMS))
     ap.add_argument("--top-k", type=int, default=None, help="chunks in the prompt (default: config retrieval.top_k)")
@@ -157,6 +187,7 @@ def main():
     suffix = "" if args.retriever == "dense" else f"_{args.retriever}"
     suffix += f"_code{args.max_code_tokens}" if args.max_code_tokens else ""
     suffix += f"_noise{args.noise_chunks}" if args.noise_chunks else ""
+    suffix += "_plainbase" if args.base_prompt == "plain" else ""
     out_dir = Path(args.output_dir or f"results/{args.subset}_{args.view}{suffix}")
 
     all_repos = sorted(p.name for p in INDEX_DIR.iterdir() if p.is_dir())
@@ -211,7 +242,8 @@ def main():
         reset_gpu_memory_stats()
         peak_ram = 0.0
         for rec in records:
-            prompt = build_prompt(rec["code"], rec["prompt_chunks"] if uses_retrieval else None)
+            prompt = build_system_prompt(rec["code"], rec["prompt_chunks"] if uses_retrieval else None,
+                                         uses_adapter, args.base_prompt)
             start = time.perf_counter()
             if uses_adapter or not args.adapter:
                 pred = complete(tokenizer, model, prompt, max_new_tokens)
@@ -242,7 +274,8 @@ def main():
                    "subset": args.subset, "view": args.view, "top_k": top_k,
                    "adapter": args.adapter, "retriever": args.retriever,
                           "max_code_tokens": args.max_code_tokens,
-                          "noise_chunks": args.noise_chunks},
+                          "noise_chunks": args.noise_chunks,
+                          "base_prompt": args.base_prompt},
         )
 
     compare_systems(results, output_dir=str(out_dir))

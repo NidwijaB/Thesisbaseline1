@@ -52,3 +52,22 @@ def test_truncate_code_left_keeps_the_text_nearest_the_cursor():
     assert truncate_code_left("a b c d e", tok, 3) == "c d e"
     assert truncate_code_left("a b", tok, 3) == "a b"
     assert truncate_code_left("a b c d e", tok, None) == "a b c d e"
+
+
+def test_new_relevant_ids_picks_test_examples_with_a_relevant_new_file():
+    from experiments.run_comparison import new_relevant_ids
+
+    def ex(tid, repo, target, snippet_files):
+        return {"metadata": {"task_id": tid, "repository": repo, "file": target},
+                "crossfile_context_retrieval": {"list": [{"filename": f} for f in snippet_files]}}
+
+    manifest = {("r", "t1.py"): "test", ("r", "t2.py"): "test", ("r", "t3.py"): "test",
+                ("r", "n.py"): "new", ("r", "b.py"): "base", ("other", "n.py"): "base"}
+    split = {"e1": "test", "e2": "test", "e3": "test", "e4": "base"}
+    rows = [ex("e1", "r", "t1.py", ["n.py", "b.py"]),    # relevant NEW file -> selected
+            ex("e2", "r", "t2.py", ["b.py"]),            # only BASE files -> not selected
+            ex("e3", "r", "t3.py", ["t3.py"]),           # own file is excluded -> not selected
+            ex("e4", "r", "n.py", ["n.py"])]             # not a TEST example -> not selected
+    assert new_relevant_ids(rows, manifest, split) == {"e1"}
+    # a NEW file in a different repository does not count
+    assert new_relevant_ids([ex("e1", "other", "t1.py", ["n.py"])], manifest, split) == set()

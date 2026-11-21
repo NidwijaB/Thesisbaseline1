@@ -6,7 +6,7 @@ The record of what was found: `docs/progress_log.md`, Entries 32 to 35; numbers 
 
 ## Where the project stands
 
-**About 67% of the project work is done (read as 64 to 70%; thesis writing not counted).** A weighted judgement
+**About 65% of the project work is done (read as 62 to 68%; thesis writing not counted).** A weighted judgement
 (Entry 35), not a measurement.
 
 | Workstream | Weight | Done | Status |
@@ -17,7 +17,7 @@ The record of what was found: `docs/progress_log.md`, Entries 32 to 35; numbers 
 | Pipeline code | 17.0% | 97% | Runs end to end on a T4 |
 | Retrieval (indexes, dense vs BM25 vs random, both datasets) | 9.1% | 87% | Done |
 | Fine-tuning | 11.4% | 60% | CrossCodeEval adapter + loss comparison done; no RepoBench run, no RAFT variant |
-| Evaluation runs | 28.4% | 33% | Pilot (n=50) done in 4 variants; **no full 543-example run; base/RAG prompt unresolved** |
+| Evaluation runs | 28.4% | 25% | Pilot (n=50) done in 4 variants; **no full 543-example run; base/RAG prompt unresolved** |
 | Extra analyses | 9.1% | 40% | Staleness view, shorter code, BM25 run; **forgetting check invalid**; hit/miss, noise, top-k, NEW-relevant subset not run |
 
 What the pilot showed (n=50, not findings): fine-tuned and hybrid score far above base and RAG (edit similarity
@@ -58,15 +58,15 @@ python -m src.evaluation.analyze_predictions results/pilot_staleness/predictions
 ```
 Writes `analysis.json` next to each file. Send me the output; I log it as the next entry.
 
-**L4. Ask Claude Code to build the three pieces the Colab steps need.** They do not exist yet, so the Colab
-commands for C1 to C3 below cannot be run until they are built, tested and pushed:
+**L4. DONE (2026-11-21, Entry 37): the three pieces the Colab steps need were built and tested locally** (decision (a):
+plain continuation prompt for base and RAG). 34 tests pass and the dry run passes. They reach Colab only after L5 (push).
 1. **A base-friendly prompt option for `run_comparison`** (for base and RAG; for example the plain code prefix, or a
    few-shot prompt), recorded in the metrics file and in the output folder name, default unchanged.
 2. **A plain-stub option for `forgetting_check`** (both models get the raw HumanEval stub with no instruction wrapper),
    plus a guard against dividing by a zero base score.
 3. **A subset filter for the 68 NEW-relevant CrossCodeEval TEST examples** (relevant file in NEW), for the real staleness
    test (H3). Expected count: 68.
-Say "build L4 items" and Claude Code writes and tests them locally (unit tests plus the dry run).
+Not built (lower priority): a pilot that includes retrieval misses; a repetition guard for the hybrid.
 
 **L5. Commit and push** (you do this; Claude Code does not push): the new code, `docs/next_steps_part3.md`, and the
 updated docs. Colab clones from GitHub, so nothing built in L4 reaches Colab until it is pushed.
@@ -84,24 +84,35 @@ Do not start until L2 is done and L4 is pushed.
 **C0. Setup (same as before):** T4 GPU; Cell 1 (Drive), Cell 2 (clone), Cell 3 (`!python tools/colab_setup.py`, all
 checks `ok`), Cell 4 (imports and adapter check, see `docs/colab_steps_part2.md` section A).
 
-**C1. Rerun the pilot with the base-friendly prompt** (50 examples, main view). The exact command and flag name are
-given when L4 item 1 is built. Success: a new folder (for example `results/pilot_main_<variant>/`) with all four systems.
+**C1. Rerun the pilot with the plain prompt for base and RAG** (50 examples, main view):
+```python
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain
+```
+Success: `results/pilot_main_plainbase/` with all four systems (fine-tuned and hybrid should be identical to the first pilot).
+Read the base and RAG predictions in `predictions.jsonl` BEFORE looking at scores: they should now be code continuations.
 Read the result against `results/pilot_main/`:
 - if base and RAG edit similarity rises a lot, the earlier deficit was a prompt artifact: the thesis compares systems
   "same task, best format per system", and states it;
 - if it does not, the deficit is real and the comparison stands as it is.
 
 **C2. Forgetting check, plain stub, all 164 problems** (Colab only; runs model-generated code):
-exact command given when L4 item 2 is built (it keeps `--4bit --allow-exec`, without `--limit`). Expect about 15 to
-25 minutes. Success: base pass@1 is well above 0 (reported around 40% for this model; verify the figure in the Qwen2.5-Coder
+```python
+!python -m src.evaluation.forgetting_check --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --allow-exec
+```
+(default prompt is `plain`; result in `results/forgetting_humaneval_plain.json`). Expect about 15 to 25 minutes. Success: base pass@1 is well above 0 (reported around 40% for this model; verify the figure in the Qwen2.5-Coder
 report before citing it), and a relative change is printed. If base is still near 0, stop and send the output.
 
 **C3. NEW-relevant subset, main and staleness views** (68 examples; the real test of "RAG handles new files, fine-tuning
-does not"): exact command given when L4 item 3 is built. Run both `--view main` and `--view staleness`. Expect about 6
-to 8 minutes each.
+does not"), both views; 68 examples from 35 repositories:
+```python
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain --subset new_relevant
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain --subset new_relevant --view staleness
+```
+Outputs: `results/new_relevant_main_plainbase/` and `results/new_relevant_staleness_plainbase/`. Expect about 6 to 8
+minutes each. In the main view the relevant NEW file cannot be retrieved; in the staleness view it can.
 
 **C4. Finish:** download all new `results/` folders to your computer (Drive `MyDrive/thesis/outputs/results/`), then
-Runtime > Disconnect and delete runtime. Send me the outputs; they become Entry 36.
+Runtime > Disconnect and delete runtime. Send me the outputs; they become Entry 38.
 
 ---
 
@@ -180,4 +191,4 @@ the limitation.
 | `DIFFERS` / `MISSING` in the data check | Do not run anything else; send the output |
 | `out of memory` | Runtime > Restart session, rerun from Cell 1; note which system failed |
 | Colab disconnected during a run | Re-run Cells 1 to 3, then start that run again |
-| A command in Phase 2 does not exist | The L4 item was not built or not pushed yet; do L4 and L5 first |
+| `unrecognized arguments: --base-prompt` or `--subset new_relevant` | The new code was not pushed; do L5 (push), then re-run Cell 2 |

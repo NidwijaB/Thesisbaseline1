@@ -1372,3 +1372,200 @@ P@1 0.62 in both. Peak GPU 2.0 GB (no retrieval) and 2.1 GB (retrieval), same as
   (2) decide on the base-friendly prompt and the plain-stub forgetting option; (3) full 543-example run only after (2),
   since a full run with a handicapped base wastes about 80 minutes per view; (4) the 68-example NEW-relevant staleness
   subset; (5) RepoBench completion and fine-tuning.
+
+## Entry 36: Local review of the Colab results: the base/RAG prompt-format artifact is confirmed (2026-11-21)
+- **Asked:** go through the downloaded results (`results/`), suggest the next local steps, and log findings.
+- **Done (read-only analysis, nothing in the code or data changed):** checked that all files arrived
+  (`pilot_main`, `pilot_staleness`, `pilot_main_code480`, `pilot_main_bm25`, `pipeline_test`,
+  `val_loss_base_vs_adapter.json`, `forgetting_humaneval.json`); read the first 14 rows of `pilot_main/predictions.jsonl`;
+  classified every base, RAG, fine-tuned and hybrid prediction; ran `analyze_predictions` on `pilot_main`, `pilot_staleness`,
+  `pilot_main_bm25` and `pilot_main_code480` (it wrote an `analysis.json` next to each `predictions.jsonl`). The numbers in
+  the console output of Entries 33 to 35 match the downloaded metrics files and the loss JSON.
+  Side note: `.gitignore` now lists `results/` (a change you made; `git status` shows only that file as modified).
+
+### Finding 1: base and RAG are not attempting the task (the prompt-format artifact is confirmed)
+What the 50 pilot predictions look like (counted by the first characters of each prediction):
+| System | Import line | Comment line | Echo of "# --- retrieved from ... ---" | Prose | def/class | Other |
+|---|---|---|---|---|---|---|
+| base | 33 | 3 | 0 | 8 | 2 | 4 |
+| RAG | 5 | 17 | 8 | 17 | 1 | 2 |
+| fine-tuned | 0 | 0 | 0 | 0 | 0 | 50 |
+| hybrid | 0 | 0 | 0 | 0 | 0 | 50 |
+- Base writes things like `from datetime import datetime`, `import pytest`, or a sentence ("The provided code is incomplete
+  ..."); RAG copies the comment header of a retrieved chunk, writes a comment, or answers in prose ("The response is a list
+  of comments ..."; one output is the word-for-word instruction "Complete the following code."). The few "other" cases
+  (4 base, 2 RAG) were not checked one by one. The fine-tuned and hybrid models always write a code continuation of the line.
+- Cause: the prompt (`src/prompting.py`) is an instruction wrapper, `### Instruction ... ### Input: <code> ### Response:`,
+  and the code ends mid-line. The adapter was trained on exactly this and learned to continue the line and stop; the base
+  model was never told to continue the cut line, so it starts something new after "### Response:". With retrieval, the
+  retrieved chunks are pasted before the code as `#` comment lines, so RAG continues the comment pattern.
+- **Consequence:** the pilot's "base and RAG score about 0.23 edit similarity, fine-tuned and hybrid about 0.61 to 0.64" mostly
+  measures prompt format, not repository knowledge. The base and RAG numbers (and every "fine-tuned minus base" and "hybrid minus
+  RAG" difference, which the analysis flags as significant) must not be used to rank the systems. They are not wrong
+  numbers; they answer a different question ("how well does each model follow this instruction format?"). This also explains
+  base 0 of 50 exact match, base HumanEval 0 of 20 (same wrapper), and RAG equal to base for any retriever or code length.
+- Not an artifact: the fine-tuned vs hybrid comparison, where both use the same format (Finding 2).
+
+### Finding 2: hybrid vs fine-tuned-only (the comparison that is valid in the pilot)
+- Hybrid minus fine-tuned, edit similarity, paired 95% CI: main +0.031 [-0.032, 0.089]; staleness +0.044 [-0.019, 0.107];
+  BM25 +0.027 [-0.034, 0.082]; code cut to 480 tokens +0.038 [-0.023, 0.095]. Exact match: +0.06 [-0.04, 0.16] (main).
+  Every interval includes 0, so there is no evidence of a difference at n=50. The four runs reuse the same 50 examples, so
+  they are not four independent confirmations; the repeated small positive sign is not extra evidence.
+- On the 50 examples (main): the hybrid prediction is identical to the fine-tuned one in 21; the hybrid is better in 17 and
+  worse in 12 (by edit similarity). Exact-match hits: 9 examples in total (7 hybrid, 4 fine-tuned, 2 shared). So retrieval
+  changes the answer in about 60% of cases, in both directions.
+- Hybrid failure mode seen: example `project_cc_python/2413` produced an 814-character output that repeats `MagicMock(), ...`
+  until the 128-token limit (edit similarity 0.058). Only one example, but it means the hybrid can degenerate when the
+  retrieved context is long; a repetition guard or a shorter-context option may be worth adding. [writing note]
+
+### Finding 3: hit-versus-miss cannot be analysed at this size
+In the main view only 2 of 50 examples had no relevant file in the top 5 (4 of 50 in the staleness view, 0 in the BM25 view).
+The hit-minus-miss numbers (for example hybrid edit similarity -0.20, CI excludes 0) rest on 2 examples and mean nothing. Hit
+versus miss needs the full 543-example run (292 with a relevant file in the pool) or a pilot that includes misses.
+
+### Finding 4: forgetting check and validation loss
+- `forgetting_humaneval.json`: base passed 0 of 20; fine-tuned passed problems 2, 11, 14, 15, 16 (5 of 20); relative change
+  `None`. Consistent with Finding 1: the base is scored on the instruction wrapper, so this is invalid as a forgetting measure.
+- Validation loss file matches Entry 34 (base 2.735, adapter 0.6887, 1,059 examples, 9,320 answer tokens). The base loss is high
+  for the same format reason.
+
+### What this changes
+1. The completion estimate (about 67%, Entry 35): revised to about **65%** (62 to 68%). The evaluation-runs share drops from about
+   33% to about 25% because the pilot's base and RAG rows have to be rerun with a fair prompt. Revise again after the rerun.
+2. The plan's "same prompt for all systems" rule needs a decision (below). Wang et al.'s base model was given the plain code
+   prefix, not an instruction wrapper (as I understand their setup; check `docs/reference_paper_comparison.md`).
+
+### Decision for you (affects the thesis wording)
+How should base and RAG be prompted? Options:
+- **(a) Plain continuation for base and RAG (recommended default).** Prompt = retrieved chunks as comments (RAG only) + the
+  code, no instruction wrapper; the model simply continues from the cursor. The fine-tuned and hybrid models keep the format
+  they were trained on. State in the thesis: "same task, same retrieved chunks, same decoding and scoring; each model gets the
+  prompt it can follow". This is the standard completion setup. Trade-off: the prompts are no longer byte-identical.
+- **(b) Few-shot instruction prompt for base and RAG.** Keep the wrapper but add two worked examples. Closer to "same prompt" but
+  longer prompts and a choice of examples that could bias results.
+- **(c) Keep the wrapper everywhere and report the format effect as a finding.** Easiest, but base and RAG stay uninformative and
+  the RAG-vs-fine-tuning question cannot be answered.
+- Whichever you choose, keep the instruction-wrapper numbers of the pilot as a documented first attempt and state why they were
+  set aside (this entry); do not delete them.
+- Fine-tuning with retrieval-formatted prompts (RAFT-style) is a separate question and is still open.
+
+### Next local steps (in order)
+1. Decide (a), (b) or (c) above.
+2. Build (Claude Code, tested locally and by the dry run): the chosen base-friendly prompt as an option in `run_comparison`
+   (default unchanged, recorded in the metrics file and output folder name); a plain-stub option and a zero-score guard for
+   `forgetting_check`; a filter for the 68 NEW-relevant CrossCodeEval examples. Also worth building: a pilot that includes
+   retrieval misses (for hit versus miss) and an optional repetition guard for the hybrid.
+3. Add a unit test that the plain prompt has no instruction wrapper and that retrieved chunks still precede the code.
+4. Commit and push; then Colab session A (`docs/next_steps_part3.md`, Phase 2): base/RAG rerun on the same 50, plain-stub
+   HumanEval on 164 problems, the 68-example staleness subset.
+5. `docs/claude_web_prompt.md`: caveat 1 and the "may not claim" line were updated in this entry; refresh the numbers after the rerun.
+
+## Entry 37: Decision (a) and the new options built; how the prompts were chosen, used and tested (plain-language note for the demo) (2026-11-21)
+- **Asked:** use option (a) from Entry 36 (plain continuation prompt for base and RAG), add a plain-language note on how the
+  prompts were selected, with examples, how they were used and tested, then build the local items (Entry 36, "Next local
+  steps", item 2). Colab steps come later.
+- **Done (all local, no GPU, nothing run on a model yet):**
+  1. `src/prompting.py`: `build_plain_prompt` (retrieved chunks as `#` comments + the code, no wrapper) and
+     `build_system_prompt(code, chunks, uses_adapter, base_prompt)`, which picks the prompt for each system. Adapter systems (B, C) always
+     get the instruction format; the frozen systems (base, A) get `instruction` (default, unchanged) or `plain`.
+  2. `experiments/run_comparison.py`: new `--base-prompt {instruction,plain}` (default `instruction`, so old commands behave as
+     before); recorded as `base_prompt` in every metrics file; the output folder gets the suffix `_plainbase`. New
+     `--subset new_relevant`: the TEST examples whose relevant file (A3 rule) is a NEW file. **Checked on the real data: 68 examples
+     from 35 repositories, as expected from Entry 7 (5 of them are also in the pilot).** Run it with `--view main` and `--view staleness`:
+     in the main view retrieval cannot reach the NEW file, in the staleness view it can.
+  3. `src/evaluation/forgetting_check.py`: new `--prompt {plain,instruction}` (default `plain`: both models get the raw HumanEval
+     function stub); `relative_change()` returns `None` for a zero base score and the script prints a warning that a 1.5B code
+     model should not score 0 with the plain prompt; the result file records the prompt and defaults to
+     `results/forgetting_humaneval_<prompt>.json`, so the first (invalid) file `forgetting_humaneval.json` is not overwritten.
+  4. `experiments/dry_run_pipeline.py`: also reports prompt lengths with `--base-prompt plain` (median 423 tokens without retrieval,
+     2,138 with, vs 437 and 2,152 with the wrapper; the wrapper is only about 14 tokens) and checks the plain prompt is shorter.
+- **Tests:** 34 automated tests pass (27 before; 7 new: plain prompt has no wrapper and ends at the cursor; retrieved chunks come
+  first as comments; adapter systems always get the instruction format; the default is unchanged; an unknown option is rejected;
+  HumanEval prompt modes and the zero-base guard; the NEW-relevant selection rule on synthetic data, including own-file,
+  other-repository and non-TEST cases). The model-free dry run passes (`DRY RUN PASSED`).
+- **Not verified:** the plain prompt has not been run on the model, so there is no evidence yet that base and RAG now continue the line
+  properly; that is the Colab rerun. Not built (from Entry 36, lower priority): a pilot that includes retrieval misses, and a
+  repetition guard for the hybrid (one 814-character `MagicMock()` loop).
+
+### Plain-language note: how the prompts were chosen, used and tested (for the demo and presentation)
+**The task, in one sentence.** We cut a line of code in the middle (for example `response = await repository_ratings.`) and ask each
+system to write the rest of that one line (`delete_rate(1, session, new_user)`). A system gets only text as input, so the way we write
+that text, the "prompt", matters a lot.
+
+**Where the first prompt came from.** The project's first training run used an "instruction" format, like a form with three boxes:
+```
+### Instruction:
+Complete the following code.
+
+### Input:
+    response = await repository_ratings.
+
+### Response:
+```
+The fine-tuned model was trained on thousands of examples that look exactly like this, followed by the answer, so it learned the form.
+We kept the same text for every system at first because the plan says all systems should see the same prompt, so that any difference
+in the results comes from the method (retrieval, fine-tuning, both) and not from the wording.
+
+**What went wrong (found by reading the pilot answers, Entry 36).** The fine-tuned model learned to read this form and write the rest
+of the line. The plain model (never trained on the form) did not understand that it should continue the cut line. For the same cut line
+(`response = await repository_ratings.`), correct answer `delete_rate(1, session, new_user)`:
+
+| System | What it wrote | Reading |
+|---|---|---|
+| base model | `from datetime import datetime` | started something new, not a continuation |
+| RAG (base + retrieved code) | `The response of the delete_rate function` | wrote a sentence about the code |
+| fine-tuned | `delete_rate(1, session, new_user)` | correct |
+| hybrid | `delete_rate(1, session, new_user)` | correct |
+
+Over the 50 pilot examples: 33 of 50 base answers were `import` lines and 8 were sentences; RAG wrote comment lines, sentences or copied the
+header of the retrieved code (`# --- retrieved from ... ---`). Fine-tuned and hybrid always wrote a code continuation. So the low scores of
+base and RAG measured "can it read the form", not "does it know the repository". An analogy for the audience: it is like giving an
+exam in a language that only one of the students was taught.
+
+**How the new prompt was chosen.** Three options were considered (Entry 36): (a) give the plain model a normal code-completion prompt
+(just the code up to the cursor, with retrieved code placed above it as comments); (b) keep the form but add two worked examples;
+(c) keep the form and report the problem. We chose (a) because it is the standard way to ask a code model to continue code, it needs no
+hand-picked examples that could bias the result, and it keeps the task, the retrieved code, the decoding and the scoring identical. The
+trade-off, stated openly: the text is no longer byte-for-byte identical across systems; each model gets the prompt it can follow.
+The fine-tuned and hybrid models keep the form they were trained on.
+
+**What each system now receives (same cut line):**
+| System | Prompt |
+|---|---|
+| base | the code only, ending at the cut: `...response = await repository_ratings.` |
+| RAG (A) | retrieved code as `#` comment lines (with the file name), then the code, ending at the cut |
+| fine-tuned (B) | the three-box form with the code in the Input box |
+| hybrid (C) | the three-box form, with the retrieved code (as comments) at the top of the Input box |
+
+**How it was used and tested.**
+- Used: `run_comparison --base-prompt plain` switches base and RAG to the plain prompt; everything else (the 50 examples, retrieval,
+  one-line decoding, scoring, intervals) is unchanged. The first pilot's numbers are kept as a documented first attempt.
+- Tested without a GPU: 7 automated tests check the prompt text (no "Instruction" box in the plain prompt, the code is last, retrieved
+  code comes first as comments, the adapter systems still get the form, the default is unchanged); a dry run on all 50 pilot examples
+  builds both prompt types for every example and checks the lengths (plain is shorter by only about 14 tokens, so it cannot change speed
+  or memory).
+- To be tested on the GPU (Colab, later): rerun base and RAG on the same 50 examples with the plain prompt and read the answers first;
+  if they are now code continuations, the scores become meaningful.
+- Same lesson for the HumanEval forgetting check: the first run (base 0 of 20) used the form and is invalid; the redo uses the raw
+  function stub for both models.
+
+**One-line message for the slides:** "Our first prompt only suited the fine-tuned model, so the baselines looked unfairly bad. We
+fixed it by giving each model the kind of prompt it understands while keeping the same task, retrieved code and scoring."
+
+### Commands for the next Colab session (Phase 2 of `docs/next_steps_part3.md`; run after pushing)
+```python
+# C1: base and RAG with the plain prompt, same 50 examples (read results/pilot_main_plainbase/predictions.jsonl first)
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain
+# C2: forgetting check, plain stub, all 164 problems (Colab only; runs model-generated code)
+!python -m src.evaluation.forgetting_check --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --allow-exec
+# C3: the 68-example staleness test, both views (add --base-prompt plain to every command)
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain --subset new_relevant
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain --subset new_relevant --view staleness
+```
+The first command writes to `results/pilot_main_plainbase/`; the new-relevant runs to `results/new_relevant_main_plainbase/` and
+`results/new_relevant_staleness_plainbase/`; the forgetting result to `results/forgetting_humaneval_plain.json`.
+Expected time: C1 about 7 minutes, C2 about 15 to 25 minutes, C3 about 6 to 8 minutes per view.
+
+### Status
+Completion estimate unchanged at about 65% (Entry 36); the local building and testing for the rerun is done, the GPU results are not. Nothing
+committed or pushed (you commit and push before Colab can use the new options).
