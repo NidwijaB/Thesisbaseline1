@@ -71,12 +71,12 @@ Model-free dry run on the 50 pilot examples: no TEST file retrieved; a relevant 
 for 48 of 50 (dense) and 50 of 50 (BM25) in the main view; prompt length median 437 tokens without retrieval
 and 2,152 with it (training used 512). These are pipeline facts, not evaluation results.
 
-## 5b. Overall completion (Entry 36, 2026-11-21; 58% Entry 31, 65% Entry 34, 67% Entry 35)
+## 5b. Overall completion (Entry 42, 2026-11-23; Part 1 about 96%, whole thesis about 74%; earlier: 58% Entry 31, 65% Entry 36)
 
-About 65% of the project work (62 to 68%; thesis writing not counted; a weighted judgement, not a measurement).
-Groundwork done (data, code, indexes, retrieval results, one training run); evaluation runs (28% of the weight)
-are about 25% done (pilot and variants; base and RAG rows invalid until rerun, Entry 36). Weights and the original completed-versus-remaining table:
-`docs/progress_log.md`, Entry 31; the revision: Entry 34.
+Part 1 (pilot and basic evaluation) is about 96% done (94 to 98%); the whole thesis project about 74%. Thesis writing is not counted; both are weighted
+judgements, not measurements. Part 1 = data and splits, retrieval comparison, one fine-tuning run, the four-system pilot with the fixed prompts and the basic
+evaluation; Part 2 (thesis wrap-up) = the full 543-example run, RepoBench training and completion, sweeps, RAFT-style decision, seeds, recommendations.
+Weights and tables: `docs/progress_log.md`, Entries 39 and 42.
 
 ## 5c. Pilot, main view, n=50 (Entry 33; pilot only, not findings)
 
@@ -132,6 +132,21 @@ on all 164 problems.
 
 Open question before the full run: the base/RAG deficit may be a prompt-format artifact (base EM 0 of 50, HumanEval 0 of
 20). See Entry 35.
+
+## 5f. Part 1 results with the fixed (plain) prompts (Entries 40 to 42; pilot only, not findings)
+
+Plain prompt for base and RAG; fine-tuned and hybrid unchanged. Pilot main view, n=50 (edit similarity [95% CI], exact match, identifier accuracy, CodeBLEU):
+base 0.494 [0.426, 0.559], 0.04, 0.298, 0.237; RAG 0.387 [0.311, 0.468], 0.02, 0.217, 0.140; fine-tuned 0.613 [0.549, 0.680], 0.08, 0.414, 0.213;
+hybrid 0.644 [0.570, 0.715], 0.14, 0.490, 0.214. Staleness view: RAG 0.403, hybrid 0.657 (EM 0.16); base and fine-tuned identical.
+Paired (edit similarity): fine-tuned - base +0.120 [0.061, 0.187]; RAG - base -0.106 [-0.172, -0.046]; hybrid - fine-tuned +0.031 [-0.032, 0.089] (not significant).
+Plain minus instruction prompt: base +0.257, RAG +0.161 (both significant); fine-tuned and hybrid 0.
+Staleness test, 68 examples with a relevant NEW file: hybrid 0.640 (main view) to 0.695 (new file in index), +0.055 [0.015, 0.103]; hybrid minus fine-tuned in the
+staleness view +0.091 [0.036, 0.146]; RAG -0.034 [-0.085, 0.018]; fine-tuned unchanged (0.604).
+BM25: retrieval MRR 0.840 vs 0.764, completion unchanged (RAG 0.386, hybrid 0.640). HumanEval forgetting (164 problems, plain stub): base 66, fine-tuned 63,
+relative change -4.5%, McNemar p = 0.68. Cost: 1.61 / 1.72 / 1.91 / 2.24 s per example (base / RAG / fine-tuned / hybrid); peak GPU 2.0 to 2.15 GB.
+**Open problem:** the frozen RAG system wrote `<|fim_suffix|>` as its answer in 6 of 50 examples and an empty line in 5 (11 of 50 unusable), so its row is not a fair
+measure of retrieval; fixes are being tested (`--suppress-fim`, `--rag-format qwen_repo`, `--save-raw`; `docs/colab_steps_new.md` section F).
+Charts: `results/figures/pilot_*.png`, numbers in `results/figures/pilot_numbers.csv`; example outputs: `docs/example_outputs.md`.
 
 ## 6. Not available yet
 

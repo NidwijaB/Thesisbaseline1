@@ -52,8 +52,8 @@ from src.evaluation.evaluator import compare_systems, run_evaluation
 from src.evaluation.latency import (LatencyRecord, current_cpu_ram_mb, peak_gpu_memory_mb,
                                     reset_gpu_memory_stats)
 from src.evaluation.metrics import edit_similarity, exact_match, mean_reciprocal_rank
-from src.generation import complete, load_model
-from src.prompting import BASE_PROMPTS, build_system_prompt, retrieval_query, truncate_code_left
+from src.generation import code_marker_ids, complete, complete_detailed, load_model
+from src.prompting import BASE_PROMPTS, RAG_FORMATS, build_system_prompt, retrieval_query, truncate_code_left
 from src.retrieval.embedder import CodeEmbedder
 from src.retrieval.vector_store import FAISSVectorStore, RetrievedChunk
 from src.utils.config import load_config
@@ -169,6 +169,17 @@ def main():
                     help="noisy-context test: add N irrelevant chunks from other repositories to the "
                          "prompts of rag_only and hybrid (seeded). Retrieval metrics are not affected.")
     ap.add_argument("--limit", type=int, default=None, help="first N examples only (quick test)")
+    ap.add_argument("--rag-format", choices=list(RAG_FORMATS), default="comments",
+                    help="how the frozen RAG system sees the retrieved chunks (only with --base-prompt plain): comments = "
+                         "chunks as # comment lines (default, first runs); qwen_repo = Qwen2.5-Coder's repository-level "
+                         "format with <|file_sep|> markers. Output folder gets the suffix _qwenrepo.")
+    ap.add_argument("--suppress-fim", action="store_true",
+                    help="forbid Qwen's fill-in-the-middle and file-separator tokens during generation, for every system "
+                         "(the frozen RAG system sometimes wrote <|fim_suffix|> as its answer). Folder suffix _nofim.")
+    ap.add_argument("--save-raw", action="store_true",
+                    help="diagnostic: also save each system's raw completion, number of generated tokens and the "
+                         "reason generation stopped (eos / newline / max_tokens) in predictions.jsonl. Same decoding, "
+                         "so the predictions are unchanged. Output folder gets the suffix _raw.")
     ap.add_argument("--4bit", dest="use_4bit", action="store_true", help="4-bit weights (needs GPU + bitsandbytes)")
     ap.add_argument("--skip-codebleu", action="store_true", help="leave CodeBLEU out (recorded as null)")
     ap.add_argument("--output-dir", default=None)
@@ -188,6 +199,9 @@ def main():
     suffix += f"_code{args.max_code_tokens}" if args.max_code_tokens else ""
     suffix += f"_noise{args.noise_chunks}" if args.noise_chunks else ""
     suffix += "_plainbase" if args.base_prompt == "plain" else ""
+    suffix += "_qwenrepo" if args.rag_format == "qwen_repo" else ""
+    suffix += "_nofim" if args.suppress_fim else ""
+    suffix += "_raw" if args.save_raw else ""
     out_dir = Path(args.output_dir or f"results/{args.subset}_{args.view}{suffix}")
 
     all_repos = sorted(p.name for p in INDEX_DIR.iterdir() if p.is_dir())
@@ -202,6 +216,7 @@ def main():
     noise_stores: dict[str, FAISSVectorStore] = {}
     tokenizer, model = load_model(cfg.llm.model, args.adapter, args.use_4bit)
     max_new_tokens = cfg.generation.max_new_tokens
+    bad_words = code_marker_ids(tokenizer) if args.suppress_fim else None
 
     # Retrieval is identical for rag_only and hybrid, so do it once per example.
     records = []
@@ -229,12 +244,13 @@ def main():
         assert all(manifest[(repo, f)] != "test" for f in files), "TEST file retrieved"
         relevant = sorted({s["filename"] for s in ex["crossfile_context_retrieval"]["list"]} - {target})
         relevant = [f for f in relevant if manifest.get((repo, f)) in VIEWS[args.view]]
-        records.append({"task_id": meta["task_id"], "repo": repo, "code": code,
+        records.append({"task_id": meta["task_id"], "repo": repo, "target": target, "code": code,
                         "reference": ex["groundtruth"].split("\n")[0], "chunks": chunks, "prompt_chunks": prompt_chunks,
                         "retrieved_files": files, "relevant_files": relevant, "retrieval_ms": elapsed})
         retrieval_ms["total"] += elapsed
 
     results, predictions = {}, defaultdict(list)
+    diagnostics = defaultdict(list)    # --save-raw only
     for system in args.systems:
         uses_adapter, uses_retrieval = SYSTEMS[system]
         logger.info(f"=== {system} ===")
@@ -243,13 +259,17 @@ def main():
         peak_ram = 0.0
         for rec in records:
             prompt = build_system_prompt(rec["code"], rec["prompt_chunks"] if uses_retrieval else None,
-                                         uses_adapter, args.base_prompt)
+                                         uses_adapter, args.base_prompt, args.rag_format, rec["repo"], rec["target"])
             start = time.perf_counter()
+            generate = complete_detailed if args.save_raw else complete
             if uses_adapter or not args.adapter:
-                pred = complete(tokenizer, model, prompt, max_new_tokens)
+                pred = generate(tokenizer, model, prompt, max_new_tokens, bad_words)
             else:
                 with model.disable_adapter():
-                    pred = complete(tokenizer, model, prompt, max_new_tokens)
+                    pred = generate(tokenizer, model, prompt, max_new_tokens, bad_words)
+            if args.save_raw:
+                diagnostics[system].append({k: pred[k] for k in ("raw", "n_new_tokens", "stop_reason")})
+                pred = pred["prediction"]
             latency.inference_ms += (time.perf_counter() - start) * 1000
             if uses_retrieval:
                 latency.retrieval_ms += rec["retrieval_ms"]
@@ -275,7 +295,8 @@ def main():
                    "adapter": args.adapter, "retriever": args.retriever,
                           "max_code_tokens": args.max_code_tokens,
                           "noise_chunks": args.noise_chunks,
-                          "base_prompt": args.base_prompt},
+                          "base_prompt": args.base_prompt, "rag_format": args.rag_format,
+                          "suppress_fim": args.suppress_fim},
         )
 
     compare_systems(results, output_dir=str(out_dir))
@@ -289,7 +310,14 @@ def main():
                 row[system] = {"prediction": preds[i],
                                "exact_match": exact_match(preds[i], rec["reference"]),
                                "edit_similarity": round(edit_similarity(preds[i], rec["reference"]), 4)}
+                if args.save_raw:
+                    row[system].update(diagnostics[system][i])
             f.write(json.dumps(row) + "\n")
+    if args.save_raw:
+        for system, rows in diagnostics.items():
+            counts = {r: sum(x["stop_reason"] == r for x in rows) for r in ("eos", "newline", "max_tokens")}
+            empty = sum(not p.strip() for p in predictions[system])
+            logger.info(f"[{system}] stop reasons {counts}; empty first lines {empty}")
     logger.info(f"Done. See {out_dir}/comparison_summary.md and predictions.jsonl")
 
 

@@ -17,13 +17,16 @@ Must attach:
 1. `docs/Nidwija_081MSCSK010_progress_report.docx`: the ORIGINAL August report (keep its structure, tone, citations).
 2. `docs/slides/Midterm_Progress_Update.pptx`: the ORIGINAL September deck (new deck continues its look).
 3. `docs/things_to_do_first`: the experiment plan (authoritative for the study design).
-4. `docs/progress_log.md`: Entries 1 to 37, every decision, number and caveat. Entry 37 holds the plain-language note on how the prompts were chosen.
+4. `docs/progress_log.md`: Entries 1 to 42, every decision, number and caveat. Entry 37 is the plain-language note on how the prompts
+   were chosen; Entries 40 to 42 hold the plain-prompt pilot, the paired analysis and the RAG formatting problem.
 5. `docs/results_summary.md`: every real result in one place.
 6. `docs/reference_paper_comparison.md`: Wang et al. (2025) comparison, and `docs/references.md`.
-7. `results/figures/*.png`, `results/retrieval_comparison.json`, `results/repobench_retrieval_comparison.json`,
-   and (after downloading from Drive) `results/pilot_main/comparison_summary.json`,
-   `results/pilot_staleness/comparison_summary.json`, `results/val_loss_base_vs_adapter.json`.
-8. `docs/next_steps_part3.md`: the remaining work in order (use it for the roadmap and "next steps").
+7. The ready-made charts: `results/figures/pilot_main_vs_staleness.png`, `pilot_prompt_effect.png`, `pilot_staleness_68.png`,
+   `pilot_paired_differences.png`, `pilot_cost.png`, `pilot_forgetting.png`, `pilot_numbers.csv` (every plotted number), and the older
+   `training_loss.png` and retrieval figures; `docs/example_outputs.md` (six side-by-side example outputs); the result JSON files
+   (`results/retrieval_comparison.json`, `results/repobench_retrieval_comparison.json`, `results/pilot_*_plainbase/comparison_summary.json`,
+   `results/new_relevant_*_plainbase/comparison_summary.json`, `results/val_loss_base_vs_adapter.json`, `results/forgetting_humaneval_plain.json`).
+8. `docs/next_steps_part3.md`: the remaining work (use it for the roadmap and "next steps").
 
 Attach if you have them: the university's report template or formatting rules; supervisor or committee feedback
 from the September defense; the original Figure 1 and Figure 3 images.
@@ -47,14 +50,21 @@ Report length: [YOU FILL IN, or "similar to the original plus about 6 pages"]. S
 
 - **Use only the numbers and facts in this prompt and the attached files.** Never invent results, intervals, latency,
   memory or citations. If something is missing, list it as a question for me.
-- **Only pilot results exist for completion quality** (50 examples; one model, one run). Label every such number
-  "pilot, n=50". Do not call anything a finding or a conclusion. The full 543-example evaluation has not been run.
-- **Claims you may NOT make** (the data does not support them yet):
-  - that RAG is worse than fine-tuning, or that fine-tuned beats base. The base and RAG scores are held back by a
-    prompt-format artifact (see section 5, caveat 1);
-  - that fine-tuning causes forgetting, or does not. The forgetting check is invalid and being redone;
-  - that RAG handles new files better than fine-tuning (the staleness hypothesis). The pilot cannot test it;
-  - that hybrid beats fine-tuned-only, or that BM25 beats dense for completion. The differences are inside the noise.
+- **Only pilot-level results exist for completion quality** (50 examples, 68 for the staleness test; one model, one run, one seed). Label
+  every such number "pilot, n=50" (or "n=68"). The full 543-example evaluation, RepoBench completion and multiple seeds are Part 2.
+- **What you MAY say (pilot, with the interval or sample size):** fine-tuned beats the base model (paired edit-similarity difference
+  +0.120, 95% interval [0.061, 0.187]); on the staleness test the hybrid improves when the relevant new file is in the index (+0.055
+  [0.015, 0.103]) and beats the fine-tuned model there (+0.091 [0.036, 0.146]) while the fine-tuned model cannot change; BM25 retrieves
+  better than dense retrieval but completion is the same; the adapter shows no significant forgetting on HumanEval (63 vs 66 of 164,
+  McNemar p = 0.68); retrieval prompts cost about 0.1 to 0.3 s and 0.14 GB more per example.
+- **What you may NOT say:**
+  - that retrieval hurts, or that RAG is worse than the base model, as a finding about retrieval. It was measured (edit similarity 0.387
+    vs 0.494) but about 22% of the frozen RAG system's answers were formatting failures (empty, or the literal token `<|fim_suffix|>`), so
+    it is a prompt-format problem of the frozen model, being fixed (section 5, caveat 1);
+  - that the hybrid generally beats the fine-tuned model: in the 50-example pilot the difference (+0.031 [-0.032, 0.089]) is not significant;
+  - that fine-tuning degrades on new files (H3). Fine-tuned does not change on new files; what was shown is that retrieval adds the new file's
+    knowledge for the hybrid;
+  - anything about hit-versus-miss accuracy (only 0 to 4 retrieval misses per run), RepoBench completion, or results beyond the pilot.
 - Hypotheses H1 to H4 were written BEFORE the experiments; label them as hypotheses.
 - Audience: examiners who know software but maybe not machine learning. Explain terms in plain words the first
   time (retrieval = looking up relevant code at the moment of the question; fine-tuning = retraining the model on the
@@ -127,29 +137,33 @@ GitHub files" is NOT verified.
 
 ## 4. Progress: how much is done (put this table in the report AND on a slide)
 
-**About 65% of the project work is done (range 62 to 68%; thesis writing not counted). This is a weighted judgement
-of effort, not a measurement; say so.** (August estimate was about 30 to 35%.)
+The work is split in two parts. **Project Part 1 (this presentation) is the pilot-level study: data and leakage-safe splits, retrieval comparison,
+one fine-tuning run, a four-system pilot on 50 examples with the fixed prompts, and the basic evaluation. Part 2 (thesis wrap-up) is the full
+evaluation and the heavier work.**
 
-| Workstream | Weight | Done | Status |
+**Part 1: about 96% done (range 94 to 98%; the presentation and report writing are not counted). This is a weighted judgement of effort, not a
+measurement; say so.** The whole thesis project is about 74% done (August estimate: about 30 to 35%).
+
+| Part 1 workstream | Weight | Done | Status |
 |---|---|---|---|
-| Plan, reference-paper analysis, hypotheses | 5.7% | 100% | Finished |
-| CrossCodeEval data (split, leakage checks, training corpus, pilot sample) | 11.4% | 100% | Finished |
-| RepoBench data (split, corpus, 300-per-setting sample) | 8.0% | 90% | Nearly finished |
-| Pipeline code (prompting, training, evaluation, demo, Colab setup, 27 tests) | 17.0% | 97% | Runs end to end on a T4 |
-| Retrieval (indexes for both datasets; dense vs BM25 vs random) | 9.1% | 87% | Done |
-| Fine-tuning | 11.4% | 60% | CrossCodeEval adapter and loss comparison done; no RepoBench adapter, no RAFT-style variant |
-| Evaluation runs (EM, edit similarity, identifier accuracy, CodeBLEU) | 28.4% | 25% | Pilot (n=50) in four variants; no full 543-example run |
-| Extra analyses (hit/miss, noisy context, staleness, forgetting, top-k) | 9.1% | 40% | Staleness view, shorter code, BM25 done; forgetting check invalid; the rest not run |
+| Plan, literature analysis, hypotheses | 8% | 100% | Finished |
+| CrossCodeEval data (split, leakage checks, training corpus, pilot sample) | 15% | 100% | Finished |
+| RepoBench data (split, corpus, 300-per-setting sample; used for retrieval in Part 1) | 10% | 100% | Finished |
+| Pipeline code (prompts, training, evaluation, diagnostics, Colab setup; 39 automated tests) | 15% | 100% | Runs end to end on a T4 |
+| Retrieval (indexes for both datasets; dense vs BM25 vs random) | 12% | 95% | Done |
+| Fine-tuning (CrossCodeEval adapter, base-vs-adapter loss) | 10% | 100% | Done |
+| Four-system pilot with the fixed prompts (main and staleness views, BM25, 68-example staleness test, HumanEval) | 20% | 95% | Done; a short follow-up run fixes the RAG formatting problem |
+| Basic evaluation and comparison with the literature | 10% | 85% | Analysis, charts and examples done; final RAG numbers pending |
 
-**Done:** both datasets prepared with leakage-checked file-level splits; fine-tuning corpora; per-repository indexes
-(206 CrossCodeEval repos, 446 RepoBench sample repos); retrieval comparison on both datasets; one QLoRA fine-tuning run;
-a pilot of all four systems; reference-paper analysis.
-**Left (in order):** (1) rerun base and RAG with the plain continuation prompt on the same 50 examples (decided; the option is
-built and tested locally, the GPU run is pending); (2) redo the forgetting check with the plain HumanEval stub on all 164 problems
-(built, run pending); (3) the 68-example staleness test, relevant file in NEW (subset built, 68 examples from 35 repos, run pending);
-(4) full CrossCodeEval comparison (543 TEST examples, main and staleness views) with hit/miss analysis, noisy-context and
-top-k extras; (5) RepoBench fine-tuning and completion; (6) decide on the RAFT-style variant; (7) numeric recommendations.
-Rough effect on progress: steps 1 to 3 about +4 to 5 points, step 4 about +12 to 15, step 5 about +8 to 10, the rest +3 to 4.
+**Part 2 (planned, thesis wrap-up):** full 543-example CrossCodeEval comparison (both views) with hit-versus-miss analysis; RepoBench fine-tuning
+and completion; noisy-context and top-k sweeps; the RAFT-style retrain decision; multiple fine-tuning seeds; numeric recommendations for the decision
+question; the thesis chapters.
+
+**Done in Part 1:** both datasets prepared with leakage-checked file-level splits; fine-tuning corpora; per-repository indexes (206 CrossCodeEval repos,
+446 RepoBench sample repos); retrieval comparison on both datasets; one QLoRA fine-tuning run; the first pilot, the discovery that its base and RAG rows
+were an instruction-prompt artifact, and the rerun with a plain prompt; staleness test; HumanEval forgetting check; reference-paper comparison.
+**Left in Part 1:** a short GPU follow-up that tests two fixes for the frozen RAG system's formatting failures (diagnostic of the raw answers; forbidding
+the fill-in-the-middle tokens; Qwen's repository-level prompt format), then refreshing the RAG numbers; the presentation and report.
 
 ## 5. Results to show (all real; section 6 says how to present them)
 
@@ -177,38 +191,68 @@ and the gap to random.
 steps, 3 h 29 min on a T4, about 8.7 GB. Training loss about 0.78 / 0.67 / 0.62 per epoch; validation loss about 0.68
 (flat; validation is not file-held-out, so optimistic). **Validation loss, base vs adapter: 2.735 vs 0.689.**
 
-**Pilot (50 CrossCodeEval TEST examples, seed 42, 40 repos; all four systems; pilot, n=50):**
+**How the prompts were chosen (use for a methodology paragraph and one slide).** The task is to write the rest of a code line cut in the middle. The
+first pilot gave every system the same "instruction form" the fine-tuned model was trained on; the plain model did not follow it (for the cut line
+`response = await repository_ratings.` the base wrote `from datetime import datetime`, RAG a sentence, fine-tuned and hybrid the correct
+`delete_rate(1, session, new_user)`). So base and RAG now get a plain continuation prompt (retrieved code as comments, then the code); the adapter
+systems keep the form they were trained on. Same task, same retrieved chunks, same decoding and scoring; each model gets the prompt it can follow (the
+prompts are not byte-identical: state this as a design choice). Plain minus instruction prompt, same 50 examples: base +0.257 edit similarity [0.191, 0.318],
+RAG +0.161 [0.089, 0.239]; fine-tuned and hybrid exactly 0. The first pilot's numbers are kept only as the documented first attempt.
+
+**Pilot, main view (50 CrossCodeEval TEST examples, seed 42, 40 repos; plain prompt for base and RAG; pilot, n=50):**
 | System | EM | Edit sim. [95% CI] | Identifier acc. | CodeBLEU |
 |---|---|---|---|---|
-| base | 0.00 | 0.236 [0.212, 0.262] | 0.018 | 0.068 |
-| RAG (A) | 0.00 | 0.226 [0.205, 0.248] | 0.042 | 0.121 |
+| base | 0.04 | 0.494 [0.426, 0.559] | 0.298 | 0.237 |
+| RAG (A) | 0.02 | 0.387 [0.311, 0.468] | 0.217 | 0.140 |
 | fine-tuned (B) | 0.08 | 0.613 [0.549, 0.680] | 0.414 | 0.213 |
 | hybrid (C) | 0.14 | 0.644 [0.570, 0.715] | 0.490 | 0.214 |
-Staleness view (NEW files added to the index; same 50): RAG 0.213 edit sim., hybrid 0.657 (EM 0.16, CodeBLEU 0.288);
-base and fine-tuned are identical to the main view. Retrieval inside the pilot: MRR 0.764 (dense, main), 0.750 (staleness),
-0.840 (BM25). Variants, edit similarity (base / RAG / fine-tuned / hybrid): code cut to 480 tokens 0.256 / 0.216 / 0.611 /
-0.649; BM25 retrieval 0.236 / 0.224 / 0.613 / 0.640. Cost in the pilot: average 1.8 to 2.3 s per example per system; peak GPU
-about 2.0 GB (2.1 with retrieval prompts of about 2,000 tokens); BM25 retrieval 203 ms vs 1,183 ms (dense) for all 50.
-Prompts with retrieval are about 2,000 tokens against 512 in training.
+Staleness view of the same 50 (new files added to the index): base 0.494 and fine-tuned 0.613 unchanged; RAG 0.403; hybrid 0.657 (EM 0.16, CodeBLEU 0.288).
+Retrieval in the pilot: MRR 0.764 dense, 0.750 dense with new files, 0.840 BM25 (BM25 completion: RAG 0.386, hybrid 0.640, the same as dense).
+Paired differences in edit similarity (95% bootstrap interval): fine-tuned minus base +0.120 [0.061, 0.187]; RAG minus base -0.106 [-0.172, -0.046]; hybrid minus
+RAG +0.257 [0.168, 0.347]; **hybrid minus fine-tuned +0.031 [-0.032, 0.089] (not significant)**; RAG minus fine-tuned -0.226 [-0.310, -0.146].
+
+**Staleness test: the 68 TEST examples whose relevant file is a NEW file (35 repositories; n=68):**
+| System | Edit sim., main view (new file not in index) | Edit sim., staleness view (new file in index) |
+|---|---|---|
+| base | 0.457 | 0.457 |
+| RAG | 0.384 | 0.350 |
+| fine-tuned | 0.604 | 0.604 |
+| hybrid | 0.640 [0.585, 0.694] | 0.695 [0.644, 0.746] |
+Paired change for the hybrid: edit similarity +0.055 [0.015, 0.103], exact match 0.088 to 0.162 (+0.074 [0.015, 0.132]); the hybrid's answer changed on 27 of 68
+examples (19 better, 8 worse); the relevant new file was in the top 5 chunks for 66 of 68. In the staleness view the hybrid beats the fine-tuned model by
++0.091 [0.036, 0.146]. RAG alone did not gain (-0.034 [-0.085, 0.018]). Fine-tuned and base cannot change (no retrieval).
+
+**Forgetting check (HumanEval, all 164 problems, plain function stub for both models):** base 66/164 (pass@1 0.402), fine-tuned 63/164 (0.384), relative change
+-4.5%, McNemar p = 0.68 (not significant). Wang et al. report -24.1% for full fine-tuning of larger models on 120,000 files.
+
+**Cost (pilot, per example, one T4, 4-bit):** average time base 1.61 s, RAG 1.72 s, fine-tuned 1.91 s, hybrid 2.24 s (retrieval itself about 23 ms with dense,
+4 ms with BM25); peak GPU 2.01 GB (base, fine-tuned) and 2.14 GB (RAG, hybrid); prompts with retrieval are about 2,100 tokens against about 430.
+
+**Preliminary comparison with Wang et al. (direction only, never absolute numbers):** fine-tuning beats the base model: matches. Combination best: matches in
+direction, not significant in the pilot. BM25 beats dense: matches for retrieval quality, no difference for completion. Retrieval raises input length and
+time: matches. Fine-tuning hurts general ability: much smaller here (-4.5%, not significant). RAG beats the base model: not reproduced, but see caveat 1.
 
 **Caveats that must appear next to these numbers:**
-1. **Prompt-format artifact (confirmed by reading the predictions, Entry 36).** Base exact match is 0 of 50 and base HumanEval
-   0 of 20. The prompt is an instruction wrapper that the adapter was trained on; the base model does not continue the cut line:
-   33 of 50 base outputs are import lines and 8 are prose; RAG outputs are comment lines (17), prose (17) or echoes of the
-   retrieved-chunk header (8); every fine-tuned and hybrid output is a code continuation. So the base and RAG rows measure prompt
-   format, not repository knowledge, and must not be used to rank RAG against fine-tuning. A rerun of base and RAG with a plain
-   continuation prompt is the next step. (Hit-vs-miss is also not analysable at n=50: only 2 of 50 examples are retrieval misses.)
-2. **Forgetting check invalid.** HumanEval first 20 problems: base 0/20, fine-tuned 5/20, with the same prompt-format
-   problem. It will be redone on all 164 problems with the plain stub. Do not present it as forgetting.
-3. **Staleness not yet tested.** The pilot examples have their relevant file in BASE, so NEW files act only as distractors
-   (retrieval recall@3 fell from 0.89 to 0.78 but completion barely moved). The real test uses the 68 NEW-relevant examples.
-4. Small pilot (n=50): hybrid vs fine-tuned, dense vs BM25, shorter code all within the confidence intervals.
-5. CodeBLEU's data-flow part is always 0 for one-line targets; lean on EM, edit similarity and identifier accuracy.
-6. CrossCodeEval relevance is a proxy; pools hold only benchmark files (fragments for RepoBench); validation not
-   file-held-out; Python only; CrossCodeEval is a community mirror; about half of long chunks are cut at the embedder's
-   1,024-token limit.
+1. **The frozen RAG system has a formatting problem.** With the comment-wrapped chunks, 5 of 50 pilot answers are empty and 6 of 50 are the literal token
+   `<|fim_suffix|>` (11 of 50 unusable; 14 and 18 of 68 in the staleness-test runs). On the 45 non-empty answers RAG is 0.430 against the base's 0.499, so a gap
+   remains, but the "RAG is below base" result must not be read as "retrieval hurts". The hybrid shows none of these failures. Two fixes (forbidding Qwen's
+   fill-in-the-middle tokens; Qwen's own repository-level prompt format) are being tested in a short GPU run; if it is done before the presentation, use its
+   numbers instead and say so.
+2. The first pilot (instruction prompt for all systems) is superseded: its base and RAG rows measured prompt format. State this once, plainly.
+3. Pilot size: n=50 (68 for the staleness test) from one model, one run, one seed. Hybrid vs fine-tuned, dense vs BM25 and shorter-code results are inside the
+   confidence intervals. Hit-versus-miss analysis is not possible (0 to 4 retrieval misses per run).
+4. CodeBLEU's data-flow part is always 0 for one-line targets; lean on edit similarity, identifier accuracy and exact match.
+5. CrossCodeEval relevance is a proxy rule; pools hold only benchmark files (fragments for RepoBench); validation set not file-held-out; Python only; CrossCodeEval is
+   a community mirror; about half of long chunks are cut at the embedder's 1,024-token limit.
 
 ## 6. Diagrams, tables and charts to create
+
+**Ready-made charts (use these images and their numbers; they come from `results/` via `src/evaluation/plot_pilot_results.py`, table in `pilot_numbers.csv`):**
+`pilot_main_vs_staleness.png` (edit similarity, identifier accuracy, exact match by system), `pilot_prompt_effect.png` (instruction vs plain prompt, paired),
+`pilot_staleness_68.png` (the 68-example staleness test and the paired change), `pilot_paired_differences.png` (which differences are real), `pilot_cost.png`,
+`pilot_forgetting.png`; plus `training_loss.png` and the retrieval figures from earlier. `docs/example_outputs.md` has six side-by-side examples for the
+examples slide. If you redraw a chart, keep: base grey, RAG blue, fine-tuned orange, hybrid green; value labels on bars; the "pilot, n=50" wording in the title.
+The list below is what the report and slides need overall; do not redo what is already ready.
 
 Style: same as the September deck (navy header bar, accent rule, simple boxes and arrows). Label axes and sample sizes.
 Use ONLY the real numbers above. If you can create image or chart files, do; otherwise give each as a clean table, a
@@ -223,7 +267,7 @@ Mermaid diagram, or chart code (matplotlib) that I can run.
    vs staleness condition).
 4. Leakage-safety checklist as a gate.
 5. Compute workflow: local machine > GitHub > Colab T4 > Google Drive (checkpoints, results), with resume after disconnect.
-6. Project status roadmap: done / in progress / not started, with the 65% figure.
+6. Project status roadmap: done / in progress / not started, with Part 1 at about 96% and the whole thesis at about 74%.
 
 **Tables (in the report; a few on slides):** the "Changes and why" table (section 3); the progress table (section 4); dataset
 tables for both datasets (counts, split sizes, coverage); fine-tuning corpora; the retrieval comparison; the pilot results
@@ -261,7 +305,7 @@ execution" statements.
 speaker notes on every slide. Suggested order: title; agenda; problem and decision question; what changed and why; the three
 systems; how the prompts were chosen (one slide: the example, the four answers, the fix); data and file-level split; leakage-safe protocol; datasets in numbers; retrieval results; fine-tuning run; pilot
 results (with the caveats slide right after); comparison with Wang et al.; hypotheses and evaluation plan; how much is done
-(65%, the completed-vs-remaining table); compute workflow; remaining work and revised timeline; risks and limitations; thank you.
+(Part 1 about 96%, whole thesis about 74%, the Part 1 table and the Part 2 plan); compute workflow; remaining work and revised timeline; risks and limitations; thank you.
 
 **Process:** (1) First reply: confirm you read every attachment, summarise in five bullets what changed since the old documents
 and what the status is, and list missing information. Wait for my "go". (2) Then write the report. (3) After I say "go" again,
@@ -271,7 +315,7 @@ write the slides. (4) Finish with a list of open questions and every `[YOU FILL 
 
 ## Notes for you (not part of the prompt)
 
-- Numbers come from `docs/progress_log.md` (Entries 3 to 37) and `docs/results_summary.md`. If new results arrive (the
+- Numbers come from `docs/progress_log.md` (Entries 3 to 42) and `docs/results_summary.md`. If new results arrive (the
   base-friendly prompt rerun, forgetting check, full runs), update sections 4 and 5 here before reusing the prompt, and remove
   the matching caveat and "may not claim" lines once they are settled.
 - Download `results/pilot_*` from Drive before attaching so the charts can use the exact values.

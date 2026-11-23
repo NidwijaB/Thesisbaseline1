@@ -207,3 +207,59 @@ I will read the predictions, run `analyze_predictions`, and log the findings.
 | CodeBLEU error | Add `--skip-codebleu` to the command (it then shows n/a, never 0) |
 | B3 fails (base/RAG still not code) | Stop; send the printed rows |
 | Disconnected during a run | Do the reset; start the unfinished run again (a run writes its files at the end) |
+
+
+---
+
+## F. Follow-up session (2026-11-23, after the local analysis): why does the frozen RAG system fail?
+
+Do this in a **new Colab session** (or the same one if it is still open and was set up with the rules at the top of this file). It is short
+(about 15 to 20 minutes of GPU) and needs the latest code pushed first (new options `--save-raw`, `--rag-format`, `--suppress-fim`).
+
+**Why:** the local analysis (progress log Entries 41 and 42) found that RAG gives empty answers (5 of 50) and writes the literal token
+`<|fim_suffix|>` as its whole answer (6 of 50) with the comment-style prompt. These are formatting failures of the frozen model, not evidence that
+retrieval is useless. The runs below find out which fix works. Everything is pilot, n=50, main view.
+
+**Setup:** sections A1 to A5 above (Cell 1, Cell 2, Cell 3 immediately, Cell 4). Skip B and C (already done). In Cell 4 the last command should now
+also show `--save-raw` (check: `!python -m experiments.run_comparison --help | grep -E "save-raw|rag-format|suppress-fim"` prints three entries).
+
+**F1. Diagnostic: current prompt, save the raw completions (RAG and base; about 3 minutes)**
+```python
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain --systems base rag_only --save-raw
+```
+Output: `results/pilot_main_plainbase_raw/`. The predictions must equal the earlier run (RAG edit similarity 0.387, base 0.494); the log prints, per
+system, how many answers stopped by `eos`, `newline` or `max_tokens`, and how many first lines are empty. Then:
+```python
+!python -m src.evaluation.inspect_raw results/pilot_main_plainbase_raw/predictions.jsonl
+```
+Copy this output into the chat.
+
+**F2. Fix 1: forbid the fill-in-the-middle tokens (RAG only; about 3 minutes)**
+```python
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain --suppress-fim --systems rag_only --save-raw
+```
+Output: `results/pilot_main_plainbase_nofim_raw/`.
+
+**F3. Fix 2: Qwen's own repository-level prompt format for the retrieved files (RAG only; about 3 minutes)**
+```python
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain --rag-format qwen_repo --systems rag_only --save-raw
+```
+Output: `results/pilot_main_plainbase_qwenrepo_raw/`. Run the inspect command on F2 and F3 as well (change the folder name).
+
+**F4. Only if F3 (or F2) clearly improves RAG: rerun the full four-system pilot with that setting** (about 8 minutes each; add `--save-raw` if you
+want the diagnostics again). Example for F3's format:
+```python
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain --rag-format qwen_repo
+!python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain --rag-format qwen_repo --view staleness
+```
+Outputs: `results/pilot_main_plainbase_qwenrepo/` and `results/pilot_staleness_plainbase_qwenrepo/`. Do not run F4 until the local analysis of F1 to F3
+says it is worth it; the hybrid is not affected by `--rag-format` (it keeps the training format), so only the RAG row can change.
+
+**F5. Finish:** E1 to E3 above. Copy the new folders (`pilot_main_plainbase_raw/`, `pilot_main_plainbase_nofim_raw/`, `pilot_main_plainbase_qwenrepo_raw/`, and any
+F4 folders) into the local `results/`, paste the three `inspect_raw` outputs into `docs/new_results_pilot_run_from_colab` (or a new file), and tell me.
+
+| What you see | Do this |
+|---|---|
+| `unrecognized arguments: --save-raw` (or `--rag-format`, `--suppress-fim`) | The latest code is not on GitHub: commit and push, then do the reset (Cell 2, Cell 3 immediately, Cell 4) |
+| F1 scores differ from the earlier run (RAG not 0.387 / base not 0.494) | Tell me; the diagnostic should not change any prediction |
+| An error mentioning `bad_words_ids` in F2 | Send the full output; F3 is independent and can still be run |

@@ -54,19 +54,41 @@ def build_plain_prompt(code: str, chunks: list | None = None) -> str:
     return format_context(chunks) + code
 
 
+RAG_FORMATS = ("comments", "qwen_repo")
+
+
+def build_repo_prompt(code: str, chunks: list | None, repo: str, target: str) -> str:
+    """Repository-level prompt in the format Qwen2.5-Coder was trained for: the other files first, each behind a
+    `<|file_sep|>` marker and path, then the file being completed ending right at the cursor. Used for the frozen RAG
+    system with `--rag-format qwen_repo`; the comment-wrapped chunks of `build_plain_prompt` made the frozen model emit
+    fill-in-the-middle tokens or stop at once (progress log Entry 42)."""
+    parts = [f"<|repo_name|>{repo}"]
+    for chunk in chunks or []:
+        parts.append(f"<|file_sep|>{chunk.file_path}\n{chunk.content[:MAX_CHUNK_CHARS]}")
+    parts.append(f"<|file_sep|>{target}\n{code}")
+    return "\n".join(parts)
+
+
 # How the models without the adapter (base, RAG) are prompted. "instruction" is the wrapper the adapter
 # was trained on (the first pilot used it; the frozen model does not follow it, see progress log Entry 36);
 # "plain" is a raw continuation. Models with the adapter always use the instruction format.
 BASE_PROMPTS = ("instruction", "plain")
 
 
-def build_system_prompt(code: str, chunks: list | None, uses_adapter: bool, base_prompt: str = "instruction") -> str:
+def build_system_prompt(code: str, chunks: list | None, uses_adapter: bool, base_prompt: str = "instruction",
+                        rag_format: str = "comments", repo: str = "", target: str = "") -> str:
     """The prompt for one system. Adapter systems (B, C): instruction format. Frozen model (base, A):
-    `base_prompt`. Retrieved chunks are passed in only for the systems that use retrieval."""
+    `base_prompt`. Retrieved chunks are passed in only for the systems that use retrieval. With
+    base_prompt "plain" and rag_format "qwen_repo", the frozen RAG system gets the repository-level format
+    (`build_repo_prompt`); the base model without chunks is unchanged."""
     if base_prompt not in BASE_PROMPTS:
         raise ValueError(f"base_prompt must be one of {BASE_PROMPTS}, got {base_prompt!r}")
+    if rag_format not in RAG_FORMATS:
+        raise ValueError(f"rag_format must be one of {RAG_FORMATS}, got {rag_format!r}")
     if uses_adapter or base_prompt == "instruction":
         return build_prompt(code, chunks)
+    if rag_format == "qwen_repo" and chunks:
+        return build_repo_prompt(code, chunks, repo, target)
     return build_plain_prompt(code, chunks)
 
 

@@ -1707,3 +1707,111 @@ New-file mechanism (not in their study): hybrid improved on files only retrieval
 - **Pending local steps once the folders are copied:** read the predictions (why RAG hurts; the empty RAG answers; examples to show), `analyze_predictions`
   on each run, paired comparisons across runs (main vs staleness on the 68 examples; plain vs instruction prompt), McNemar-style paired test for
   HumanEval, a pilot results table with intervals, example outputs, charts, then refresh the web prompt and the slides.
+
+## Entry 41: Local analysis of the plain-prompt pilot results (2026-11-23)
+- **Asked:** after copying the Drive results into `results/`, give the next local steps before the presentation (Friday) and the percentage done.
+- **Done (read-only analysis; no code or data changed):** confirmed that all seven items arrived (`plain_test`, `pilot_main_plainbase`,
+  `pilot_staleness_plainbase`, `pilot_main_bm25_plainbase`, `new_relevant_main_plainbase`, `new_relevant_staleness_plainbase`,
+  `forgetting_humaneval_plain.json`; row counts 5, 50, 50, 50, 68, 68); ran `analyze_predictions` on the five run folders (it wrote an `analysis.json` next
+  to each `predictions.jsonl`); wrote throw-away paired-bootstrap checks (10,000 resamples, seed 42, not saved in the repo) for comparisons across runs;
+  an exact McNemar test for HumanEval; classified the RAG answers.
+
+### 1. Paired comparisons, pilot main view, plain prompt (n=50, 95% bootstrap CI of the paired difference in edit similarity)
+| Comparison | Difference | Reading |
+|---|---|---|
+| fine-tuned minus base | +0.120 [0.061, 0.187] | significant: fine-tuning helps (exact match +0.04 [0.00, 0.10]) |
+| RAG minus base | -0.106 [-0.172, -0.046] | significant: RAG is **worse** than the base model |
+| hybrid minus RAG | +0.257 [0.168, 0.347] | significant |
+| hybrid minus fine-tuned | +0.031 [-0.032, 0.089] | not significant (exact match +0.06 [-0.04, 0.16]) |
+| RAG minus fine-tuned | -0.226 [-0.310, -0.146] | significant: fine-tuning beats RAG alone |
+The same picture holds in the staleness view and with BM25 (RAG minus base -0.090 and -0.108, both significant; hybrid minus fine-tuned +0.044 and +0.027, both not).
+- **Prompt effect, same 50 examples, plain minus instruction prompt:** base +0.257 [0.191, 0.318]; RAG +0.161 [0.089, 0.239]; fine-tuned and hybrid exactly 0
+  (as they should). So the first pilot's base and RAG rows were about 0.26 and 0.16 too low because of the prompt, now measured with intervals.
+
+### 2. The staleness test (68 examples whose relevant file is a NEW file), paired across views (staleness view minus main view)
+| System | Edit similarity | Exact match |
+|---|---|---|
+| base, fine-tuned | 0.000 (no retrieval, identical) | 0.000 |
+| RAG | -0.034 [-0.085, +0.018] | +0.015 [0.000, 0.044] |
+| hybrid | **+0.055 [+0.015, +0.103]** | **+0.074 [+0.015, +0.132]** |
+- The hybrid's answer changed on 27 of 68 examples: 19 improved, 8 got worse. The relevant new file was in the top-5 chunks for 66 of 68 examples (staleness view).
+- In the staleness view the hybrid beats the fine-tuned model by **+0.091 [0.036, 0.146]** edit similarity (in the main view +0.037 [-0.009, 0.085], not significant),
+  and the fine-tuned model cannot improve, because it never saw those files. This is the first statistically supported evidence for the mechanism behind H3:
+  retrieval gives access to new code that fine-tuning cannot. Caveats: n=68 from 35 repositories, one model, one seed; RAG alone did not benefit; the
+  fine-tuned model also loses nothing in this subset (0.604), so this shows what retrieval adds, not that fine-tuning degrades on new files.
+
+### 3. Why RAG alone looks bad: part of it is empty and cut-off answers (new finding, cause not yet known)
+- RAG (frozen model with retrieved chunks) returns an **empty first line in 5 of 50** pilot answers (4 in the staleness view, 8 with BM25) and several cut-off words
+  (`und` for `set_graph(self.old_g)`, `quer`, `che`); the base, fine-tuned and hybrid models return at most 0 or 1 such answers. Empty and cut-off answers
+  score about 0 and pull the RAG mean down. On the 45 non-empty answers RAG is 0.430 and the base 0.499 on the same examples, so RAG is still lower, but the gap is
+  about 0.07 instead of 0.11.
+- RAG was worse than the base on 18 of 50 examples, better on 10, equal on 22. Where RAG helps it is by picking up a name from the retrieved code
+  (`OverlappingWindowBasedLoader(window,overlap)` vs the reference `WindowBasedLoader(window=window, ...`).
+- Likely causes (untested): the model ends its answer (new line or end-of-text) too early when the prompt is a long block of `#` comments followed by the code;
+  or it spends its first tokens on a comment-style continuation. The saved predictions contain only the first line, so the raw completion and the stop reason
+  are not available. A short diagnostic run (RAG only, saving the raw text, number of generated tokens and the reason it stopped) would settle it.
+- Consequence for how to present RAG: the measured numbers are valid as run, but "RAG hurts" must be stated with this caveat: with this prompt design (chunks as
+  comments), the frozen 1.5B model often stops early or copies; it is not evidence that retrieval is useless. The hybrid, which was fine-tuned on the code-continuation
+  format, does not show the empty answers and does benefit from retrieval of new files (section 2).
+
+### 4. Forgetting check, paired test
+Base passes 66 of 164, fine-tuned 63; base-only 13 problems, fine-tuned-only 10; exact McNemar p = 0.68. No evidence of forgetting after this adapter
+(relative change -4.5%, not significant); Wang et al.'s -24.1% was full fine-tuning of larger models on 120,000 files.
+
+### 5. Hit versus miss
+Still not usable at n=50 (main view 2 misses; staleness view 4; BM25 view 0; 68-example subset 1 and 2 misses). Leave it to the full run (thesis wrap-up).
+
+### Status and percentages (as of 2026-11-23)
+- **Project Part 1: about 95% done (read as 93 to 97%)**, from 92% (Entry 40). Weights as in Entry 39: pipeline now validated on a GPU (100%), the four-system pilot with
+  fixed prompts done including a diagnosis of why RAG underperforms except for the raw-output check (95%), the basic evaluation and literature comparison done except
+  for charts and example outputs (80%). Total 96.4, rounded down because of the unexplained RAG empty answers. Presentation and report writing are not counted.
+- **Whole thesis project: about 73%** (72% in Entry 40; the full 543-example run, RepoBench training and completion, and the remaining sweeps stay in Part 2).
+- **Remaining Part 1 work (all local except the optional diagnostic):** (a) optional Colab diagnostic for the empty RAG answers (about 5 to 10 minutes of GPU; code
+  change first); (b) result tables and charts for the slides; (c) 5 to 6 example outputs side by side; (d) update `docs/results_summary.md` and `docs/claude_web_prompt.md`
+  with the final numbers and the Part 1 framing; (e) commit and push (including `git rm -r --cached results`); (f) draft, review and rehearse the presentation.
+
+## Entry 42: Diagnostics built, slide charts and example outputs generated; a second prompt problem found in the frozen RAG system (2026-11-23)
+- **Asked:** do steps 1 to 4 of Entry 41 (diagnostic option, charts, example outputs, documents) and say whether the Colab step should come first.
+- **Done:**
+  1. **Diagnostic option** `run_comparison --save-raw`: saves each answer's raw completion (special tokens shown), the number of generated tokens and why
+     generation stopped (`eos`, `newline` or `max_tokens`); same decoding, so the predictions do not change; the output folder gets `_raw`. New
+     `src/evaluation/inspect_raw.py` summarises it (no GPU). New `generation.classify_stop` and `complete_detailed`.
+  2. **Two fixes to test for the frozen RAG system** (both off by default, nothing changes unless asked): `--suppress-fim` forbids Qwen's
+     fill-in-the-middle and file-separator tokens during generation (folder suffix `_nofim`); `--rag-format qwen_repo` gives the retrieved files in Qwen2.5-Coder's
+     own repository-level layout (`<|repo_name|>`, `<|file_sep|> path`, then the file being completed; folder suffix `_qwenrepo`); it applies only to the
+     frozen RAG system, the base and the adapter systems keep their prompts. Checked locally with the real tokenizer: the six marker tokens exist (ids
+     151659 to 151664) and the repository markers tokenise as single tokens.
+  3. **Slide charts** `src/evaluation/plot_pilot_results.py` (six figures in `results/figures/pilot_*.png` plus `pilot_numbers.csv` with every plotted number): pilot
+     by system, main vs staleness view; prompt effect (instruction vs plain); the 68-example staleness test with the paired change; a forest plot of the paired
+     differences; cost; HumanEval forgetting. Colours were checked with the dataviz skill's validator (passes; the aqua mark is below 3:1 on white, so every bar
+     carries its value label and the table is in the CSV). The charts use the same bootstrap as `analyze_predictions` (2,000 resamples, seed 42), so the numbers
+     match the log. I looked at every figure after rendering and fixed a legend that covered a value label.
+  4. **Example outputs** `src/evaluation/example_outputs.py` -> `docs/example_outputs.md`: six cut lines with the four systems' answers, chosen by fixed
+     rules written in the file (not by hand): fine-tuning learns the repository's calls; retrieval reaches a new file the adapter never saw (3560, hybrid 0.08 to
+     1.00 edit similarity); a RAG failure; retrieval helping the frozen model (3095); a runaway hybrid answer (2413); a case hard for every system.
+  5. **Tests:** 39 pass (36 before; 3 more for the repository-format prompt, where each format applies, and the token-id helper). Dry run unchanged.
+  6. **Colab:** a follow-up session (section F of `docs/colab_steps_new.md`): the raw diagnostic, then the two fixes, RAG only, three runs of about 3 minutes each.
+  7. **Numbers corrected in Entry 41** (my first throw-away bootstrap used a different seed than the analysis script): prompt effect base +0.257 [0.191, 0.318], RAG
+     +0.161 [0.089, 0.239]; staleness change for the hybrid +0.055 [0.015, 0.103] (exact match +0.074 [0.015, 0.132]) and RAG -0.034 [-0.085, 0.018]. Conclusions unchanged.
+
+### New finding: the frozen RAG system writes the fill-in-the-middle token as its answer
+- With the plain prompt, RAG's answer is the literal text `<|fim_suffix|>` in **6 of 50** pilot examples (6 in the staleness view and 6 with BM25 as well), and in 14
+  and 18 of the 68 staleness-test examples (main and staleness view). In the first pilot (instruction prompt) it never happened, and the base, fine-tuned and
+  hybrid models never write it. Together with the 5 empty first lines, **11 of 50 (22%) RAG answers in the pilot are unusable**, and the cut-off words (`und`,
+  `quer`, `che`) are a further sign.
+- Why it is visible: that token decodes as text even with special tokens skipped (checked with the real tokenizer); the end-of-text token is skipped, so an
+  immediate end shows as an empty answer. Likely cause (untested): the comment-wrapped chunks look like a multi-file repository to a model trained for
+  fill-in-the-middle and repository-level completion, so it answers with a format marker or stops. The `--save-raw` run will show it.
+- **Consequence:** the statement "RAG is below the base model" (Entries 40 and 41) is still what was measured, but it is now explained in large part by a prompt-format
+  failure of the frozen model, not by retrieval being unhelpful. On the 39 pilot examples where RAG gave a usable answer the comparison is closer (computed after
+  the Colab fix). Do **not** present "retrieval hurts" as a finding; present it as "the frozen model needs a prompt in its own repository format; with the comment
+  format 22% of its answers failed". The hybrid is not affected (it was fine-tuned on code continuation), and its staleness gain stands.
+
+### Answer to "Colab first or build first?"
+Everything that can be built locally is built (the diagnostics and both fixes are in one push). The next Colab session is the follow-up in section F (about 15 to 20
+minutes of GPU): it can run as soon as the code is pushed, in parallel with the writing of the slides. The charts and examples regenerate in seconds if a RAG number changes
+(`python -m src.evaluation.plot_pilot_results`, `python -m src.evaluation.example_outputs`).
+
+### Status
+Project Part 1: about **96%** (94 to 98%): the analysis, charts and examples are done; the open item is the RAG fix (one short Colab session) and then refreshing the RAG
+numbers in the documents. Whole thesis: about 74%.
