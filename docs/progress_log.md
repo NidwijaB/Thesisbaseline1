@@ -1569,3 +1569,51 @@ Expected time: C1 about 7 minutes, C2 about 15 to 25 minutes, C3 about 6 to 8 mi
 ### Status
 Completion estimate unchanged at about 65% (Entry 36); the local building and testing for the rerun is done, the GPU results are not. Nothing
 committed or pushed (you commit and push before Colab can use the new options).
+
+## Entry 38: Scope for the upcoming presentation, agreed with the supervisor (2026-11-23)
+- **Asked / decided:** the supervisor advised that, for the upcoming presentation, the pilot (50 CrossCodeEval examples) is completed with the
+  fixed prompts (Entries 36 and 37) and given a basic evaluation, together with the comparison with the literature (Wang et al.). Heavier work
+  (full 543-example run, RepoBench fine-tuning and completion, RAFT-style retrain, noise and top-k sweeps, multiple seeds) moves to the
+  thesis wrap-up. This is a scope change to record (plan Section 11).
+- **Done:** wrote `docs/next_steps_presentation.md`: local push, then one Colab session (core: pilot main and staleness with
+  `--base-prompt plain`; recommended extras: BM25, the 68-example staleness test, HumanEval plain-stub forgetting check), a gate after the
+  first run (base and RAG must now write code continuations, otherwise switch to few-shot), the local evaluation to produce, and the comparison
+  with the literature (direction of effects only). Nothing run; no code changed in this entry.
+- **Effect on the completion estimate:** the percentage in Entry 36 (about 65%) measures the full thesis project. For the presentation scope
+  the remaining work is the Colab session above (about 30 to 60 minutes of GPU) and the local analysis; the rest is thesis wrap-up.
+
+## Entry 39: Project Part 1 versus Part 2, and the completion estimate for Part 1 (2026-11-23)
+- **Asked:** treat the current work as "Project Part 1" (for the upcoming presentation), define the scope accordingly, give the next
+  steps, and keep the Colab steps in `docs/colab_steps_new.md`.
+- **Done:** defined the two parts below; re-weighted the progress estimate for Part 1; wrote `docs/colab_steps_new.md` (setup, a gate
+  after a 5-example test, the pilot in main and staleness views with the plain prompt, optional BM25 / 68-example staleness / HumanEval
+  extras, finish). `docs/next_steps_presentation.md` stays as the overview and points to it for the Colab cells. No code changed; nothing run.
+
+### Scope
+**Part 1 (presentation, pilot level; in progress):** leakage-safe file-level splits for both datasets; fine-tuning corpora; per-repository
+indexes; retrieval comparison (dense vs BM25 vs random) on both datasets; one QLoRA fine-tuning run on CrossCodeEval with a base-vs-adapter loss
+comparison; a four-system pilot (base, RAG, fine-tuned, hybrid) on 50 CrossCodeEval examples with the fixed prompts, main and staleness
+views; a basic evaluation (scores with intervals, paired differences, cost, example outputs); comparison with the literature (Wang et al.) by
+direction of effect; presentation and progress report. Optional inside Part 1: BM25 pilot, the 68-example staleness test, HumanEval plain-stub
+forgetting check.
+**Part 2 (thesis wrap-up, later):** full 543-example CrossCodeEval comparison (both views) with hit-vs-miss analysis; RepoBench fine-tuning and
+completion; noisy-context and top-k sweeps; RAFT-style retrain decision; multiple fine-tuning seeds; numeric recommendations for the decision
+question; moving seeds and constants into `config.yaml`; thesis chapters.
+
+### Part 1 completion estimate: about 78% (read as 75 to 80%; presentation and report writing not counted)
+A judgement, same method as Entries 23, 29, 31 and 36, with weights re-set for Part 1:
+| Workstream (Part 1) | Weight | Done | Contribution |
+|---|---|---|---|
+| Plan, literature analysis, hypotheses | 8% | 100% | 8.0 |
+| CrossCodeEval data | 15% | 100% | 15.0 |
+| RepoBench data (split, corpus, sample; used for retrieval only in Part 1) | 10% | 100% | 10.0 |
+| Pipeline code (new prompt options built and tested locally, not yet run on a GPU) | 15% | 95% | 14.3 |
+| Retrieval (both datasets indexed and compared) | 12% | 95% | 11.4 |
+| Fine-tuning (CrossCodeEval adapter, loss comparison) | 10% | 100% | 10.0 |
+| Four-system pilot with fixed prompts (first pilot done; base and RAG rerun and staleness view pending) | 20% | 30% | 6.0 |
+| Basic evaluation and comparison with the literature (tooling and literature analysis done; results analysis pending) | 10% | 30% | 3.0 |
+| **Total** | 100% | | **77.7** |
+- For comparison: the whole thesis project is about 65% (Entry 36); Part 1 is further along because the heavy items (full run, RepoBench training) are
+  outside it. The remaining Part 1 work is the Colab session (about 30 to 60 minutes of GPU) and the local analysis; the percentage should
+  reach about 95% once the pilot rerun and its analysis are done (the rest is the presentation and report themselves).
+- For slides: show "Part 1: about 78% (75 to 80%)" and "Part 2: planned" with the Part 2 list above.
