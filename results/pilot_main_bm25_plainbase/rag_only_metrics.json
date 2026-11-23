@@ -1,0 +1,47 @@
+{
+  "system": "rag_only",
+  "exact_match": 0.02,
+  "edit_similarity": 0.3857,
+  "identifier_accuracy": 0.2168,
+  "code_bleu": 0.1549,
+  "exact_match_ci95": [
+    0.0,
+    0.06
+  ],
+  "edit_similarity_ci95": [
+    0.3082,
+    0.4682
+  ],
+  "n_samples": 50,
+  "n_examples": 50,
+  "n_with_relevant_file": 50,
+  "subset": "pilot",
+  "view": "main",
+  "top_k": 5,
+  "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+  "retriever": "bm25",
+  "max_code_tokens": null,
+  "noise_chunks": 0,
+  "base_prompt": "plain",
+  "retrieval": {
+    "mrr": 0.84,
+    "precision@1": 0.7,
+    "recall@1": 0.59,
+    "precision@3": 0.4267,
+    "recall@3": 0.9767,
+    "precision@5": 0.268,
+    "recall@5": 1.0,
+    "precision@10": 0.134,
+    "recall@10": 1.0,
+    "n_queries": 50
+  },
+  "efficiency": {
+    "system": "rag_only",
+    "retrieval_latency_ms": 206.58,
+    "inference_latency_ms": 92037.12,
+    "total_latency_ms": 92243.7,
+    "avg_total_ms": 1844.87,
+    "peak_gpu_mb": 1667.39,
+    "peak_cpu_ram_mb": 2387.64
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "base": {
+    "system": "base",
+    "exact_match": 0.04,
+    "edit_similarity": 0.4935,
+    "identifier_accuracy": 0.2979,
+    "code_bleu": 0.2367,
+    "exact_match_ci95": [
+      0.0,
+      0.1
+    ],
+    "edit_similarity_ci95": [
+      0.4258,
+      0.5588
+    ],
+    "n_samples": 50,
+    "n_examples": 50,
+    "n_with_relevant_file": 50,
+    "subset": "pilot",
+    "view": "staleness",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "efficiency": {
+      "system": "base",
+      "retrieval_latency_ms": 0.0,
+      "inference_latency_ms": 78532.75,
+      "total_latency_ms": 78532.75,
+      "avg_total_ms": 1570.65,
+      "peak_gpu_mb": 2008.93,
+      "peak_cpu_ram_mb": 2423.68
+    }
+  },
+  "rag_only": {
+    "system": "rag_only",
+    "exact_match": 0.0,
+    "edit_similarity": 0.4033,
+    "identifier_accuracy": 0.2132,
+    "code_bleu": 0.1494,
+    "exact_match_ci95": [
+      0.0,
+      0.0
+    ],
+    "edit_similarity_ci95": [
+      0.3271,
+      0.4832
+    ],
+    "n_samples": 50,
+    "n_examples": 50,
+    "n_with_relevant_file": 50,
+    "subset": "pilot",
+    "view": "staleness",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "retrieval": {
+      "mrr": 0.7504,
+      "precision@1": 0.62,
+      "recall@1": 0.4767,
+      "precision@3": 0.3667,
+      "recall@3": 0.7833,
+      "precision@5": 0.264,
+      "recall@5": 0.915,
+      "precision@10": 0.144,
+      "recall@10": 1.0,
+      "n_queries": 50
+    },
+    "efficiency": {
+      "system": "rag_only",
+      "retrieval_latency_ms": 1392.7,
+      "inference_latency_ms": 86732.7,
+      "total_latency_ms": 88125.4,
+      "avg_total_ms": 1762.51,
+      "peak_gpu_mb": 2142.45,
+      "peak_cpu_ram_mb": 2470.36
+    }
+  },
+  "finetuning_only": {
+    "system": "finetuning_only",
+    "exact_match": 0.08,
+    "edit_similarity": 0.613,
+    "identifier_accuracy": 0.4142,
+    "code_bleu": 0.213,
+    "exact_match_ci95": [
+      0.02,
+      0.16
+    ],
+    "edit_similarity_ci95": [
+      0.5485,
+      0.6802
+    ],
+    "n_samples": 50,
+    "n_examples": 50,
+    "n_with_relevant_file": 50,
+    "subset": "pilot",
+    "view": "staleness",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "efficiency": {
+      "system": "finetuning_only",
+      "retrieval_latency_ms": 0.0,
+      "inference_latency_ms": 98883.81,
+      "total_latency_ms": 98883.81,
+      "avg_total_ms": 1977.68,
+      "peak_gpu_mb": 2009.11,
+      "peak_cpu_ram_mb": 2470.81
+    }
+  },
+  "hybrid": {
+    "system": "hybrid",
+    "exact_match": 0.16,
+    "edit_similarity": 0.657,
+    "identifier_accuracy": 0.5073,
+    "code_bleu": 0.2883,
+    "exact_match_ci95": [
+      0.06,
+      0.26
+    ],
+    "edit_similarity_ci95": [
+      0.5822,
+      0.7277
+    ],
+    "n_samples": 50,
+    "n_examples": 50,
+    "n_with_relevant_file": 50,
+    "subset": "pilot",
+    "view": "staleness",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "retrieval": {
+      "mrr": 0.7504,
+      "precision@1": 0.62,
+      "recall@1": 0.4767,
+      "precision@3": 0.3667,
+      "recall@3": 0.7833,
+      "precision@5": 0.264,
+      "recall@5": 0.915,
+      "precision@10": 0.144,
+      "recall@10": 1.0,
+      "n_queries": 50
+    },
+    "efficiency": {
+      "system": "hybrid",
+      "retrieval_latency_ms": 1392.7,
+      "inference_latency_ms": 118302.85,
+      "total_latency_ms": 119695.54,
+      "avg_total_ms": 2393.91,
+      "peak_gpu_mb": 2146.1,
+      "peak_cpu_ram_mb": 2470.83
+    }
+  }
+}

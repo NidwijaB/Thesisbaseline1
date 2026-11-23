@@ -1,0 +1,166 @@
+{
+  "base": {
+    "system": "base",
+    "exact_match": 0.0147,
+    "edit_similarity": 0.4567,
+    "identifier_accuracy": 0.2934,
+    "code_bleu": 0.1644,
+    "exact_match_ci95": [
+      0.0,
+      0.0588
+    ],
+    "edit_similarity_ci95": [
+      0.3978,
+      0.5143
+    ],
+    "n_samples": 68,
+    "n_examples": 68,
+    "n_with_relevant_file": 68,
+    "subset": "new_relevant",
+    "view": "staleness",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "efficiency": {
+      "system": "base",
+      "retrieval_latency_ms": 0.0,
+      "inference_latency_ms": 109334.26,
+      "total_latency_ms": 109334.26,
+      "avg_total_ms": 1607.86,
+      "peak_gpu_mb": 2042.54,
+      "peak_cpu_ram_mb": 2479.3
+    }
+  },
+  "rag_only": {
+    "system": "rag_only",
+    "exact_match": 0.0294,
+    "edit_similarity": 0.3504,
+    "identifier_accuracy": 0.1912,
+    "code_bleu": 0.1877,
+    "exact_match_ci95": [
+      0.0,
+      0.0739
+    ],
+    "edit_similarity_ci95": [
+      0.2875,
+      0.4207
+    ],
+    "n_samples": 68,
+    "n_examples": 68,
+    "n_with_relevant_file": 68,
+    "subset": "new_relevant",
+    "view": "staleness",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "retrieval": {
+      "mrr": 0.7157,
+      "precision@1": 0.5441,
+      "recall@1": 0.3284,
+      "precision@3": 0.4412,
+      "recall@3": 0.7721,
+      "precision@5": 0.3176,
+      "recall@5": 0.935,
+      "precision@10": 0.1691,
+      "recall@10": 0.9926,
+      "n_queries": 68
+    },
+    "efficiency": {
+      "system": "rag_only",
+      "retrieval_latency_ms": 1613.44,
+      "inference_latency_ms": 128729.64,
+      "total_latency_ms": 130343.08,
+      "avg_total_ms": 1916.81,
+      "peak_gpu_mb": 2171.86,
+      "peak_cpu_ram_mb": 2481.46
+    }
+  },
+  "finetuning_only": {
+    "system": "finetuning_only",
+    "exact_match": 0.0882,
+    "edit_similarity": 0.6036,
+    "identifier_accuracy": 0.403,
+    "code_bleu": 0.1619,
+    "exact_match_ci95": [
+      0.0294,
+      0.1618
+    ],
+    "edit_similarity_ci95": [
+      0.5551,
+      0.6525
+    ],
+    "n_samples": 68,
+    "n_examples": 68,
+    "n_with_relevant_file": 68,
+    "subset": "new_relevant",
+    "view": "staleness",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "efficiency": {
+      "system": "finetuning_only",
+      "retrieval_latency_ms": 0.0,
+      "inference_latency_ms": 120979.96,
+      "total_latency_ms": 120979.96,
+      "avg_total_ms": 1779.12,
+      "peak_gpu_mb": 2043.75,
+      "peak_cpu_ram_mb": 2461.39
+    }
+  },
+  "hybrid": {
+    "system": "hybrid",
+    "exact_match": 0.1618,
+    "edit_similarity": 0.695,
+    "identifier_accuracy": 0.5508,
+    "code_bleu": 0.4436,
+    "exact_match_ci95": [
+      0.0882,
+      0.25
+    ],
+    "edit_similarity_ci95": [
+      0.6438,
+      0.7457
+    ],
+    "n_samples": 68,
+    "n_examples": 68,
+    "n_with_relevant_file": 68,
+    "subset": "new_relevant",
+    "view": "staleness",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "retrieval": {
+      "mrr": 0.7157,
+      "precision@1": 0.5441,
+      "recall@1": 0.3284,
+      "precision@3": 0.4412,
+      "recall@3": 0.7721,
+      "precision@5": 0.3176,
+      "recall@5": 0.935,
+      "precision@10": 0.1691,
+      "recall@10": 0.9926,
+      "n_queries": 68
+    },
+    "efficiency": {
+      "system": "hybrid",
+      "retrieval_latency_ms": 1613.44,
+      "inference_latency_ms": 154366.44,
+      "total_latency_ms": 155979.88,
+      "avg_total_ms": 2293.82,
+      "peak_gpu_mb": 2172.04,
+      "peak_cpu_ram_mb": 2422.09
+    }
+  }
+}

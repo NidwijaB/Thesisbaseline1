@@ -1,0 +1,166 @@
+{
+  "base": {
+    "system": "base",
+    "exact_match": 0.0,
+    "edit_similarity": 0.2551,
+    "identifier_accuracy": 0.1,
+    "code_bleu": 0.0385,
+    "exact_match_ci95": [
+      0.0,
+      0.0
+    ],
+    "edit_similarity_ci95": [
+      0.1368,
+      0.3868
+    ],
+    "n_samples": 5,
+    "n_examples": 5,
+    "n_with_relevant_file": 5,
+    "subset": "pilot",
+    "view": "main",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "efficiency": {
+      "system": "base",
+      "retrieval_latency_ms": 0.0,
+      "inference_latency_ms": 11316.53,
+      "total_latency_ms": 11316.53,
+      "avg_total_ms": 2263.31,
+      "peak_gpu_mb": 1697.02,
+      "peak_cpu_ram_mb": 2381.82
+    }
+  },
+  "rag_only": {
+    "system": "rag_only",
+    "exact_match": 0.0,
+    "edit_similarity": 0.2274,
+    "identifier_accuracy": 0.0,
+    "code_bleu": 0.0,
+    "exact_match_ci95": [
+      0.0,
+      0.0
+    ],
+    "edit_similarity_ci95": [
+      0.091,
+      0.3637
+    ],
+    "n_samples": 5,
+    "n_examples": 5,
+    "n_with_relevant_file": 5,
+    "subset": "pilot",
+    "view": "main",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "retrieval": {
+      "mrr": 0.6333,
+      "precision@1": 0.4,
+      "recall@1": 0.4,
+      "precision@3": 0.3333,
+      "recall@3": 1.0,
+      "precision@5": 0.2,
+      "recall@5": 1.0,
+      "precision@10": 0.1,
+      "recall@10": 1.0,
+      "n_queries": 5
+    },
+    "efficiency": {
+      "system": "rag_only",
+      "retrieval_latency_ms": 349.77,
+      "inference_latency_ms": 6805.38,
+      "total_latency_ms": 7155.15,
+      "avg_total_ms": 1431.03,
+      "peak_gpu_mb": 1822.64,
+      "peak_cpu_ram_mb": 2531.5
+    }
+  },
+  "finetuning_only": {
+    "system": "finetuning_only",
+    "exact_match": 0.2,
+    "edit_similarity": 0.5836,
+    "identifier_accuracy": 0.35,
+    "code_bleu": 0.1438,
+    "exact_match_ci95": [
+      0.0,
+      0.6
+    ],
+    "edit_similarity_ci95": [
+      0.3041,
+      0.863
+    ],
+    "n_samples": 5,
+    "n_examples": 5,
+    "n_with_relevant_file": 5,
+    "subset": "pilot",
+    "view": "main",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "efficiency": {
+      "system": "finetuning_only",
+      "retrieval_latency_ms": 0.0,
+      "inference_latency_ms": 9177.38,
+      "total_latency_ms": 9177.38,
+      "avg_total_ms": 1835.48,
+      "peak_gpu_mb": 1698.01,
+      "peak_cpu_ram_mb": 2534.01
+    }
+  },
+  "hybrid": {
+    "system": "hybrid",
+    "exact_match": 0.2,
+    "edit_similarity": 0.6576,
+    "identifier_accuracy": 0.55,
+    "code_bleu": 0.1486,
+    "exact_match_ci95": [
+      0.0,
+      0.6
+    ],
+    "edit_similarity_ci95": [
+      0.3877,
+      0.9275
+    ],
+    "n_samples": 5,
+    "n_examples": 5,
+    "n_with_relevant_file": 5,
+    "subset": "pilot",
+    "view": "main",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "retrieval": {
+      "mrr": 0.6333,
+      "precision@1": 0.4,
+      "recall@1": 0.4,
+      "precision@3": 0.3333,
+      "recall@3": 1.0,
+      "precision@5": 0.2,
+      "recall@5": 1.0,
+      "precision@10": 0.1,
+      "recall@10": 1.0,
+      "n_queries": 5
+    },
+    "efficiency": {
+      "system": "hybrid",
+      "retrieval_latency_ms": 349.77,
+      "inference_latency_ms": 9381.35,
+      "total_latency_ms": 9731.12,
+      "avg_total_ms": 1946.22,
+      "peak_gpu_mb": 1823.37,
+      "peak_cpu_ram_mb": 2537.02
+    }
+  }
+}
