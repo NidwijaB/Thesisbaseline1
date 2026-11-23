@@ -1,0 +1,1117 @@
+imports ok
+total 15452
+drwx------ 4 root root     4096 Nov 19 08:59 .
+drwx------ 3 root root     4096 Nov 19 07:56 ..
+-rw------- 1 root root     1078 Nov 19 12:29 adapter_config.json
+-rw------- 1 root root  4372840 Nov 19 12:29 adapter_model.safetensors
+-rw------- 1 root root     2507 Nov 19 12:29 chat_template.jinja
+drwx------ 2 root root     4096 Nov 19 12:20 checkpoint-1700
+drwx------ 2 root root     4096 Nov 19 12:28 checkpoint-1761
+-rw------- 1 root root     5200 Nov 19 12:29 README.md
+-rw------- 1 root root      696 Nov 19 12:29 tokenizer_config.json
+-rw------- 1 root root 11421892 Nov 19 12:29 tokenizer.json
+-rw------- 1 root root       23 Nov 19 08:59 training_version.json
+                         [--subset {pilot,test,new_relevant}]
+                         [--base-prompt {instruction,plain}]
+--base-prompt chooses what base and rag get: "instruction" (default, the format of the first pilot,
+--subset test (all TEST examples) or --subset new_relevant (the TEST examples whose relevant file,
+  --subset {pilot,test,new_relevant}
+  --base-prompt {instruction,plain}
+
+  ok      adapter base model Qwen/Qwen2.5-Coder-1.5B == config llm.model Qwen/Qwen2.5-Coder-1.5B
+ok      adapter_model.safetensors present
+ok      pilot examples loaded: 50 (expect 50)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+config.json: 100% 660/660 [00:00<00:00, 2.42MB/s]
+tokenizer_config.json: 100% 7.31k/7.31k [00:00<00:00, 17.0MB/s]
+vocab.json: 100% 2.78M/2.78M [00:00<00:00, 55.4MB/s]
+merges.txt: 100% 1.67M/1.67M [00:00<00:00, 82.2MB/s]
+tokenizer.json: 100% 7.03M/7.03M [00:00<00:00, 82.8MB/s]
+[2026-11-23 13:28:08] INFO src.retrieval.embedder - Loading embedding model: microsoft/unixcoder-base
+config.json: 100% 691/691 [00:00<00:00, 4.58MB/s]
+
+pytorch_model.bin: downloading bytes:  13% 67.6M/504M [00:00<00:04, 101MB/s, 3.54MB/s  ]
+pytorch_model.bin: downloading bytes:  45% 226M/504M [00:01<00:01, 200MB/s, 18.5MB/s  ]
+pytorch_model.bin: downloading bytes:  53% 265M/504M [00:01<00:00, 244MB/s, 20.9MB/s  ]
+pytorch_model.bin: downloading bytes:  59% 296M/504M [00:01<00:00, 260MB/s, 24.5MB/s  ]
+pytorch_model.bin: downloading bytes:  66% 332M/504M [00:01<00:00, 283MB/s, 27.2MB/s  ]
+pytorch_model.bin: downloading bytes:  75% 378M/504M [00:02<00:00, 260MB/s, 32.4MB/s  ]
+pytorch_model.bin: downloading bytes:  84% 422M/504M [00:02<00:00, 243MB/s, 35.5MB/s  ]
+pytorch_model.bin: reconstructing file:  49% 248M/504M [00:02<00:01, 201MB/s, 17.4MB/s  ]
+pytorch_model.bin: downloading bytes:  91% 460M/504M [00:02<00:00, 190MB/s, 39.0MB/s  ]
+pytorch_model.bin: reconstructing file:  81% 406M/504M [00:02<00:00, 344MB/s, 27.4MB/s  ]
+pytorch_model.bin: downloading bytes: 100% 476M/476M [00:03<00:00, 151MB/s, 41.2MB/s  ]
+pytorch_model.bin: reconstructing file: 100% 504M/504M [00:03<00:00, 159MB/s, 44.2MB/s  ]
+Loading weights: 100% 199/199 [00:00<00:00, 26497.35it/s]
+tokenizer_config.json: 100% 1.11k/1.11k [00:00<00:00, 2.98MB/s]
+
+model.safetensors: downloading bytes:   0% 0.00/504M [00:00<?, ?B/s]
+
+vocab.json: 100% 938k/938k [00:00<00:00, 100MB/s]
+model.safetensors: downloading bytes:   2% 8.28M/504M [00:00<00:37, 13.2MB/s]
+
+merges.txt: 100% 444k/444k [00:00<00:00, 20.9MB/s]
+model.safetensors: downloading bytes:  34% 172M/504M [00:01<00:01, 266MB/s, 12.3MB/s  ]
+
+special_tokens_map.json: 100% 772/772 [00:00<00:00, 2.78MB/s]
+model.safetensors: downloading bytes:  43% 215M/504M [00:01<00:00, 307MB/s, 16.6MB/s  ]
+model.safetensors: downloading bytes:  69% 348M/504M [00:01<00:00, 314MB/s, 23.9MB/s  ]
+model.safetensors: downloading bytes:  80% 405M/504M [00:01<00:00, 265MB/s, 34.8MB/s  ]
+model.safetensors: downloading bytes:  91% 457M/504M [00:02<00:00, 232MB/s, 39.1MB/s  ][2026-11-23 13:28:16] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Kubenew-ChaosGPT-2c40353/main (2 vectors)
+
+
+Batches:   0% 0/1 [00:00<?, ?it/s]
+model.safetensors: reconstructing file:  53% 268M/504M [00:02<00:01, 145MB/s, 18.7MB/s  ]
+model.safetensors: reconstructing file:  67% 335M/504M [00:02<00:00, 203MB/s, 24.4MB/s  ]
+
+Batches: 100% 1/1 [00:00<00:00,  1.28it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/quarkslab-tritondse-9805288/main (4 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 31.90it/s]
+
+
+Batches: 100% 1/1 [00:00<00:00, 33.10it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/log10-io-log10-d605f37/main (3 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 38.78it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/BlueBrain-Currentscape-29753e8/main (3 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 48.66it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/K024-chatglm-q-eab6472/main (2 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 40.72it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/krishnaik06-Chicken-Disease-Classification-Projects-d0f5e13/main (3 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 67.66it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ZhengPeng7-CoSOD_fps_collection-bee3764/main (5 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 45.07it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/adobe-aepp-0e23c55/main (4 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 44.95it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/knexer-ai-storyteller-86da1d3/main (3 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 24.83it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/leandl-wvalidate-8cb9603/main (5 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 54.47it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ortursucceeh-Project-PhotoShare-1942d61/main (10 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 55.65it/s]
+
+
+Batches: 100% 1/1 [00:00<00:00, 68.52it/s]
+
+
+Batches: 100% 1/1 [00:00<00:00, 73.31it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bharatsubedi-PARseq_torch-8ffcb95/main (5 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 72.79it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/yuyujunjun-RSMT-Realtime-Stylized-Motion-Transition-67c65b7/main (8 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 51.34it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vectara-vectara-ingest-0a867f1/main (6 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 57.47it/s]
+[2026-11-23 13:28:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Stevenic-promptrix-py-6ed7059/main (4 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 74.34it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kraemer-lab-GRAPEVNE-1d241a8/main (5 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 76.11it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Quantomatic-zxlive-c7b5c28/main (6 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 60.70it/s]
+
+
+Batches: 100% 1/1 [00:00<00:00, 61.14it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bxdoan-venom-auto-da0fcfa/main (7 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 83.64it/s]
+
+
+Batches: 100% 1/1 [00:00<00:00, 85.87it/s]
+
+
+Batches: 100% 1/1 [00:00<00:00, 56.20it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/v-mikhaylov-tfold-release-e2bae1f/main (7 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 48.14it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nyaarium-blender-nyaatools-4fc69af/main (2 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 65.34it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vladkens-twscrape-4f2ee7f/main (5 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 61.68it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Zhendong-Wang-Patch-Diffusion-929b0c0/main (5 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 60.35it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/blurgyy-jaxngp-adbe49e/main (3 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 54.12it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bufbuild-protovalidate-python-2eee9ba/main (2 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 78.93it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/canpool-QxRibbon-4bbd7f5/main (5 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 66.25it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/edarchimbaud-systematic-trading-a9fec02/main (4 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 60.85it/s]
+
+
+Batches: 100% 1/1 [00:00<00:00, 67.17it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nccgroup-libslub-7732a54/main (7 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 83.53it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/SAIC-iSmart-API-saic-python-client-29b99ad/main (7 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 65.29it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/wm-pxel-langchain-testbench-53701f9/main (5 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 71.19it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/EmbedInAI-EmbedInDB-b2d7852/main (3 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 70.04it/s]
+[2026-11-23 13:28:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Adam-Vandervorst-PyBHV-ff5dcca/main (5 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 32.89it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/mp3guy-SymE3-445731e/main (4 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 70.24it/s]
+
+
+Batches: 100% 1/1 [00:00<00:00, 69.35it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/JuniusLuo-VecLucene-8a47c91/main (3 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 64.44it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/remixer-dec-botality-ii-f8402d5/main (3 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 45.17it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/slewie-HypONIC-5b95063/main (6 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 48.84it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/crowdgames-sturgeon-pub-a235e6d/main (20 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 57.80it/s]
+
+
+Batches: 100% 1/1 [00:00<00:00, 49.59it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ryongithub-GatedPromptTuning-1de14b5/main (3 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 61.32it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/jfamestad-TexasHoldemAgents-a171a13/main (6 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 31.26it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/briandelmsft-STAT-Function-f91d421/main (7 vectors)
+
+
+Batches: 100% 1/1 [00:00<00:00, 26.00it/s]
+
+model.safetensors: reconstructing file: 100% 504M/504M [00:05<00:00, 86.3MB/s, 30.5MB/s  ]
+
+Batches: 100% 1/1 [00:00<00:00, 27.84it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/datasig-ac-uk-RoughPy-fbd9016/main (8 vectors)
+
+
+model.safetensors: downloading bytes: 100% 476M/476M [00:05<00:00, 87.9MB/s, 41.3MB/s  ]
+model.safetensors: reconstructing file: 100% 504M/504M [00:05<00:00, 93.0MB/s, 38.4MB/s  ]
+Batches: 100% 1/1 [00:00<00:00, 43.21it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Kubenew-ChaosGPT-2c40353/staleness (2 vectors)
+Batches: 100% 1/1 [00:00<00:00, 69.88it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/quarkslab-tritondse-9805288/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 48.82it/s]
+Batches: 100% 1/1 [00:00<00:00, 48.39it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/log10-io-log10-d605f37/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 53.65it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/BlueBrain-Currentscape-29753e8/staleness (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 69.38it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/K024-chatglm-q-eab6472/staleness (2 vectors)
+Batches: 100% 1/1 [00:00<00:00, 53.56it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/krishnaik06-Chicken-Disease-Classification-Projects-d0f5e13/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 59.15it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ZhengPeng7-CoSOD_fps_collection-bee3764/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 45.94it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/adobe-aepp-0e23c55/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 46.38it/s]
+[2026-11-23 13:28:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/knexer-ai-storyteller-86da1d3/staleness (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 25.58it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/leandl-wvalidate-8cb9603/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 53.72it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ortursucceeh-Project-PhotoShare-1942d61/staleness (12 vectors)
+Batches: 100% 1/1 [00:00<00:00, 54.26it/s]
+Batches: 100% 1/1 [00:00<00:00, 65.02it/s]
+Batches: 100% 1/1 [00:00<00:00, 53.74it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bharatsubedi-PARseq_torch-8ffcb95/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 62.65it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/yuyujunjun-RSMT-Realtime-Stylized-Motion-Transition-67c65b7/staleness (12 vectors)
+Batches: 100% 1/1 [00:00<00:00, 52.14it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vectara-vectara-ingest-0a867f1/staleness (8 vectors)
+Batches: 100% 1/1 [00:00<00:00, 59.39it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Stevenic-promptrix-py-6ed7059/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 67.57it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kraemer-lab-GRAPEVNE-1d241a8/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 75.98it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Quantomatic-zxlive-c7b5c28/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 65.35it/s]
+Batches: 100% 1/1 [00:00<00:00, 64.83it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bxdoan-venom-auto-da0fcfa/staleness (10 vectors)
+Batches: 100% 1/1 [00:00<00:00, 84.52it/s]
+Batches: 100% 1/1 [00:00<00:00, 77.41it/s]
+Batches: 100% 1/1 [00:00<00:00, 76.89it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/v-mikhaylov-tfold-release-e2bae1f/staleness (8 vectors)
+Batches: 100% 1/1 [00:00<00:00, 54.26it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nyaarium-blender-nyaatools-4fc69af/staleness (2 vectors)
+Batches: 100% 1/1 [00:00<00:00, 51.71it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vladkens-twscrape-4f2ee7f/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 73.06it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Zhendong-Wang-Patch-Diffusion-929b0c0/staleness (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 67.68it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/blurgyy-jaxngp-adbe49e/staleness (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 77.99it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bufbuild-protovalidate-python-2eee9ba/staleness (2 vectors)
+Batches: 100% 1/1 [00:00<00:00, 83.26it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/canpool-QxRibbon-4bbd7f5/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 80.73it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/edarchimbaud-systematic-trading-a9fec02/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 75.45it/s]
+Batches: 100% 1/1 [00:00<00:00, 74.83it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nccgroup-libslub-7732a54/staleness (9 vectors)
+Batches: 100% 1/1 [00:00<00:00, 84.98it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/SAIC-iSmart-API-saic-python-client-29b99ad/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 70.88it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/wm-pxel-langchain-testbench-53701f9/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 81.86it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/EmbedInAI-EmbedInDB-b2d7852/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 81.75it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Adam-Vandervorst-PyBHV-ff5dcca/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 74.85it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/mp3guy-SymE3-445731e/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 78.31it/s]
+Batches: 100% 1/1 [00:00<00:00, 77.88it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/JuniusLuo-VecLucene-8a47c91/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 77.03it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/remixer-dec-botality-ii-f8402d5/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 54.84it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/slewie-HypONIC-5b95063/staleness (8 vectors)
+Batches: 100% 1/1 [00:00<00:00, 62.69it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/crowdgames-sturgeon-pub-a235e6d/staleness (25 vectors)
+Batches: 100% 1/1 [00:00<00:00, 76.31it/s]
+Batches: 100% 1/1 [00:00<00:00, 55.97it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ryongithub-GatedPromptTuning-1de14b5/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 75.01it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/jfamestad-TexasHoldemAgents-a171a13/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 83.64it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/briandelmsft-STAT-Function-f91d421/staleness (9 vectors)
+Batches: 100% 1/1 [00:00<00:00, 80.78it/s]
+Batches: 100% 1/1 [00:00<00:00, 54.64it/s]
+[2026-11-23 13:28:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/datasig-ac-uk-RoughPy-fbd9016/staleness (11 vectors)
+Batches: 100% 1/1 [00:00<00:00, 83.78it/s]
+info    main: 50 of 50 pilot examples have a relevant file; relevant file inside the top-5 chunks for 48 of them
+info    staleness: 50 of 50 pilot examples have a relevant file; relevant file inside the top-5 chunks for 46 of them
+ok      all 50 pilot examples have a relevant file in the main pool (pilot is drawn from them)
+ok      no TEST file retrieved in either view
+info    prompt tokens, no_retrieval: median 437, max 4411, over training limit 512: 21 of 50
+info    prompt tokens, retrieval: median 2152, max 5919, over training limit 512: 50 of 50
+info    generation limit max_new_tokens = 128
+info    with --base-prompt plain, prompt tokens, no_retrieval: median 423, max 4397
+info    with --base-prompt plain, prompt tokens, retrieval: median 2138, max 5905
+ok      plain prompt is shorter than the instruction prompt (no wrapper)
+info    BM25 (main): relevant file inside the top-5 chunks for 50 of 50
+ok      truncate_code_left shortens long code and leaves short code alone: True
+info    with --max-code-tokens 480, prompt tokens, no_retrieval: median 437, max 494, over 512: 0 of 50
+info    with --max-code-tokens 480, prompt tokens, retrieval: median 1983, max 2535, over 512: 50 of 50
+[2026-11-23 13:28:21] INFO src.evaluation.evaluator - [base] quality metrics: {'exact_match': 0.0, 'edit_similarity': 0.0, 'identifier_accuracy': 0.0, 'code_bleu': None, 'exact_match_ci95': [0.0, 0.0], 'edit_similarity_ci95': [0.0, 0.0], 'n_samples': 50}
+[2026-11-23 13:28:22] INFO src.evaluation.evaluator - Results saved -> results/dry_run/base_metrics.json
+[2026-11-23 13:28:22] INFO src.evaluation.evaluator - [rag_only] retrieval metrics: {'mrr': 0.7642, 'precision@1': 0.62, 'recall@1': 0.51, 'precision@3': 0.3933, 'recall@3': 0.8933, 'precision@5': 0.26, 'recall@5': 0.97, 'precision@10': 0.134, 'recall@10': 1.0, 'n_queries': 50}
+[2026-11-23 13:28:22] INFO src.evaluation.evaluator - [rag_only] quality metrics: {'exact_match': 1.0, 'edit_similarity': 1.0, 'identifier_accuracy': 1.0, 'code_bleu': None, 'exact_match_ci95': [1.0, 1.0], 'edit_similarity_ci95': [1.0, 1.0], 'n_samples': 50}
+[2026-11-23 13:28:22] INFO src.evaluation.evaluator - Results saved -> results/dry_run/rag_only_metrics.json
+[2026-11-23 13:28:22] INFO src.evaluation.evaluator - [finetuning_only] quality metrics: {'exact_match': 1.0, 'edit_similarity': 1.0, 'identifier_accuracy': 1.0, 'code_bleu': None, 'exact_match_ci95': [1.0, 1.0], 'edit_similarity_ci95': [1.0, 1.0], 'n_samples': 50}
+[2026-11-23 13:28:23] INFO src.evaluation.evaluator - Results saved -> results/dry_run/finetuning_only_metrics.json
+[2026-11-23 13:28:23] INFO src.evaluation.evaluator - [hybrid] retrieval metrics: {'mrr': 0.7642, 'precision@1': 0.62, 'recall@1': 0.51, 'precision@3': 0.3933, 'recall@3': 0.8933, 'precision@5': 0.26, 'recall@5': 0.97, 'precision@10': 0.134, 'recall@10': 1.0, 'n_queries': 50}
+[2026-11-23 13:28:23] INFO src.evaluation.evaluator - [hybrid] quality metrics: {'exact_match': 0.0, 'edit_similarity': 0.9804, 'identifier_accuracy': 0.9908, 'code_bleu': None, 'exact_match_ci95': [0.0, 0.0], 'edit_similarity_ci95': [0.9758, 0.9844], 'n_samples': 50}
+[2026-11-23 13:28:23] INFO src.evaluation.evaluator - Results saved -> results/dry_run/hybrid_metrics.json
+[2026-11-23 13:28:23] INFO src.evaluation.evaluator - Combined results -> results/dry_run/comparison_summary.json
+[2026-11-23 13:28:24] INFO src.evaluation.evaluator - Markdown comparison -> results/dry_run/comparison_summary.md
+info    stand-in exact match by system (expect rag/ft 1.0, base 0.0): {'base': 0.0, 'rag_only': 1.0, 'finetuning_only': 1.0, 'hybrid': 0.0}
+ok      codebleu package works
+
+DRY RUN PASSED (stand-in predictions only, not results)
+
+
+[2026-11-23 13:28:42] INFO run_comparison - pilot: 5 examples, view=main, top_k=5
+[2026-11-23 13:28:42] INFO src.retrieval.embedder - Loading embedding model: microsoft/unixcoder-base
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100% 199/199 [00:00<00:00, 26798.51it/s]
+
+model.safetensors: downloading bytes:   5% 166M/3.09G [00:01<00:13, 221MB/s, 12.9MB/s  ]
+model.safetensors: downloading bytes:  12% 374M/3.09G [00:02<00:17, 158MB/s, 31.3MB/s  ]
+model.safetensors: downloading bytes:  19% 599M/3.09G [00:03<00:14, 167MB/s, 48.1MB/s  ]
+model.safetensors: downloading bytes:  33% 1.01G/3.09G [00:05<00:06, 321MB/s, 74.1MB/s  ]
+model.safetensors: downloading bytes:  45% 1.40G/3.09G [00:06<00:05, 329MB/s, 98.6MB/s  ]
+model.safetensors: downloading bytes:  50% 1.54G/3.09G [00:08<00:12, 124MB/s, 96.0MB/s  ]
+model.safetensors: downloading bytes:  63% 1.94G/3.09G [00:11<00:04, 284MB/s,  109MB/s  ]
+model.safetensors: downloading bytes:  72% 2.21G/3.09G [00:23<00:11, 74.4MB/s, 59.9MB/s  ]
+model.safetensors: downloading bytes:  85% 2.62G/3.09G [00:25<00:01, 239MB/s, 82.0MB/s  ]
+model.safetensors: downloading bytes:  86% 2.67G/3.09G [00:25<00:01, 226MB/s, 83.9MB/s  ]
+model.safetensors: reconstructing file:  90% 2.79G/3.09G [00:28<00:02, 104MB/s,  103MB/s  ]
+model.safetensors: downloading bytes: 100% 2.68G/2.68G [00:29<00:00, 92.2MB/s, 85.2MB/s  ]
+model.safetensors: reconstructing file: 100% 3.09G/3.09G [00:29<00:00, 106MB/s,  123MB/s  ]
+Loading weights: 100% 338/338 [00:03<00:00, 99.44it/s]
+generation_config.json: 100% 117/117 [00:00<00:00, 708kB/s]
+[2026-11-23 13:29:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Kubenew-ChaosGPT-2c40353/main (2 vectors)
+Batches: 100% 1/1 [00:00<00:00,  4.74it/s]
+[2026-11-23 13:29:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/quarkslab-tritondse-9805288/main (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 31.94it/s]
+Batches: 100% 1/1 [00:00<00:00, 31.77it/s]
+[2026-11-23 13:29:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/log10-io-log10-d605f37/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 40.51it/s]
+[2026-11-23 13:29:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/BlueBrain-Currentscape-29753e8/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 49.36it/s]
+[2026-11-23 13:29:21] INFO run_comparison - === base ===
+WARNING:root:WARNING: There is no reference data-flows extracted from the whole corpus, and the data-flow match score degenerates to 0. Please consider ignoring this score.
+[2026-11-23 13:29:32] INFO src.evaluation.evaluator - [base] quality metrics: {'exact_match': 0.0, 'edit_similarity': 0.2551, 'identifier_accuracy': 0.1, 'code_bleu': 0.0385, 'exact_match_ci95': [0.0, 0.0], 'edit_similarity_ci95': [0.1368, 0.3868], 'n_samples': 5}
+INFO:src.evaluation.evaluator:[base] quality metrics: {'exact_match': 0.0, 'edit_similarity': 0.2551, 'identifier_accuracy': 0.1, 'code_bleu': 0.0385, 'exact_match_ci95': [0.0, 0.0], 'edit_similarity_ci95': [0.1368, 0.3868], 'n_samples': 5}
+[2026-11-23 13:29:32] INFO src.evaluation.evaluator - [base] efficiency: {'system': 'base', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 11316.53, 'total_latency_ms': 11316.53, 'avg_total_ms': 2263.31, 'peak_gpu_mb': 1697.02, 'peak_cpu_ram_mb': 2381.82}
+INFO:src.evaluation.evaluator:[base] efficiency: {'system': 'base', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 11316.53, 'total_latency_ms': 11316.53, 'avg_total_ms': 2263.31, 'peak_gpu_mb': 1697.02, 'peak_cpu_ram_mb': 2381.82}
+[2026-11-23 13:29:32] INFO src.evaluation.evaluator - Results saved -> results/plain_test/base_metrics.json
+INFO:src.evaluation.evaluator:Results saved -> results/plain_test/base_metrics.json
+[2026-11-23 13:29:32] INFO run_comparison - === rag_only ===
+INFO:run_comparison:=== rag_only ===
+WARNING:root:WARNING: There is no reference data-flows extracted from the whole corpus, and the data-flow match score degenerates to 0. Please consider ignoring this score.
+[2026-11-23 13:29:39] INFO src.evaluation.evaluator - [rag_only] retrieval metrics: {'mrr': 0.6333, 'precision@1': 0.4, 'recall@1': 0.4, 'precision@3': 0.3333, 'recall@3': 1.0, 'precision@5': 0.2, 'recall@5': 1.0, 'precision@10': 0.1, 'recall@10': 1.0, 'n_queries': 5}
+INFO:src.evaluation.evaluator:[rag_only] retrieval metrics: {'mrr': 0.6333, 'precision@1': 0.4, 'recall@1': 0.4, 'precision@3': 0.3333, 'recall@3': 1.0, 'precision@5': 0.2, 'recall@5': 1.0, 'precision@10': 0.1, 'recall@10': 1.0, 'n_queries': 5}
+[2026-11-23 13:29:39] INFO src.evaluation.evaluator - [rag_only] quality metrics: {'exact_match': 0.0, 'edit_similarity': 0.2274, 'identifier_accuracy': 0.0, 'code_bleu': 0.0, 'exact_match_ci95': [0.0, 0.0], 'edit_similarity_ci95': [0.091, 0.3637], 'n_samples': 5}
+INFO:src.evaluation.evaluator:[rag_only] quality metrics: {'exact_match': 0.0, 'edit_similarity': 0.2274, 'identifier_accuracy': 0.0, 'code_bleu': 0.0, 'exact_match_ci95': [0.0, 0.0], 'edit_similarity_ci95': [0.091, 0.3637], 'n_samples': 5}
+[2026-11-23 13:29:39] INFO src.evaluation.evaluator - [rag_only] efficiency: {'system': 'rag_only', 'retrieval_latency_ms': 349.77, 'inference_latency_ms': 6805.38, 'total_latency_ms': 7155.15, 'avg_total_ms': 1431.03, 'peak_gpu_mb': 1822.64, 'peak_cpu_ram_mb': 2531.5}
+INFO:src.evaluation.evaluator:[rag_only] efficiency: {'system': 'rag_only', 'retrieval_latency_ms': 349.77, 'inference_latency_ms': 6805.38, 'total_latency_ms': 7155.15, 'avg_total_ms': 1431.03, 'peak_gpu_mb': 1822.64, 'peak_cpu_ram_mb': 2531.5}
+[2026-11-23 13:29:39] INFO src.evaluation.evaluator - Results saved -> results/plain_test/rag_only_metrics.json
+INFO:src.evaluation.evaluator:Results saved -> results/plain_test/rag_only_metrics.json
+[2026-11-23 13:29:39] INFO run_comparison - === finetuning_only ===
+INFO:run_comparison:=== finetuning_only ===
+WARNING:root:WARNING: There is no reference data-flows extracted from the whole corpus, and the data-flow match score degenerates to 0. Please consider ignoring this score.
+[2026-11-23 13:29:48] INFO src.evaluation.evaluator - [finetuning_only] quality metrics: {'exact_match': 0.2, 'edit_similarity': 0.5836, 'identifier_accuracy': 0.35, 'code_bleu': 0.1438, 'exact_match_ci95': [0.0, 0.6], 'edit_similarity_ci95': [0.3041, 0.863], 'n_samples': 5}
+INFO:src.evaluation.evaluator:[finetuning_only] quality metrics: {'exact_match': 0.2, 'edit_similarity': 0.5836, 'identifier_accuracy': 0.35, 'code_bleu': 0.1438, 'exact_match_ci95': [0.0, 0.6], 'edit_similarity_ci95': [0.3041, 0.863], 'n_samples': 5}
+[2026-11-23 13:29:48] INFO src.evaluation.evaluator - [finetuning_only] efficiency: {'system': 'finetuning_only', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 9177.38, 'total_latency_ms': 9177.38, 'avg_total_ms': 1835.48, 'peak_gpu_mb': 1698.01, 'peak_cpu_ram_mb': 2534.01}
+INFO:src.evaluation.evaluator:[finetuning_only] efficiency: {'system': 'finetuning_only', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 9177.38, 'total_latency_ms': 9177.38, 'avg_total_ms': 1835.48, 'peak_gpu_mb': 1698.01, 'peak_cpu_ram_mb': 2534.01}
+[2026-11-23 13:29:48] INFO src.evaluation.evaluator - Results saved -> results/plain_test/finetuning_only_metrics.json
+INFO:src.evaluation.evaluator:Results saved -> results/plain_test/finetuning_only_metrics.json
+[2026-11-23 13:29:48] INFO run_comparison - === hybrid ===
+INFO:run_comparison:=== hybrid ===
+WARNING:root:WARNING: There is no reference data-flows extracted from the whole corpus, and the data-flow match score degenerates to 0. Please consider ignoring this score.
+[2026-11-23 13:29:58] INFO src.evaluation.evaluator - [hybrid] retrieval metrics: {'mrr': 0.6333, 'precision@1': 0.4, 'recall@1': 0.4, 'precision@3': 0.3333, 'recall@3': 1.0, 'precision@5': 0.2, 'recall@5': 1.0, 'precision@10': 0.1, 'recall@10': 1.0, 'n_queries': 5}
+INFO:src.evaluation.evaluator:[hybrid] retrieval metrics: {'mrr': 0.6333, 'precision@1': 0.4, 'recall@1': 0.4, 'precision@3': 0.3333, 'recall@3': 1.0, 'precision@5': 0.2, 'recall@5': 1.0, 'precision@10': 0.1, 'recall@10': 1.0, 'n_queries': 5}
+[2026-11-23 13:29:58] INFO src.evaluation.evaluator - [hybrid] quality metrics: {'exact_match': 0.2, 'edit_similarity': 0.6576, 'identifier_accuracy': 0.55, 'code_bleu': 0.1486, 'exact_match_ci95': [0.0, 0.6], 'edit_similarity_ci95': [0.3877, 0.9275], 'n_samples': 5}
+INFO:src.evaluation.evaluator:[hybrid] quality metrics: {'exact_match': 0.2, 'edit_similarity': 0.6576, 'identifier_accuracy': 0.55, 'code_bleu': 0.1486, 'exact_match_ci95': [0.0, 0.6], 'edit_similarity_ci95': [0.3877, 0.9275], 'n_samples': 5}
+[2026-11-23 13:29:58] INFO src.evaluation.evaluator - [hybrid] efficiency: {'system': 'hybrid', 'retrieval_latency_ms': 349.77, 'inference_latency_ms': 9381.35, 'total_latency_ms': 9731.12, 'avg_total_ms': 1946.22, 'peak_gpu_mb': 1823.37, 'peak_cpu_ram_mb': 2537.02}
+INFO:src.evaluation.evaluator:[hybrid] efficiency: {'system': 'hybrid', 'retrieval_latency_ms': 349.77, 'inference_latency_ms': 9381.35, 'total_latency_ms': 9731.12, 'avg_total_ms': 1946.22, 'peak_gpu_mb': 1823.37, 'peak_cpu_ram_mb': 2537.02}
+[2026-11-23 13:29:58] INFO src.evaluation.evaluator - Results saved -> results/plain_test/hybrid_metrics.json
+INFO:src.evaluation.evaluator:Results saved -> results/plain_test/hybrid_metrics.json
+[2026-11-23 13:29:58] INFO src.evaluation.evaluator - Combined results -> results/plain_test/comparison_summary.json
+INFO:src.evaluation.evaluator:Combined results -> results/plain_test/comparison_summary.json
+[2026-11-23 13:29:58] INFO src.evaluation.evaluator - Markdown comparison -> results/plain_test/comparison_summary.md
+INFO:src.evaluation.evaluator:Markdown comparison -> results/plain_test/comparison_summary.md
+[2026-11-23 13:29:58] INFO run_comparison - Done. See results/plain_test/comparison_summary.md and predictions.jsonl
+INFO:run_comparison:Done. See results/plain_test/comparison_summary.md and predictions.jsonl
+
+REF : 'fast_token_limit, 4000)'
+  base             'assistant_name, "assistant")' | ES 0.3529
+  rag_only         'assistant_name, "Auto-GPT")' | ES 0.36
+  finetuning_only  'llm_model, "gpt-3.5-turbo")' | ES 0.28
+  hybrid           'memory_index, "auto-gpt")' | ES 0.25
+REF : 'add_input_seed(Seed(b"./6\\x00AZERAZER\\x00AZERAZER"))'
+  base             'verbosity = logging.DEBUG' | ES 0.1039
+  rag_only         'threads = [dse.create_thread()]' | ES 0.2651
+  finetuning_only  'add_callback(CbType.PRE_INST, trace_inst)' | ES 0.2151
+  hybrid           'add_sanitizer(NullDerefSanitizer())' | ES 0.2989
+REF : 'add_input_seed(Seed(b"AZER"))'
+  base             'verbosity = 1' | ES 0.0952
+  rag_only         'verbosity = 1' | ES 0.0952
+  finetuning_only  'add_input_seed(Seed(b"AZERAZAZERA"))' | ES 0.8923
+  hybrid           'add_input_seed(Seed(b"AZERAZAZERA", 10))' | ES 0.8406
+REF : 'run(inp))'
+  base             'anticipate_action(inp))' | ES 0.4375
+  rag_only         '' | ES 0.0
+  finetuning_only  'run(inp))' | ES 1.0
+  hybrid           'run(inp))' | ES 1.0
+REF : 'plot(voltage, currents, config)'
+  base             'trajectory(' | ES 0.2857
+  rag_only         'ion_currentscape(' | ES 0.4167
+  finetuning_only  'plot_currentscape(' | ES 0.5306
+  hybrid           'plot(voltage, currents, config=config)' | ES 0.8986
+
+  [2026-11-23 13:33:43] INFO run_comparison - pilot: 50 examples, view=main, top_k=5
+[2026-11-23 13:33:43] INFO src.retrieval.embedder - Loading embedding model: microsoft/unixcoder-base
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100% 199/199 [00:00<00:00, 13365.14it/s]
+Loading weights: 100% 338/338 [00:04<00:00, 77.42it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Kubenew-ChaosGPT-2c40353/main (2 vectors)
+Batches: 100% 1/1 [00:00<00:00,  4.98it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/quarkslab-tritondse-9805288/main (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 31.56it/s]
+Batches: 100% 1/1 [00:00<00:00, 32.55it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/log10-io-log10-d605f37/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 40.52it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/BlueBrain-Currentscape-29753e8/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 48.53it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/K024-chatglm-q-eab6472/main (2 vectors)
+Batches: 100% 1/1 [00:00<00:00, 40.53it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/krishnaik06-Chicken-Disease-Classification-Projects-d0f5e13/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 81.28it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ZhengPeng7-CoSOD_fps_collection-bee3764/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 46.64it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/adobe-aepp-0e23c55/main (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 45.86it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/knexer-ai-storyteller-86da1d3/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 25.95it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/leandl-wvalidate-8cb9603/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 56.44it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ortursucceeh-Project-PhotoShare-1942d61/main (10 vectors)
+Batches: 100% 1/1 [00:00<00:00, 58.11it/s]
+Batches: 100% 1/1 [00:00<00:00, 56.08it/s]
+Batches: 100% 1/1 [00:00<00:00, 57.75it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bharatsubedi-PARseq_torch-8ffcb95/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 66.62it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/yuyujunjun-RSMT-Realtime-Stylized-Motion-Transition-67c65b7/main (8 vectors)
+Batches: 100% 1/1 [00:00<00:00, 53.41it/s]
+[2026-11-23 13:33:52] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vectara-vectara-ingest-0a867f1/main (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 65.94it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Stevenic-promptrix-py-6ed7059/main (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 74.14it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kraemer-lab-GRAPEVNE-1d241a8/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 82.03it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Quantomatic-zxlive-c7b5c28/main (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 67.18it/s]
+Batches: 100% 1/1 [00:00<00:00, 67.32it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bxdoan-venom-auto-da0fcfa/main (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 91.04it/s]
+Batches: 100% 1/1 [00:00<00:00, 91.35it/s]
+Batches: 100% 1/1 [00:00<00:00, 77.86it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/v-mikhaylov-tfold-release-e2bae1f/main (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 56.10it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nyaarium-blender-nyaatools-4fc69af/main (2 vectors)
+Batches: 100% 1/1 [00:00<00:00, 81.24it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vladkens-twscrape-4f2ee7f/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 81.03it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Zhendong-Wang-Patch-Diffusion-929b0c0/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 62.01it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/blurgyy-jaxngp-adbe49e/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 71.03it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bufbuild-protovalidate-python-2eee9ba/main (2 vectors)
+Batches: 100% 1/1 [00:00<00:00, 84.79it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/canpool-QxRibbon-4bbd7f5/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 75.24it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/edarchimbaud-systematic-trading-a9fec02/main (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 69.04it/s]
+Batches: 100% 1/1 [00:00<00:00, 55.64it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nccgroup-libslub-7732a54/main (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 97.63it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/SAIC-iSmart-API-saic-python-client-29b99ad/main (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 79.86it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/wm-pxel-langchain-testbench-53701f9/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 98.99it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/EmbedInAI-EmbedInDB-b2d7852/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 91.46it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Adam-Vandervorst-PyBHV-ff5dcca/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 82.67it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/mp3guy-SymE3-445731e/main (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 80.30it/s]
+Batches: 100% 1/1 [00:00<00:00, 83.15it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/JuniusLuo-VecLucene-8a47c91/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 76.15it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/remixer-dec-botality-ii-f8402d5/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 52.08it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/slewie-HypONIC-5b95063/main (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 62.26it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/crowdgames-sturgeon-pub-a235e6d/main (20 vectors)
+Batches: 100% 1/1 [00:00<00:00, 78.51it/s]
+Batches: 100% 1/1 [00:00<00:00, 57.80it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ryongithub-GatedPromptTuning-1de14b5/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 78.15it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/jfamestad-TexasHoldemAgents-a171a13/main (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 93.16it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/briandelmsft-STAT-Function-f91d421/main (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 84.23it/s]
+Batches: 100% 1/1 [00:00<00:00, 67.66it/s]
+[2026-11-23 13:33:53] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/datasig-ac-uk-RoughPy-fbd9016/main (8 vectors)
+Batches: 100% 1/1 [00:00<00:00, 92.89it/s]
+[2026-11-23 13:33:53] INFO run_comparison - === base ===
+[2026-11-23 13:35:13] INFO src.evaluation.evaluator - [base] quality metrics: {'exact_match': 0.04, 'edit_similarity': 0.4935, 'identifier_accuracy': 0.2979, 'code_bleu': 0.2367, 'exact_match_ci95': [0.0, 0.1], 'edit_similarity_ci95': [0.4258, 0.5588], 'n_samples': 50}
+[2026-11-23 13:35:13] INFO src.evaluation.evaluator - [base] efficiency: {'system': 'base', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 80310.75, 'total_latency_ms': 80310.75, 'avg_total_ms': 1606.21, 'peak_gpu_mb': 2008.93, 'peak_cpu_ram_mb': 2495.5}
+[2026-11-23 13:35:14] INFO src.evaluation.evaluator - Results saved -> results/pilot_main_plainbase/base_metrics.json
+[2026-11-23 13:35:14] INFO run_comparison - === rag_only ===
+[2026-11-23 13:36:39] INFO src.evaluation.evaluator - [rag_only] retrieval metrics: {'mrr': 0.7642, 'precision@1': 0.62, 'recall@1': 0.51, 'precision@3': 0.3933, 'recall@3': 0.8933, 'precision@5': 0.26, 'recall@5': 0.97, 'precision@10': 0.134, 'recall@10': 1.0, 'n_queries': 50}
+[2026-11-23 13:36:39] INFO src.evaluation.evaluator - [rag_only] quality metrics: {'exact_match': 0.02, 'edit_similarity': 0.3872, 'identifier_accuracy': 0.2165, 'code_bleu': 0.1401, 'exact_match_ci95': [0.0, 0.06], 'edit_similarity_ci95': [0.3111, 0.4683], 'n_samples': 50}
+[2026-11-23 13:36:39] INFO src.evaluation.evaluator - [rag_only] efficiency: {'system': 'rag_only', 'retrieval_latency_ms': 1170.44, 'inference_latency_ms': 84996.85, 'total_latency_ms': 86167.28, 'avg_total_ms': 1723.35, 'peak_gpu_mb': 2142.45, 'peak_cpu_ram_mb': 2541.44}
+[2026-11-23 13:36:39] INFO src.evaluation.evaluator - Results saved -> results/pilot_main_plainbase/rag_only_metrics.json
+[2026-11-23 13:36:39] INFO run_comparison - === finetuning_only ===
+[2026-11-23 13:38:14] INFO src.evaluation.evaluator - [finetuning_only] quality metrics: {'exact_match': 0.08, 'edit_similarity': 0.613, 'identifier_accuracy': 0.4142, 'code_bleu': 0.213, 'exact_match_ci95': [0.02, 0.16], 'edit_similarity_ci95': [0.5485, 0.6802], 'n_samples': 50}
+[2026-11-23 13:38:14] INFO src.evaluation.evaluator - [finetuning_only] efficiency: {'system': 'finetuning_only', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 95336.73, 'total_latency_ms': 95336.73, 'avg_total_ms': 1906.73, 'peak_gpu_mb': 2009.11, 'peak_cpu_ram_mb': 2522.13}
+[2026-11-23 13:38:14] INFO src.evaluation.evaluator - Results saved -> results/pilot_main_plainbase/finetuning_only_metrics.json
+[2026-11-23 13:38:14] INFO run_comparison - === hybrid ===
+[2026-11-23 13:40:05] INFO src.evaluation.evaluator - [hybrid] retrieval metrics: {'mrr': 0.7642, 'precision@1': 0.62, 'recall@1': 0.51, 'precision@3': 0.3933, 'recall@3': 0.8933, 'precision@5': 0.26, 'recall@5': 0.97, 'precision@10': 0.134, 'recall@10': 1.0, 'n_queries': 50}
+[2026-11-23 13:40:05] INFO src.evaluation.evaluator - [hybrid] quality metrics: {'exact_match': 0.14, 'edit_similarity': 0.644, 'identifier_accuracy': 0.4898, 'code_bleu': 0.2139, 'exact_match_ci95': [0.06, 0.24], 'edit_similarity_ci95': [0.5701, 0.7153], 'n_samples': 50}
+[2026-11-23 13:40:05] INFO src.evaluation.evaluator - [hybrid] efficiency: {'system': 'hybrid', 'retrieval_latency_ms': 1170.44, 'inference_latency_ms': 110934.3, 'total_latency_ms': 112104.74, 'avg_total_ms': 2242.09, 'peak_gpu_mb': 2146.1, 'peak_cpu_ram_mb': 2522.13}
+[2026-11-23 13:40:05] INFO src.evaluation.evaluator - Results saved -> results/pilot_main_plainbase/hybrid_metrics.json
+[2026-11-23 13:40:05] INFO src.evaluation.evaluator - Combined results -> results/pilot_main_plainbase/comparison_summary.json
+[2026-11-23 13:40:05] INFO src.evaluation.evaluator - Markdown comparison -> results/pilot_main_plainbase/comparison_summary.md
+[2026-11-23 13:40:05] INFO run_comparison - Done. See results/pilot_main_plainbase/comparison_summary.md and predictions.jsonl
+
+[2026-11-23 14:07:05] INFO run_comparison - pilot: 50 examples, view=staleness, top_k=5
+[2026-11-23 14:07:05] INFO src.retrieval.embedder - Loading embedding model: microsoft/unixcoder-base
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100% 199/199 [00:00<00:00, 23384.60it/s]
+Loading weights: 100% 338/338 [00:03<00:00, 111.53it/s]
+[2026-11-23 14:07:12] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Kubenew-ChaosGPT-2c40353/staleness (2 vectors)
+Batches: 100% 1/1 [00:00<00:00,  3.87it/s]
+[2026-11-23 14:07:12] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/quarkslab-tritondse-9805288/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 30.51it/s]
+Batches: 100% 1/1 [00:00<00:00, 31.65it/s]
+[2026-11-23 14:07:12] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/log10-io-log10-d605f37/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 39.09it/s]
+[2026-11-23 14:07:12] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/BlueBrain-Currentscape-29753e8/staleness (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 46.47it/s]
+[2026-11-23 14:07:12] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/K024-chatglm-q-eab6472/staleness (2 vectors)
+Batches: 100% 1/1 [00:00<00:00, 39.03it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/krishnaik06-Chicken-Disease-Classification-Projects-d0f5e13/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 56.08it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ZhengPeng7-CoSOD_fps_collection-bee3764/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 31.13it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/adobe-aepp-0e23c55/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 47.78it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/knexer-ai-storyteller-86da1d3/staleness (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 27.71it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/leandl-wvalidate-8cb9603/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 58.38it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ortursucceeh-Project-PhotoShare-1942d61/staleness (12 vectors)
+Batches: 100% 1/1 [00:00<00:00, 60.44it/s]
+Batches: 100% 1/1 [00:00<00:00, 58.18it/s]
+Batches: 100% 1/1 [00:00<00:00, 60.69it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bharatsubedi-PARseq_torch-8ffcb95/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 58.39it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/yuyujunjun-RSMT-Realtime-Stylized-Motion-Transition-67c65b7/staleness (12 vectors)
+Batches: 100% 1/1 [00:00<00:00, 42.60it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vectara-vectara-ingest-0a867f1/staleness (8 vectors)
+Batches: 100% 1/1 [00:00<00:00, 48.87it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Stevenic-promptrix-py-6ed7059/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 59.29it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kraemer-lab-GRAPEVNE-1d241a8/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 60.68it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Quantomatic-zxlive-c7b5c28/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 52.46it/s]
+Batches: 100% 1/1 [00:00<00:00, 58.36it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bxdoan-venom-auto-da0fcfa/staleness (10 vectors)
+Batches: 100% 1/1 [00:00<00:00, 77.04it/s]
+Batches: 100% 1/1 [00:00<00:00, 79.46it/s]
+Batches: 100% 1/1 [00:00<00:00, 72.45it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/v-mikhaylov-tfold-release-e2bae1f/staleness (8 vectors)
+Batches: 100% 1/1 [00:00<00:00, 50.61it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nyaarium-blender-nyaatools-4fc69af/staleness (2 vectors)
+Batches: 100% 1/1 [00:00<00:00, 70.67it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vladkens-twscrape-4f2ee7f/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 74.13it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Zhendong-Wang-Patch-Diffusion-929b0c0/staleness (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 62.08it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/blurgyy-jaxngp-adbe49e/staleness (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 71.75it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bufbuild-protovalidate-python-2eee9ba/staleness (2 vectors)
+Batches: 100% 1/1 [00:00<00:00, 81.72it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/canpool-QxRibbon-4bbd7f5/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 74.32it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/edarchimbaud-systematic-trading-a9fec02/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 80.19it/s]
+Batches: 100% 1/1 [00:00<00:00, 81.41it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nccgroup-libslub-7732a54/staleness (9 vectors)
+Batches: 100% 1/1 [00:00<00:00, 84.41it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/SAIC-iSmart-API-saic-python-client-29b99ad/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 69.26it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/wm-pxel-langchain-testbench-53701f9/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 76.88it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/EmbedInAI-EmbedInDB-b2d7852/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 72.71it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Adam-Vandervorst-PyBHV-ff5dcca/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 78.53it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/mp3guy-SymE3-445731e/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 73.92it/s]
+Batches: 100% 1/1 [00:00<00:00, 75.41it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/JuniusLuo-VecLucene-8a47c91/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 60.72it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/remixer-dec-botality-ii-f8402d5/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 52.52it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/slewie-HypONIC-5b95063/staleness (8 vectors)
+Batches: 100% 1/1 [00:00<00:00, 52.33it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/crowdgames-sturgeon-pub-a235e6d/staleness (25 vectors)
+Batches: 100% 1/1 [00:00<00:00, 69.22it/s]
+Batches: 100% 1/1 [00:00<00:00, 52.20it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ryongithub-GatedPromptTuning-1de14b5/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 57.07it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/jfamestad-TexasHoldemAgents-a171a13/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 75.71it/s]
+[2026-11-23 14:07:13] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/briandelmsft-STAT-Function-f91d421/staleness (9 vectors)
+Batches: 100% 1/1 [00:00<00:00, 61.45it/s]
+Batches: 100% 1/1 [00:00<00:00, 58.91it/s]
+[2026-11-23 14:07:14] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/datasig-ac-uk-RoughPy-fbd9016/staleness (11 vectors)
+Batches: 100% 1/1 [00:00<00:00, 59.05it/s]
+[2026-11-23 14:07:14] INFO run_comparison - === base ===
+[2026-11-23 14:08:32] INFO src.evaluation.evaluator - [base] quality metrics: {'exact_match': 0.04, 'edit_similarity': 0.4935, 'identifier_accuracy': 0.2979, 'code_bleu': 0.2367, 'exact_match_ci95': [0.0, 0.1], 'edit_similarity_ci95': [0.4258, 0.5588], 'n_samples': 50}
+[2026-11-23 14:08:32] INFO src.evaluation.evaluator - [base] efficiency: {'system': 'base', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 78532.75, 'total_latency_ms': 78532.75, 'avg_total_ms': 1570.65, 'peak_gpu_mb': 2008.93, 'peak_cpu_ram_mb': 2423.68}
+[2026-11-23 14:08:32] INFO src.evaluation.evaluator - Results saved -> results/pilot_staleness_plainbase/base_metrics.json
+[2026-11-23 14:08:32] INFO run_comparison - === rag_only ===
+[2026-11-23 14:09:59] INFO src.evaluation.evaluator - [rag_only] retrieval metrics: {'mrr': 0.7504, 'precision@1': 0.62, 'recall@1': 0.4767, 'precision@3': 0.3667, 'recall@3': 0.7833, 'precision@5': 0.264, 'recall@5': 0.915, 'precision@10': 0.144, 'recall@10': 1.0, 'n_queries': 50}
+[2026-11-23 14:09:59] INFO src.evaluation.evaluator - [rag_only] quality metrics: {'exact_match': 0.0, 'edit_similarity': 0.4033, 'identifier_accuracy': 0.2132, 'code_bleu': 0.1494, 'exact_match_ci95': [0.0, 0.0], 'edit_similarity_ci95': [0.3271, 0.4832], 'n_samples': 50}
+[2026-11-23 14:09:59] INFO src.evaluation.evaluator - [rag_only] efficiency: {'system': 'rag_only', 'retrieval_latency_ms': 1392.7, 'inference_latency_ms': 86732.7, 'total_latency_ms': 88125.4, 'avg_total_ms': 1762.51, 'peak_gpu_mb': 2142.45, 'peak_cpu_ram_mb': 2470.36}
+[2026-11-23 14:09:59] INFO src.evaluation.evaluator - Results saved -> results/pilot_staleness_plainbase/rag_only_metrics.json
+[2026-11-23 14:09:59] INFO run_comparison - === finetuning_only ===
+[2026-11-23 14:11:38] INFO src.evaluation.evaluator - [finetuning_only] quality metrics: {'exact_match': 0.08, 'edit_similarity': 0.613, 'identifier_accuracy': 0.4142, 'code_bleu': 0.213, 'exact_match_ci95': [0.02, 0.16], 'edit_similarity_ci95': [0.5485, 0.6802], 'n_samples': 50}
+[2026-11-23 14:11:38] INFO src.evaluation.evaluator - [finetuning_only] efficiency: {'system': 'finetuning_only', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 98883.81, 'total_latency_ms': 98883.81, 'avg_total_ms': 1977.68, 'peak_gpu_mb': 2009.11, 'peak_cpu_ram_mb': 2470.81}
+[2026-11-23 14:11:38] INFO src.evaluation.evaluator - Results saved -> results/pilot_staleness_plainbase/finetuning_only_metrics.json
+[2026-11-23 14:11:38] INFO run_comparison - === hybrid ===
+[2026-11-23 14:13:36] INFO src.evaluation.evaluator - [hybrid] retrieval metrics: {'mrr': 0.7504, 'precision@1': 0.62, 'recall@1': 0.4767, 'precision@3': 0.3667, 'recall@3': 0.7833, 'precision@5': 0.264, 'recall@5': 0.915, 'precision@10': 0.144, 'recall@10': 1.0, 'n_queries': 50}
+[2026-11-23 14:13:36] INFO src.evaluation.evaluator - [hybrid] quality metrics: {'exact_match': 0.16, 'edit_similarity': 0.657, 'identifier_accuracy': 0.5073, 'code_bleu': 0.2883, 'exact_match_ci95': [0.06, 0.26], 'edit_similarity_ci95': [0.5822, 0.7277], 'n_samples': 50}
+[2026-11-23 14:13:36] INFO src.evaluation.evaluator - [hybrid] efficiency: {'system': 'hybrid', 'retrieval_latency_ms': 1392.7, 'inference_latency_ms': 118302.85, 'total_latency_ms': 119695.54, 'avg_total_ms': 2393.91, 'peak_gpu_mb': 2146.1, 'peak_cpu_ram_mb': 2470.83}
+[2026-11-23 14:13:36] INFO src.evaluation.evaluator - Results saved -> results/pilot_staleness_plainbase/hybrid_metrics.json
+[2026-11-23 14:13:36] INFO src.evaluation.evaluator - Combined results -> results/pilot_staleness_plainbase/comparison_summary.json
+[2026-11-23 14:13:36] INFO src.evaluation.evaluator - Markdown comparison -> results/pilot_staleness_plainbase/comparison_summary.md
+[2026-11-23 14:13:36] INFO run_comparison - Done. See results/pilot_staleness_plainbase/comparison_summary.md and predictions.jsonl
+
+# Comparative Study Results
+
+## Code Completion Quality
+
+| System | Exact Match | Edit Sim | Identifier Acc | CodeBLEU |
+|--------|------------|----------|----------------|----------|
+| base | 0.04 | 0.4935 | 0.2979 | 0.2367 |
+| rag_only | 0.02 | 0.3872 | 0.2165 | 0.1401 |
+| finetuning_only | 0.08 | 0.613 | 0.4142 | 0.213 |
+| hybrid | 0.14 | 0.644 | 0.4898 | 0.2139 |
+
+## Retrieval Quality (RAG-Only & Hybrid)
+
+| System | MRR | P@1 | P@3 | P@5 | P@10 | R@1 | R@3 | R@5 | R@10 |
+|--------|-----|-----|-----|-----|------|-----|-----|-----|------|
+| base | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| rag_only | 0.7642 | 0.62 | 0.3933 | 0.26 | 0.134 | 0.51 | 0.8933 | 0.97 | 1.0 |
+| finetuning_only | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| hybrid | 0.7642 | 0.62 | 0.3933 | 0.26 | 0.134 | 0.51 | 0.8933 | 0.97 | 1.0 |
+
+## Efficiency
+
+| System | Retrieval (ms) | Inference (ms) | Total (ms) | GPU Mem (MB) | CPU RAM (MB) |
+|--------|---------------|----------------|------------|--------------|--------------|
+| base | 0.0 | 80310.75 | 80310.75 | 2008.93 | 2495.5 |
+| rag_only | 1170.44 | 84996.85 | 86167.28 | 2142.45 | 2541.44 |
+| finetuning_only | 0.0 | 95336.73 | 95336.73 | 2009.11 | 2522.13 |
+| hybrid | 1170.44 | 110934.3 | 112104.74 | 2146.1 | 2522.13 |
+# Comparative Study Results
+
+## Code Completion Quality
+
+| System | Exact Match | Edit Sim | Identifier Acc | CodeBLEU |
+|--------|------------|----------|----------------|----------|
+| base | 0.04 | 0.4935 | 0.2979 | 0.2367 |
+| rag_only | 0.0 | 0.4033 | 0.2132 | 0.1494 |
+| finetuning_only | 0.08 | 0.613 | 0.4142 | 0.213 |
+| hybrid | 0.16 | 0.657 | 0.5073 | 0.2883 |
+
+## Retrieval Quality (RAG-Only & Hybrid)
+
+| System | MRR | P@1 | P@3 | P@5 | P@10 | R@1 | R@3 | R@5 | R@10 |
+|--------|-----|-----|-----|-----|------|-----|-----|-----|------|
+| base | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| rag_only | 0.7504 | 0.62 | 0.3667 | 0.264 | 0.144 | 0.4767 | 0.7833 | 0.915 | 1.0 |
+| finetuning_only | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| hybrid | 0.7504 | 0.62 | 0.3667 | 0.264 | 0.144 | 0.4767 | 0.7833 | 0.915 | 1.0 |
+
+## Efficiency
+
+| System | Retrieval (ms) | Inference (ms) | Total (ms) | GPU Mem (MB) | CPU RAM (MB) |
+|--------|---------------|----------------|------------|--------------|--------------|
+| base | 0.0 | 78532.75 | 78532.75 | 2008.93 | 2423.68 |
+| rag_only | 1392.7 | 86732.7 | 88125.4 | 2142.45 | 2470.36 |
+| finetuning_only | 0.0 | 98883.81 | 98883.81 | 2009.11 | 2470.81 |
+| hybrid | 1392.7 | 118302.85 | 119695.54 | 2146.1 | 2470.83 |
+
+[2026-11-23 14:23:41] INFO run_comparison - pilot: 50 examples, view=main, top_k=5
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100% 338/338 [00:03<00:00, 91.69it/s]
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Kubenew-ChaosGPT-2c40353/main (2 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/quarkslab-tritondse-9805288/main (4 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/log10-io-log10-d605f37/main (3 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/BlueBrain-Currentscape-29753e8/main (3 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/K024-chatglm-q-eab6472/main (2 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/krishnaik06-Chicken-Disease-Classification-Projects-d0f5e13/main (3 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ZhengPeng7-CoSOD_fps_collection-bee3764/main (5 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/adobe-aepp-0e23c55/main (4 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/knexer-ai-storyteller-86da1d3/main (3 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/leandl-wvalidate-8cb9603/main (5 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ortursucceeh-Project-PhotoShare-1942d61/main (10 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bharatsubedi-PARseq_torch-8ffcb95/main (5 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/yuyujunjun-RSMT-Realtime-Stylized-Motion-Transition-67c65b7/main (8 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vectara-vectara-ingest-0a867f1/main (6 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Stevenic-promptrix-py-6ed7059/main (4 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kraemer-lab-GRAPEVNE-1d241a8/main (5 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Quantomatic-zxlive-c7b5c28/main (6 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bxdoan-venom-auto-da0fcfa/main (7 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/v-mikhaylov-tfold-release-e2bae1f/main (7 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nyaarium-blender-nyaatools-4fc69af/main (2 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vladkens-twscrape-4f2ee7f/main (5 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Zhendong-Wang-Patch-Diffusion-929b0c0/main (5 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/blurgyy-jaxngp-adbe49e/main (3 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bufbuild-protovalidate-python-2eee9ba/main (2 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/canpool-QxRibbon-4bbd7f5/main (5 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/edarchimbaud-systematic-trading-a9fec02/main (4 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nccgroup-libslub-7732a54/main (7 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/SAIC-iSmart-API-saic-python-client-29b99ad/main (7 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/wm-pxel-langchain-testbench-53701f9/main (5 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/EmbedInAI-EmbedInDB-b2d7852/main (3 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Adam-Vandervorst-PyBHV-ff5dcca/main (5 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/mp3guy-SymE3-445731e/main (4 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/JuniusLuo-VecLucene-8a47c91/main (3 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/remixer-dec-botality-ii-f8402d5/main (3 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/slewie-HypONIC-5b95063/main (6 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/crowdgames-sturgeon-pub-a235e6d/main (20 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ryongithub-GatedPromptTuning-1de14b5/main (3 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/jfamestad-TexasHoldemAgents-a171a13/main (6 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/briandelmsft-STAT-Function-f91d421/main (7 vectors)
+[2026-11-23 14:23:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/datasig-ac-uk-RoughPy-fbd9016/main (8 vectors)
+[2026-11-23 14:23:47] INFO run_comparison - === base ===
+[2026-11-23 14:25:06] INFO src.evaluation.evaluator - [base] quality metrics: {'exact_match': 0.04, 'edit_similarity': 0.4935, 'identifier_accuracy': 0.2979, 'code_bleu': 0.2367, 'exact_match_ci95': [0.0, 0.1], 'edit_similarity_ci95': [0.4258, 0.5588], 'n_samples': 50}
+[2026-11-23 14:25:06] INFO src.evaluation.evaluator - [base] efficiency: {'system': 'base', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 78690.05, 'total_latency_ms': 78690.05, 'avg_total_ms': 1573.8, 'peak_gpu_mb': 1517.8, 'peak_cpu_ram_mb': 2345.65}
+[2026-11-23 14:25:06] INFO src.evaluation.evaluator - Results saved -> results/pilot_main_bm25_plainbase/base_metrics.json
+[2026-11-23 14:25:06] INFO run_comparison - === rag_only ===
+[2026-11-23 14:26:38] INFO src.evaluation.evaluator - [rag_only] retrieval metrics: {'mrr': 0.84, 'precision@1': 0.7, 'recall@1': 0.59, 'precision@3': 0.4267, 'recall@3': 0.9767, 'precision@5': 0.268, 'recall@5': 1.0, 'precision@10': 0.134, 'recall@10': 1.0, 'n_queries': 50}
+[2026-11-23 14:26:38] INFO src.evaluation.evaluator - [rag_only] quality metrics: {'exact_match': 0.02, 'edit_similarity': 0.3857, 'identifier_accuracy': 0.2168, 'code_bleu': 0.1549, 'exact_match_ci95': [0.0, 0.06], 'edit_similarity_ci95': [0.3082, 0.4682], 'n_samples': 50}
+[2026-11-23 14:26:38] INFO src.evaluation.evaluator - [rag_only] efficiency: {'system': 'rag_only', 'retrieval_latency_ms': 206.58, 'inference_latency_ms': 92037.12, 'total_latency_ms': 92243.7, 'avg_total_ms': 1844.87, 'peak_gpu_mb': 1667.39, 'peak_cpu_ram_mb': 2387.64}
+[2026-11-23 14:26:38] INFO src.evaluation.evaluator - Results saved -> results/pilot_main_bm25_plainbase/rag_only_metrics.json
+[2026-11-23 14:26:38] INFO run_comparison - === finetuning_only ===
+[2026-11-23 14:28:15] INFO src.evaluation.evaluator - [finetuning_only] quality metrics: {'exact_match': 0.08, 'edit_similarity': 0.613, 'identifier_accuracy': 0.4142, 'code_bleu': 0.213, 'exact_match_ci95': [0.02, 0.16], 'edit_similarity_ci95': [0.5485, 0.6802], 'n_samples': 50}
+[2026-11-23 14:28:15] INFO src.evaluation.evaluator - [finetuning_only] efficiency: {'system': 'finetuning_only', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 96792.66, 'total_latency_ms': 96792.66, 'avg_total_ms': 1935.85, 'peak_gpu_mb': 1517.96, 'peak_cpu_ram_mb': 2409.47}
+[2026-11-23 14:28:15] INFO src.evaluation.evaluator - Results saved -> results/pilot_main_bm25_plainbase/finetuning_only_metrics.json
+[2026-11-23 14:28:15] INFO run_comparison - === hybrid ===
+[2026-11-23 14:30:07] INFO src.evaluation.evaluator - [hybrid] retrieval metrics: {'mrr': 0.84, 'precision@1': 0.7, 'recall@1': 0.59, 'precision@3': 0.4267, 'recall@3': 0.9767, 'precision@5': 0.268, 'recall@5': 1.0, 'precision@10': 0.134, 'recall@10': 1.0, 'n_queries': 50}
+[2026-11-23 14:30:07] INFO src.evaluation.evaluator - [hybrid] quality metrics: {'exact_match': 0.12, 'edit_similarity': 0.6398, 'identifier_accuracy': 0.4692, 'code_bleu': 0.2093, 'exact_match_ci95': [0.04, 0.2], 'edit_similarity_ci95': [0.5647, 0.7108], 'n_samples': 50}
+[2026-11-23 14:30:07] INFO src.evaluation.evaluator - [hybrid] efficiency: {'system': 'hybrid', 'retrieval_latency_ms': 206.58, 'inference_latency_ms': 111841.86, 'total_latency_ms': 112048.44, 'avg_total_ms': 2240.97, 'peak_gpu_mb': 1667.67, 'peak_cpu_ram_mb': 2409.47}
+[2026-11-23 14:30:07] INFO src.evaluation.evaluator - Results saved -> results/pilot_main_bm25_plainbase/hybrid_metrics.json
+[2026-11-23 14:30:07] INFO src.evaluation.evaluator - Combined results -> results/pilot_main_bm25_plainbase/comparison_summary.json
+[2026-11-23 14:30:07] INFO src.evaluation.evaluator - Markdown comparison -> results/pilot_main_bm25_plainbase/comparison_summary.md
+[2026-11-23 14:30:07] INFO run_comparison - Done. See results/pilot_main_bm25_plainbase/comparison_summary.md and predictions.jsonl
+
+[2026-11-23 14:30:38] INFO run_comparison - new_relevant subset: 68 TEST examples with a relevant NEW file (expected 68)
+[2026-11-23 14:30:39] INFO run_comparison - new_relevant: 68 examples, view=main, top_k=5
+[2026-11-23 14:30:39] INFO src.retrieval.embedder - Loading embedding model: microsoft/unixcoder-base
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100% 199/199 [00:00<00:00, 26868.39it/s]
+Loading weights: 100% 338/338 [00:03<00:00, 94.83it/s]
+[2026-11-23 14:30:46] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/open-mmlab-Multimodal-GPT-9c73e47/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00,  5.37it/s]
+Batches: 100% 1/1 [00:00<00:00, 38.55it/s]
+Batches: 100% 1/1 [00:00<00:00, 39.64it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/hyperliquid-dex-hyperliquid-python-sdk-6ddfbfb/main (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 39.48it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/imaginationtech-constrainedrandom-db5b49a/main (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 47.22it/s]
+Batches: 100% 1/1 [00:00<00:00, 46.68it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Cybereason-eztw-94a0ae9/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 34.08it/s]
+Batches: 100% 1/1 [00:00<00:00, 68.77it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ingra14m-mipnerf360-pytorch-bfc1e77/main (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 68.66it/s]
+Batches: 100% 1/1 [00:00<00:00, 52.16it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/willleeney-ugle-7cfe1b3/main (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 55.40it/s]
+Batches: 100% 1/1 [00:00<00:00, 41.60it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Materials-Data-Science-and-Informatics-somesy-a47ca93/main (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 82.52it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/leandl-wvalidate-8cb9603/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 58.43it/s]
+Batches: 100% 1/1 [00:00<00:00, 58.97it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ortursucceeh-Project-PhotoShare-1942d61/main (10 vectors)
+Batches: 100% 1/1 [00:00<00:00, 58.74it/s]
+Batches: 100% 1/1 [00:00<00:00, 71.10it/s]
+Batches: 100% 1/1 [00:00<00:00, 74.54it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ddPn08-rvc-webui-c4a12a8/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 56.67it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Adeon18-Mori-Bazius-Backend-f33b8ba/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 82.95it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vectara-vectara-ingest-0a867f1/main (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 71.87it/s]
+Batches: 100% 1/1 [00:00<00:00, 65.91it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/fuzzylabs-matcha-examples-c780c2e/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 75.77it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/facebookresearch-AudioDec-9b49838/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 51.52it/s]
+Batches: 100% 1/1 [00:00<00:00, 52.41it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Stevenic-promptrix-py-6ed7059/main (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 64.53it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/graphcore-PopTransformer-1314598/main (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 66.86it/s]
+Batches: 100% 1/1 [00:00<00:00, 47.61it/s]
+Batches: 100% 1/1 [00:00<00:00, 39.87it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/eloimoliner-BABE-777b624/main (18 vectors)
+Batches: 100% 1/1 [00:00<00:00, 59.88it/s]
+Batches: 100% 1/1 [00:00<00:00, 62.66it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/jdum-asciinema-scene-82f586d/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 75.56it/s]
+Batches: 100% 1/1 [00:00<00:00, 83.39it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vladkens-twscrape-4f2ee7f/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 68.28it/s]
+Batches: 100% 1/1 [00:00<00:00, 68.78it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/gabacode-chatGPDP-4701532/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 74.89it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/hq0709-Depth-NeuS-49d93d4/main (11 vectors)
+Batches: 100% 1/1 [00:00<00:00, 55.97it/s]
+[2026-11-23 14:30:47] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/N00Bception-AI-Powered-5G-OpenRAN-Optimizer-a0eac7b/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 61.37it/s]
+Batches: 100% 1/1 [00:00<00:00, 64.57it/s]
+Batches: 100% 1/1 [00:00<00:00, 63.67it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nccgroup-libslub-7732a54/main (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 71.54it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/mp3guy-SymE3-445731e/main (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 64.25it/s]
+Batches: 100% 1/1 [00:00<00:00, 63.28it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/iuiaoin-wechat-gptbot-b379085/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 70.19it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vsiegel-thoughttree-84b1498/main (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 49.55it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/slewie-HypONIC-5b95063/main (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 61.13it/s]
+Batches: 100% 1/1 [00:00<00:00, 51.30it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/crowdgames-sturgeon-pub-a235e6d/main (20 vectors)
+Batches: 100% 1/1 [00:00<00:00, 44.54it/s]
+Batches: 100% 1/1 [00:00<00:00, 66.91it/s]
+Batches: 100% 1/1 [00:00<00:00, 37.35it/s]
+Batches: 100% 1/1 [00:00<00:00, 65.83it/s]
+Batches: 100% 1/1 [00:00<00:00, 59.08it/s]
+Batches: 100% 1/1 [00:00<00:00, 68.53it/s]
+Batches: 100% 1/1 [00:00<00:00, 60.73it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ches-001-metatune-278c315/main (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 33.32it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/wolfhoundgelert-xman-1da4d2d/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 70.73it/s]
+Batches: 100% 1/1 [00:00<00:00, 81.74it/s]
+Batches: 100% 1/1 [00:00<00:00, 57.25it/s]
+Batches: 100% 1/1 [00:00<00:00, 66.97it/s]
+Batches: 100% 1/1 [00:00<00:00, 65.21it/s]
+Batches: 100% 1/1 [00:00<00:00, 53.04it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Zhang-Zhiyuan-zzy-hotpot-3a13089/main (3 vectors)
+Batches: 100% 1/1 [00:00<00:00, 80.87it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Mattie-chatsnack-94305b2/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 60.82it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/speedb-io-log-parser-d600b0e/main (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 88.28it/s]
+Batches: 100% 1/1 [00:00<00:00, 64.45it/s]
+Batches: 100% 1/1 [00:00<00:00, 90.04it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/briandelmsft-STAT-Function-f91d421/main (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 79.07it/s]
+[2026-11-23 14:30:48] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/datasig-ac-uk-RoughPy-fbd9016/main (8 vectors)
+Batches: 100% 1/1 [00:00<00:00, 95.38it/s]
+[2026-11-23 14:30:48] INFO run_comparison - === base ===
+[2026-11-23 14:32:37] INFO src.evaluation.evaluator - [base] quality metrics: {'exact_match': 0.0147, 'edit_similarity': 0.4567, 'identifier_accuracy': 0.2934, 'code_bleu': 0.1644, 'exact_match_ci95': [0.0, 0.0588], 'edit_similarity_ci95': [0.3978, 0.5143], 'n_samples': 68}
+[2026-11-23 14:32:37] INFO src.evaluation.evaluator - [base] efficiency: {'system': 'base', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 108634.73, 'total_latency_ms': 108634.73, 'avg_total_ms': 1597.57, 'peak_gpu_mb': 2042.54, 'peak_cpu_ram_mb': 2516.79}
+[2026-11-23 14:32:37] INFO src.evaluation.evaluator - Results saved -> results/new_relevant_main_plainbase/base_metrics.json
+[2026-11-23 14:32:37] INFO run_comparison - === rag_only ===
+[2026-11-23 14:34:44] INFO src.evaluation.evaluator - [rag_only] retrieval metrics: {'mrr': 0.8217, 'precision@1': 0.697, 'recall@1': 0.5606, 'precision@3': 0.404, 'recall@3': 0.899, 'precision@5': 0.2606, 'recall@5': 0.9697, 'precision@10': 0.1333, 'recall@10': 1.0, 'n_queries': 33}
+[2026-11-23 14:34:44] INFO src.evaluation.evaluator - [rag_only] quality metrics: {'exact_match': 0.0147, 'edit_similarity': 0.384, 'identifier_accuracy': 0.2186, 'code_bleu': 0.219, 'exact_match_ci95': [0.0, 0.0588], 'edit_similarity_ci95': [0.3193, 0.4499], 'n_samples': 68}
+[2026-11-23 14:34:44] INFO src.evaluation.evaluator - [rag_only] efficiency: {'system': 'rag_only', 'retrieval_latency_ms': 1574.11, 'inference_latency_ms': 127336.57, 'total_latency_ms': 128910.69, 'avg_total_ms': 1895.75, 'peak_gpu_mb': 2174.21, 'peak_cpu_ram_mb': 2557.6}
+[2026-11-23 14:34:44] INFO src.evaluation.evaluator - Results saved -> results/new_relevant_main_plainbase/rag_only_metrics.json
+[2026-11-23 14:34:44] INFO run_comparison - === finetuning_only ===
+[2026-11-23 14:36:46] INFO src.evaluation.evaluator - [finetuning_only] quality metrics: {'exact_match': 0.0882, 'edit_similarity': 0.6036, 'identifier_accuracy': 0.403, 'code_bleu': 0.1619, 'exact_match_ci95': [0.0294, 0.1618], 'edit_similarity_ci95': [0.5551, 0.6525], 'n_samples': 68}
+[2026-11-23 14:36:46] INFO src.evaluation.evaluator - [finetuning_only] efficiency: {'system': 'finetuning_only', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 121960.4, 'total_latency_ms': 121960.4, 'avg_total_ms': 1793.54, 'peak_gpu_mb': 2043.75, 'peak_cpu_ram_mb': 2557.97}
+[2026-11-23 14:36:46] INFO src.evaluation.evaluator - Results saved -> results/new_relevant_main_plainbase/finetuning_only_metrics.json
+[2026-11-23 14:36:46] INFO run_comparison - === hybrid ===
+[2026-11-23 14:39:19] INFO src.evaluation.evaluator - [hybrid] retrieval metrics: {'mrr': 0.8217, 'precision@1': 0.697, 'recall@1': 0.5606, 'precision@3': 0.404, 'recall@3': 0.899, 'precision@5': 0.2606, 'recall@5': 0.9697, 'precision@10': 0.1333, 'recall@10': 1.0, 'n_queries': 33}
+[2026-11-23 14:39:19] INFO src.evaluation.evaluator - [hybrid] quality metrics: {'exact_match': 0.0882, 'edit_similarity': 0.6402, 'identifier_accuracy': 0.4775, 'code_bleu': 0.3739, 'exact_match_ci95': [0.0294, 0.1618], 'edit_similarity_ci95': [0.5853, 0.6943], 'n_samples': 68}
+[2026-11-23 14:39:19] INFO src.evaluation.evaluator - [hybrid] efficiency: {'system': 'hybrid', 'retrieval_latency_ms': 1574.11, 'inference_latency_ms': 152721.65, 'total_latency_ms': 154295.76, 'avg_total_ms': 2269.06, 'peak_gpu_mb': 2175.12, 'peak_cpu_ram_mb': 2538.3}
+[2026-11-23 14:39:19] INFO src.evaluation.evaluator - Results saved -> results/new_relevant_main_plainbase/hybrid_metrics.json
+[2026-11-23 14:39:19] INFO src.evaluation.evaluator - Combined results -> results/new_relevant_main_plainbase/comparison_summary.json
+[2026-11-23 14:39:19] INFO src.evaluation.evaluator - Markdown comparison -> results/new_relevant_main_plainbase/comparison_summary.md
+[2026-11-23 14:39:19] INFO run_comparison - Done. See results/new_relevant_main_plainbase/comparison_summary.md and predictions.jsonl
+
+[2026-11-23 14:40:34] INFO run_comparison - new_relevant subset: 68 TEST examples with a relevant NEW file (expected 68)
+[2026-11-23 14:40:34] INFO run_comparison - new_relevant: 68 examples, view=staleness, top_k=5
+[2026-11-23 14:40:34] INFO src.retrieval.embedder - Loading embedding model: microsoft/unixcoder-base
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100% 199/199 [00:00<00:00, 24115.64it/s]
+Loading weights: 100% 338/338 [00:03<00:00, 88.32it/s]
+[2026-11-23 14:40:42] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/open-mmlab-Multimodal-GPT-9c73e47/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00,  5.61it/s]
+Batches: 100% 1/1 [00:00<00:00, 38.77it/s]
+Batches: 100% 1/1 [00:00<00:00, 40.66it/s]
+[2026-11-23 14:40:42] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/hyperliquid-dex-hyperliquid-python-sdk-6ddfbfb/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 40.06it/s]
+[2026-11-23 14:40:42] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/imaginationtech-constrainedrandom-db5b49a/staleness (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 48.03it/s]
+Batches: 100% 1/1 [00:00<00:00, 48.31it/s]
+[2026-11-23 14:40:42] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Cybereason-eztw-94a0ae9/staleness (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 32.49it/s]
+Batches: 100% 1/1 [00:00<00:00, 47.85it/s]
+[2026-11-23 14:40:42] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ingra14m-mipnerf360-pytorch-bfc1e77/staleness (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 45.11it/s]
+Batches: 100% 1/1 [00:00<00:00, 39.20it/s]
+[2026-11-23 14:40:42] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/willleeney-ugle-7cfe1b3/staleness (10 vectors)
+Batches: 100% 1/1 [00:00<00:00, 39.51it/s]
+Batches: 100% 1/1 [00:00<00:00, 45.14it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Materials-Data-Science-and-Informatics-somesy-a47ca93/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 75.37it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/leandl-wvalidate-8cb9603/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 70.14it/s]
+Batches: 100% 1/1 [00:00<00:00, 68.64it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ortursucceeh-Project-PhotoShare-1942d61/staleness (12 vectors)
+Batches: 100% 1/1 [00:00<00:00, 68.27it/s]
+Batches: 100% 1/1 [00:00<00:00, 68.31it/s]
+Batches: 100% 1/1 [00:00<00:00, 66.28it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ddPn08-rvc-webui-c4a12a8/staleness (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 48.99it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Adeon18-Mori-Bazius-Backend-f33b8ba/staleness (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 67.57it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vectara-vectara-ingest-0a867f1/staleness (8 vectors)
+Batches: 100% 1/1 [00:00<00:00, 32.21it/s]
+Batches: 100% 1/1 [00:00<00:00, 60.22it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/fuzzylabs-matcha-examples-c780c2e/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 52.65it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/facebookresearch-AudioDec-9b49838/staleness (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 35.39it/s]
+Batches: 100% 1/1 [00:00<00:00, 64.12it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Stevenic-promptrix-py-6ed7059/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 69.63it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/graphcore-PopTransformer-1314598/staleness (8 vectors)
+Batches: 100% 1/1 [00:00<00:00, 71.45it/s]
+Batches: 100% 1/1 [00:00<00:00, 51.46it/s]
+Batches: 100% 1/1 [00:00<00:00, 40.17it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/eloimoliner-BABE-777b624/staleness (23 vectors)
+Batches: 100% 1/1 [00:00<00:00, 64.32it/s]
+Batches: 100% 1/1 [00:00<00:00, 63.96it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/jdum-asciinema-scene-82f586d/staleness (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 76.41it/s]
+Batches: 100% 1/1 [00:00<00:00, 79.62it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vladkens-twscrape-4f2ee7f/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 70.18it/s]
+Batches: 100% 1/1 [00:00<00:00, 83.12it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/gabacode-chatGPDP-4701532/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 82.56it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/hq0709-Depth-NeuS-49d93d4/staleness (12 vectors)
+Batches: 100% 1/1 [00:00<00:00, 60.83it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/N00Bception-AI-Powered-5G-OpenRAN-Optimizer-a0eac7b/staleness (7 vectors)
+Batches: 100% 1/1 [00:00<00:00, 66.85it/s]
+Batches: 100% 1/1 [00:00<00:00, 66.79it/s]
+Batches: 100% 1/1 [00:00<00:00, 63.35it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nccgroup-libslub-7732a54/staleness (9 vectors)
+Batches: 100% 1/1 [00:00<00:00, 76.86it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/mp3guy-SymE3-445731e/staleness (5 vectors)
+Batches: 100% 1/1 [00:00<00:00, 64.14it/s]
+Batches: 100% 1/1 [00:00<00:00, 53.77it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/iuiaoin-wechat-gptbot-b379085/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 74.02it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vsiegel-thoughttree-84b1498/staleness (9 vectors)
+Batches: 100% 1/1 [00:00<00:00, 53.03it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/slewie-HypONIC-5b95063/staleness (8 vectors)
+Batches: 100% 1/1 [00:00<00:00, 63.42it/s]
+Batches: 100% 1/1 [00:00<00:00, 52.65it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/crowdgames-sturgeon-pub-a235e6d/staleness (25 vectors)
+Batches: 100% 1/1 [00:00<00:00, 43.89it/s]
+Batches: 100% 1/1 [00:00<00:00, 65.98it/s]
+Batches: 100% 1/1 [00:00<00:00, 35.15it/s]
+Batches: 100% 1/1 [00:00<00:00, 71.21it/s]
+Batches: 100% 1/1 [00:00<00:00, 63.64it/s]
+Batches: 100% 1/1 [00:00<00:00, 81.25it/s]
+Batches: 100% 1/1 [00:00<00:00, 69.98it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ches-001-metatune-278c315/staleness (10 vectors)
+Batches: 100% 1/1 [00:00<00:00, 42.00it/s]
+[2026-11-23 14:40:43] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/wolfhoundgelert-xman-1da4d2d/staleness (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 70.95it/s]
+Batches: 100% 1/1 [00:00<00:00, 59.35it/s]
+Batches: 100% 1/1 [00:00<00:00, 57.61it/s]
+Batches: 100% 1/1 [00:00<00:00, 64.79it/s]
+Batches: 100% 1/1 [00:00<00:00, 60.75it/s]
+Batches: 100% 1/1 [00:00<00:00, 51.06it/s]
+[2026-11-23 14:40:44] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Zhang-Zhiyuan-zzy-hotpot-3a13089/staleness (4 vectors)
+Batches: 100% 1/1 [00:00<00:00, 76.92it/s]
+[2026-11-23 14:40:44] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Mattie-chatsnack-94305b2/staleness (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 53.16it/s]
+[2026-11-23 14:40:44] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/speedb-io-log-parser-d600b0e/staleness (6 vectors)
+Batches: 100% 1/1 [00:00<00:00, 75.42it/s]
+Batches: 100% 1/1 [00:00<00:00, 53.22it/s]
+Batches: 100% 1/1 [00:00<00:00, 74.66it/s]
+[2026-11-23 14:40:44] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/briandelmsft-STAT-Function-f91d421/staleness (9 vectors)
+Batches: 100% 1/1 [00:00<00:00, 63.91it/s]
+[2026-11-23 14:40:44] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/datasig-ac-uk-RoughPy-fbd9016/staleness (11 vectors)
+Batches: 100% 1/1 [00:00<00:00, 82.63it/s]
+[2026-11-23 14:40:44] INFO run_comparison - === base ===
+[2026-11-23 14:42:33] INFO src.evaluation.evaluator - [base] quality metrics: {'exact_match': 0.0147, 'edit_similarity': 0.4567, 'identifier_accuracy': 0.2934, 'code_bleu': 0.1644, 'exact_match_ci95': [0.0, 0.0588], 'edit_similarity_ci95': [0.3978, 0.5143], 'n_samples': 68}
+[2026-11-23 14:42:33] INFO src.evaluation.evaluator - [base] efficiency: {'system': 'base', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 109334.26, 'total_latency_ms': 109334.26, 'avg_total_ms': 1607.86, 'peak_gpu_mb': 2042.54, 'peak_cpu_ram_mb': 2479.3}
+[2026-11-23 14:42:33] INFO src.evaluation.evaluator - Results saved -> results/new_relevant_staleness_plainbase/base_metrics.json
+[2026-11-23 14:42:33] INFO run_comparison - === rag_only ===
+[2026-11-23 14:44:42] INFO src.evaluation.evaluator - [rag_only] retrieval metrics: {'mrr': 0.7157, 'precision@1': 0.5441, 'recall@1': 0.3284, 'precision@3': 0.4412, 'recall@3': 0.7721, 'precision@5': 0.3176, 'recall@5': 0.935, 'precision@10': 0.1691, 'recall@10': 0.9926, 'n_queries': 68}
+[2026-11-23 14:44:42] INFO src.evaluation.evaluator - [rag_only] quality metrics: {'exact_match': 0.0294, 'edit_similarity': 0.3504, 'identifier_accuracy': 0.1912, 'code_bleu': 0.1877, 'exact_match_ci95': [0.0, 0.0739], 'edit_similarity_ci95': [0.2875, 0.4207], 'n_samples': 68}
+[2026-11-23 14:44:42] INFO src.evaluation.evaluator - [rag_only] efficiency: {'system': 'rag_only', 'retrieval_latency_ms': 1613.44, 'inference_latency_ms': 128729.64, 'total_latency_ms': 130343.08, 'avg_total_ms': 1916.81, 'peak_gpu_mb': 2171.86, 'peak_cpu_ram_mb': 2481.46}
+[2026-11-23 14:44:42] INFO src.evaluation.evaluator - Results saved -> results/new_relevant_staleness_plainbase/rag_only_metrics.json
+[2026-11-23 14:44:42] INFO run_comparison - === finetuning_only ===
+[2026-11-23 14:46:43] INFO src.evaluation.evaluator - [finetuning_only] quality metrics: {'exact_match': 0.0882, 'edit_similarity': 0.6036, 'identifier_accuracy': 0.403, 'code_bleu': 0.1619, 'exact_match_ci95': [0.0294, 0.1618], 'edit_similarity_ci95': [0.5551, 0.6525], 'n_samples': 68}
+[2026-11-23 14:46:43] INFO src.evaluation.evaluator - [finetuning_only] efficiency: {'system': 'finetuning_only', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 120979.96, 'total_latency_ms': 120979.96, 'avg_total_ms': 1779.12, 'peak_gpu_mb': 2043.75, 'peak_cpu_ram_mb': 2461.39}
+[2026-11-23 14:46:43] INFO src.evaluation.evaluator - Results saved -> results/new_relevant_staleness_plainbase/finetuning_only_metrics.json
+[2026-11-23 14:46:43] INFO run_comparison - === hybrid ===
+[2026-11-23 14:49:17] INFO src.evaluation.evaluator - [hybrid] retrieval metrics: {'mrr': 0.7157, 'precision@1': 0.5441, 'recall@1': 0.3284, 'precision@3': 0.4412, 'recall@3': 0.7721, 'precision@5': 0.3176, 'recall@5': 0.935, 'precision@10': 0.1691, 'recall@10': 0.9926, 'n_queries': 68}
+[2026-11-23 14:49:17] INFO src.evaluation.evaluator - [hybrid] quality metrics: {'exact_match': 0.1618, 'edit_similarity': 0.695, 'identifier_accuracy': 0.5508, 'code_bleu': 0.4436, 'exact_match_ci95': [0.0882, 0.25], 'edit_similarity_ci95': [0.6438, 0.7457], 'n_samples': 68}
+[2026-11-23 14:49:17] INFO src.evaluation.evaluator - [hybrid] efficiency: {'system': 'hybrid', 'retrieval_latency_ms': 1613.44, 'inference_latency_ms': 154366.44, 'total_latency_ms': 155979.88, 'avg_total_ms': 2293.82, 'peak_gpu_mb': 2172.04, 'peak_cpu_ram_mb': 2422.09}
+[2026-11-23 14:49:17] INFO src.evaluation.evaluator - Results saved -> results/new_relevant_staleness_plainbase/hybrid_metrics.json
+[2026-11-23 14:49:17] INFO src.evaluation.evaluator - Combined results -> results/new_relevant_staleness_plainbase/comparison_summary.json
+[2026-11-23 14:49:17] INFO src.evaluation.evaluator - Markdown comparison -> results/new_relevant_staleness_plainbase/comparison_summary.md
+[2026-11-23 14:49:17] INFO run_comparison - Done. See results/new_relevant_staleness_plainbase/comparison_summary.md and predictions.jsonl
+
+README.md: 100% 6.52k/6.52k [00:00<00:00, 16.5MB/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+openai_humaneval/test-00000-of-00001.par(…): downloading bytes:   0% 0.00/83.9k [00:00<?, ?B/s]
+openai_humaneval/test-00000-of-00001.par(…): downloading bytes: 100% 75.7k/75.7k [00:00<00:00, 156kB/s, 7.50kB/s  ]
+openai_humaneval/test-00000-of-00001.par(…): reconstructing file: 100% 83.9k/83.9k [00:00<00:00, 173kB/s, 8.31kB/s  ]
+Generating test split: 100% 164/164 [00:00<00:00, 5903.06 examples/s]
+Loading weights: 100% 338/338 [00:04<00:00, 83.24it/s]
+base: 66/164
+finetuned: 63/164
+pass@1 {'base': 0.4024, 'finetuned': 0.3841}, relative change -0.0455. Saved results/forgetting_humaneval_plain.json
+
+dry_run				  pilot_main_code480
+forgetting_humaneval.json	  pilot_main_plainbase
+forgetting_humaneval_plain.json   pilot_staleness
+new_relevant_main_plainbase	  pilot_staleness_plainbase
+new_relevant_staleness_plainbase  pipeline_test
+pilot_main			  plain_test
+pilot_main_bm25			  val_loss_base_vs_adapter.json
+pilot_main_bm25_plainbase

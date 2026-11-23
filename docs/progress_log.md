@@ -1617,3 +1617,93 @@ A judgement, same method as Entries 23, 29, 31 and 36, with weights re-set for P
   outside it. The remaining Part 1 work is the Colab session (about 30 to 60 minutes of GPU) and the local analysis; the percentage should
   reach about 95% once the pilot rerun and its analysis are done (the rest is the presentation and report themselves).
 - For slides: show "Part 1: about 78% (75 to 80%)" and "Part 2: planned" with the Part 2 list above.
+
+## Entry 40: Part 1 pilot with the fixed (plain) prompts: all Colab runs finished (2026-11-23; raw console output in `docs/new_results_pilot_run_from_colab`)
+- **Asked:** go through the new Colab results and log the findings; then list which files to copy over and where.
+- **Source:** the pasted console output only. The result folders (and so `predictions.jsonl`) are **not copied here yet**, so everything below is read
+  from the printed metrics; the example-level checks (what RAG writes, the empty RAG answer, paired tests) are pending the copy.
+- **Runs completed (all ran without errors, Colab T4, 4-bit, adapter v2):** dry run (`DRY RUN PASSED`; plain-prompt lengths median 423 and 2,138
+  tokens); 5-example gate test (`plain_test`); pilot main and staleness with `--base-prompt plain` (50 examples each); BM25 pilot; the 68-example
+  staleness test in both views (log confirms "new_relevant subset: 68 TEST examples"); HumanEval forgetting check on all 164 problems.
+  Setup was repeated after the tracked-`results/` problem (fixed by removing the cloned `results/` in Cell 2, see `docs/colab_steps_new.md`).
+
+### 1. The gate passed: the prompt-format artifact is confirmed as the cause (pilot, n=50, main view)
+| System | EM | Edit sim. [95% CI] | Identifier acc. | CodeBLEU | First pilot (instruction prompt) edit sim. |
+|---|---|---|---|---|---|
+| base (plain prompt) | 0.04 | 0.494 [0.426, 0.559] | 0.298 | 0.237 | 0.236 |
+| RAG (plain prompt) | 0.02 | 0.387 [0.311, 0.468] | 0.217 | 0.140 | 0.226 |
+| fine-tuned (instruction) | 0.08 | 0.613 [0.549, 0.680] | 0.414 | 0.213 | 0.613 (identical) |
+| hybrid (instruction) | 0.14 | 0.644 [0.570, 0.715] | 0.490 | 0.214 | 0.644 (identical) |
+- The plain prompt moved the base from 0.236 to 0.494 edit similarity (identifier accuracy 0.018 to 0.298; CodeBLEU 0.068 to 0.237) and RAG from
+  0.226 to 0.387. The fine-tuned and hybrid rows reproduce the first pilot exactly (same prompt, greedy decoding), a consistency check that passed.
+  In the 5-example gate test base and RAG wrote code lines (`assistant_name, "assistant")`, `anticipate_action(inp))`), so the instruction-wrapper
+  explanation in Entries 36 and 37 was right. **The first pilot's base and RAG rows are retired; these are the numbers to use.**
+- The gap between fine-tuned and base shrinks from 0.38 to 0.12 edit similarity once the base is prompted properly: most of the first gap was format.
+  What is left is still a real difference (fine-tuned 0.613 vs base 0.494; intervals only just overlap; paired test pending).
+
+### 2. New finding that goes against the first hypothesis ordering: retrieval alone hurt the frozen model
+- RAG (0.387) is **below** the base model (0.494) in edit similarity, identifier accuracy (0.217 vs 0.298) and CodeBLEU (0.140 vs 0.237): adding the
+  5 retrieved chunks made the frozen model worse, in the main view, the staleness view (RAG 0.403) and with BM25 (0.386). In Wang et al. RAG was the
+  largest single gain (their 1.5B EM 24.5 to 55.8 with BM25). One empty RAG prediction was seen in the gate test.
+- Not yet explained. Candidates to check once the predictions are here (untested): the model copies or continues the retrieved comments instead of the
+  cut line; the five chunks (about 1,700 more tokens, truncated chunks of up to 1,200 characters) push the cursor line far from the model's attention;
+  chunks are pasted as `#` comments (a format the model rarely sees); retrieval picks files that are related but whose style differs. This is the
+  main item for the evaluation write-up and for the thesis wrap-up (for example a different way to place chunks, or fewer chunks).
+- Hybrid vs fine-tuned: hybrid is higher in every run (main +0.031 edit sim., EM 0.14 vs 0.08) but the intervals overlap heavily at n=50 (not significant).
+  So retrieval helps the adapted model slightly and hurts the frozen model; both are small-sample statements.
+
+### 3. Staleness, pilot view (50 examples; NEW files added to the retrieval index)
+Base 0.494 and fine-tuned 0.613 are unchanged (no retrieval); RAG 0.387 to 0.403; hybrid 0.644 to 0.657 (EM 0.14 to 0.16, CodeBLEU 0.214 to 0.288).
+Retrieval recall@3 0.893 to 0.783 and MRR 0.764 to 0.750. Differences are inside the intervals.
+
+### 4. The staleness test proper: the 68 examples whose relevant file is a NEW file (H3), main view vs staleness view
+| System | Edit sim., main view | Edit sim., staleness view | EM main / staleness | Identifier acc. main / staleness |
+|---|---|---|---|---|
+| base | 0.457 | 0.457 | 0.015 / 0.015 | 0.293 / 0.293 |
+| RAG | 0.384 | 0.350 | 0.015 / 0.029 | 0.219 / 0.191 |
+| fine-tuned | 0.604 | 0.604 | 0.088 / 0.088 | 0.403 / 0.403 |
+| hybrid | 0.640 [0.585, 0.694] | 0.695 [0.644, 0.746] | 0.088 / 0.162 | 0.478 / 0.551 |
+- Direction as hypothesised: when the relevant new file is available to retrieval (staleness view) the hybrid improves (edit sim. +0.055, exact match
+  0.088 to 0.162, identifier accuracy +0.07, CodeBLEU 0.374 to 0.444), while the fine-tuned model, which never saw that file, cannot change. This is the
+  first evidence for H3's mechanism. **Caveats:** the hybrid intervals overlap (0.585 to 0.694 vs 0.644 to 0.746); a paired test over the same 68
+  examples is needed; in the main view only 33 of the 68 have any relevant file in the pool, so retrieval metrics are on 33 queries there and 68 in the
+  staleness view; RAG alone did not benefit (0.384 to 0.350), consistent with section 2.
+- Retrieval in this subset (staleness view, 68 queries): MRR 0.716, recall@1 0.33, recall@3 0.77, recall@5 0.935 (main view, 33 queries: MRR 0.822).
+
+### 5. BM25 vs dense for completion (pilot, plain prompt)
+Retrieval is better with BM25 (MRR 0.840 vs 0.764; recall@3 0.977 vs 0.893; retrieval time 207 ms vs 1,170 ms for 50 examples), but completion is the
+same: RAG edit sim. 0.386 vs 0.387, hybrid 0.640 vs 0.644, identifier accuracy 0.217 vs 0.217 (RAG), 0.469 vs 0.490 (hybrid). Better ranking did not help.
+
+### 6. Forgetting check, valid this time (HumanEval, all 164 problems, plain stub, greedy, same prompt for both models)
+Base 66/164 = pass@1 0.402; fine-tuned 63/164 = 0.384; relative change **-4.5%** (3 problems). The base now scores about 40%, which also confirms the old 0/20
+was the prompt artifact. This is much smaller than Wang et al.'s -24.1% average (full fine-tuning of larger models on 120,000 files); here the LoRA
+adapter trained on about 9,400 examples left general code ability nearly unchanged. With n=164 the 95% interval on a 0.402 pass rate is about +-0.07, so
+the difference is not statistically distinguishable from 0 (a paired test is pending). [writing note]
+
+### 7. Cost (pilot, main view, per example, one T4, 4-bit; one process)
+Average time: base 1.61 s, RAG 1.72 s, fine-tuned 1.91 s, hybrid 2.24 s (retrieval itself about 23 ms per example with dense, 4 ms with BM25).
+Peak GPU memory: 2.01 GB (base, fine-tuned), 2.14 GB (RAG, hybrid; 1.52 and 1.67 GB with BM25, where UniXcoder is not loaded). So retrieval adds about
+0.14 GB and about 0.1 to 0.3 s per example; prompts with retrieval are about 2,100 tokens against about 430. The fine-tuned model is about 0.3 s per
+example slower than the base (unmerged 4-bit LoRA adapter; cause not tested). Training cost was 3 h 29 min and 8.7 GB (Entry 18).
+
+### 8. Preliminary comparison with Wang et al. (direction only; pilot n=50, different language, scale and method)
+| Their finding | This pilot |
+|---|---|
+| RAG beats the base model by a lot | **Differs**: RAG was below the base (0.387 vs 0.494) |
+| Fine-tuning beats the base model | Matches: 0.613 vs 0.494 (gap smaller than with the wrong prompt) |
+| Combination is best | Matches in direction (hybrid highest everywhere), not significant vs fine-tuned at n=50 |
+| BM25 beats dense retrieval | Matches for retrieval quality (both datasets); no difference for completion |
+| Retrieval greatly increases input length and slows inference | Matches: about 2,100 vs 430 tokens; +0.3 s per example |
+| Fine-tuning hurts general code ability (-24.1% HumanEval) | Much smaller here: -4.5% (3 of 164 problems) |
+New-file mechanism (not in their study): hybrid improved on files only retrieval could know (+0.055 edit similarity).
+
+### What this changes
+- The earlier concern is resolved: the pilot is now valid for all four systems. Remove the "prompt-format artifact (open)" caveat from the slides and the web
+  prompt; keep the instruction-prompt numbers only as the documented first attempt.
+- **Part 1 completion estimate: about 92% (read as 90 to 94%)** (78% in Entry 39). Pilot with fixed prompts now about 90% (all runs done, analysis of the
+  predictions and paired tests pending), basic evaluation and literature comparison about 55% (numbers collected, paired analysis, example outputs and
+  charts pending). The remaining 8% is the local analysis. Whole-thesis estimate: about 72% (was 65%), because the pilot, staleness, BM25, 68-example and
+  forgetting runs are done; the full 543-example run, RepoBench training and completion and the other Part 2 items remain.
+- **Pending local steps once the folders are copied:** read the predictions (why RAG hurts; the empty RAG answers; examples to show), `analyze_predictions`
+  on each run, paired comparisons across runs (main vs staleness on the 68 examples; plain vs instruction prompt), McNemar-style paired test for
+  HumanEval, a pilot results table with intervals, example outputs, charts, then refresh the web prompt and the slides.
