@@ -1,0 +1,3926 @@
+imports ok
+total 15452
+drwx------ 4 root root     4096 Nov 19 08:59 .
+drwx------ 3 root root     4096 Nov 19 07:56 ..
+-rw------- 1 root root     1078 Nov 19 12:29 adapter_config.json
+-rw------- 1 root root  4372840 Nov 19 12:29 adapter_model.safetensors
+-rw------- 1 root root     2507 Nov 19 12:29 chat_template.jinja
+drwx------ 2 root root     4096 Nov 19 12:20 checkpoint-1700
+drwx------ 2 root root     4096 Nov 19 12:28 checkpoint-1761
+-rw------- 1 root root     5200 Nov 19 12:29 README.md
+-rw------- 1 root root      696 Nov 19 12:29 tokenizer_config.json
+-rw------- 1 root root 11421892 Nov 19 12:29 tokenizer.json
+-rw------- 1 root root       23 Nov 19 08:59 training_version.json
+STATUS.txt  test_main_dense
+
+imports ok
+total 15452
+drwx------ 4 root root     4096 Nov 19 08:59 .
+drwx------ 3 root root     4096 Nov 19 07:56 ..
+-rw------- 1 root root     1078 Nov 19 12:29 adapter_config.json
+-rw------- 1 root root  4372840 Nov 19 12:29 adapter_model.safetensors
+-rw------- 1 root root     2507 Nov 19 12:29 chat_template.jinja
+drwx------ 2 root root     4096 Nov 19 12:20 checkpoint-1700
+drwx------ 2 root root     4096 Nov 19 12:28 checkpoint-1761
+-rw------- 1 root root     5200 Nov 19 12:29 README.md
+-rw------- 1 root root      696 Nov 19 12:29 tokenizer_config.json
+-rw------- 1 root root 11421892 Nov 19 12:29 tokenizer.json
+-rw------- 1 root root       23 Nov 19 08:59 training_version.json
+STATUS.txt  test_main_dense
+
+>> python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain --output-dir results/b2/test_noretr --subset test --systems base finetuning_only
+[2026-11-25 15:49:36] INFO run_comparison - test: 543 examples, view=main, top_k=5
+[2026-11-25 15:49:36] INFO src.retrieval.embedder - Loading embedding model: microsoft/unixcoder-base
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 199/199 [00:00<00:00, 23953.69it/s]
+
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/338 [00:00<03:21,  1.67it/s]
+Loading weights:   1%|          | 3/338 [00:00<01:14,  4.50it/s]
+Loading weights:   4%|▍         | 15/338 [00:00<00:12, 26.03it/s]
+Loading weights:   8%|▊         | 27/338 [00:01<00:06, 44.76it/s]
+Loading weights:  12%|█▏        | 39/338 [00:01<00:05, 59.64it/s]
+Loading weights:  15%|█▌        | 51/338 [00:01<00:03, 72.24it/s]
+Loading weights:  19%|█▊        | 63/338 [00:01<00:03, 80.92it/s]
+Loading weights:  22%|██▏       | 75/338 [00:01<00:03, 87.24it/s]
+Loading weights:  26%|██▌       | 87/338 [00:01<00:02, 91.43it/s]
+Loading weights:  29%|██▉       | 99/338 [00:01<00:02, 96.15it/s]
+Loading weights:  33%|███▎      | 111/338 [00:01<00:02, 99.11it/s]
+Loading weights:  36%|███▋      | 123/338 [00:01<00:02, 102.12it/s]
+Loading weights:  40%|███▉      | 135/338 [00:02<00:01, 103.67it/s]
+Loading weights:  43%|████▎     | 147/338 [00:02<00:01, 105.36it/s]
+Loading weights:  47%|████▋     | 159/338 [00:02<00:01, 105.39it/s]
+Loading weights:  51%|█████     | 171/338 [00:02<00:01, 105.75it/s]
+Loading weights:  54%|█████▍    | 183/338 [00:02<00:01, 105.38it/s]
+Loading weights:  58%|█████▊    | 195/338 [00:02<00:01, 104.95it/s]
+Loading weights:  61%|██████    | 207/338 [00:02<00:01, 104.52it/s]
+Loading weights:  65%|██████▍   | 219/338 [00:02<00:01, 102.96it/s]
+Loading weights:  68%|██████▊   | 230/338 [00:02<00:01, 104.13it/s]
+Loading weights:  71%|███████▏  | 241/338 [00:03<00:00, 101.82it/s]
+Loading weights:  75%|███████▍  | 252/338 [00:03<00:00, 99.55it/s]
+Loading weights:  78%|███████▊  | 262/338 [00:03<00:00, 98.17it/s]
+Loading weights:  80%|████████  | 272/338 [00:03<00:00, 95.92it/s]
+Loading weights:  83%|████████▎ | 282/338 [00:03<00:00, 94.72it/s]
+Loading weights:  87%|████████▋ | 293/338 [00:03<00:00, 94.36it/s]
+Loading weights:  90%|█████████ | 305/338 [00:03<00:00, 98.20it/s]
+Loading weights:  94%|█████████▍| 317/338 [00:03<00:00, 100.04it/s]
+Loading weights:  97%|█████████▋| 329/338 [00:03<00:00, 102.40it/s]
+Loading weights: 100%|██████████| 338/338 [00:03<00:00, 85.33it/s]
+[2026-11-25 15:50:16] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/virtualzx-nad-easy_llm_agents-8a29505/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00,  1.55it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00,  1.55it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/turboderp-exllama-a544085/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.33it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/open-mmlab-Multimodal-GPT-9c73e47/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 47.38it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 39.82it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 40.78it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/prophecy-io-spark-ai-fd52ad1/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 49.71it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 48.79it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/microsoft-DPSDA-79f0868/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 39.43it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/lskyset-priconne-asset-extractor-3d54812/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 48.83it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 40.97it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Kubenew-ChaosGPT-2c40353/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.39it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.57it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.02it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.98it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.62it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.56it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.75it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/irgolic-AutoPR-10e2891/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.19it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/hyperliquid-dex-hyperliquid-python-sdk-6ddfbfb/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.03it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.85it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.38it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.17it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/last-war-photoshare-fastapi-67888ff/main (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 95.70it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 95.71it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 97.61it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.55it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 93.65it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.24it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.06it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/xbpeng-rl_assignments-cdb92a8/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.94it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 96.16it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ml-research-SLASH-8d0f42d/main (10 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.86it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/fbdp1202-tts_data_engine-02353ab/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.00it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/quarkslab-tritondse-9805288/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.71it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/maybelinot-yamx-5e304a5/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.07it/s]
+[2026-11-25 15:50:17] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/obahamonde-aiofauna-67993d2/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 100.66it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/log10-io-log10-d605f37/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.15it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/BlueBrain-Currentscape-29753e8/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 85.78it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/imaginationtech-constrainedrandom-db5b49a/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 96.32it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 96.81it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.52it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.10it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/iryna-kondr-scikit-llm-38ad5e9/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 92.94it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 91.96it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.70it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/opensean-kedro-graphql-75c7dae/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 105.88it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/K024-chatglm-q-eab6472/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.18it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/appsignal-appsignal-python-5a0cfa9/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.83it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/griffinbholt-decisionmaking-code-py-e08645e/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.62it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.66it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.78it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/swan-utokyo-deir-385d351/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 41.11it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/GenBench-genbench_cbt-caa63fb/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.49it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/traas-stack-holoinsight-ai-b235643/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.92it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/krishnaik06-Chicken-Disease-Classification-Projects-d0f5e13/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 100.35it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/FabienRoger-concistency-lenses-6500b44/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.29it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Cybereason-eztw-94a0ae9/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.67it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 100.25it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/aiplan4eu-UP4ROS-59c1358/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 95.44it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ingra14m-mipnerf360-pytorch-bfc1e77/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.69it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.24it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.67it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/willleeney-ugle-7cfe1b3/main (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.32it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.54it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.97it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/philtabor-ProtoRL-31f81e7/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.47it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.50it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ZhengPeng7-CoSOD_fps_collection-bee3764/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.93it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 45.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.13it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.55it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.70it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/adobe-aepp-0e23c55/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.98it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/colindecourt-darod-ab4878e/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.57it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.49it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.15it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.34it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.38it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.80it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/UMEssen-matrix-scala-bd97a56/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.19it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/salesforce-AuditNLG-c473044/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.83it/s]
+[2026-11-25 15:50:18] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Materials-Data-Science-and-Informatics-somesy-a47ca93/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.20it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 91.61it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.54it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.79it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.90it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 101.01it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.85it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 91.21it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Spawning-Inc-datadiligence-9e949d2/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.86it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tarsil-databasez-01b23b0/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.32it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/JunbongJang-contour-tracking-1219b66/main (9 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.14it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/knexer-ai-storyteller-86da1d3/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 35.50it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 32.78it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/leandl-wvalidate-8cb9603/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.33it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.03it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.76it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ortursucceeh-Project-PhotoShare-1942d61/main (10 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.93it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.11it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.52it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.03it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 93.49it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.16it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.06it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.24it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.39it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ddPn08-rvc-webui-c4a12a8/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.34it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bharatsubedi-PARseq_torch-8ffcb95/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.24it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.71it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ZhangJD-ong-MoSID-Breast-Tumor-Segmentation-from-Multi-parametric-MRI-e826e12/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.95it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/omron-sinicx-action-constrained-RL-benchmark-47b85fb/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.16it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.32it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/viper-framework-viper2-bd8aa34/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 97.10it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kabeer11000-autollm-53e7404/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.19it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/yuyujunjun-RSMT-Realtime-Stylized-Motion-Transition-67c65b7/main (8 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.40it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.09it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 49.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.77it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 56.94it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 56.37it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.47it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.31it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Adeon18-Mori-Bazius-Backend-f33b8ba/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.55it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.75it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.82it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/roboflow-cvevals-4d29537/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.01it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.56it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Ying1123-llm-caching-multiplexing-2dc7e69/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 94.04it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vectara-vectara-ingest-0a867f1/main (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.27it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/reko-beep-hsr-data-c73208a/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.51it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.21it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.55it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.44it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/metalbobinou-python-ListComparator-00b6794/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.24it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/fuzzylabs-matcha-examples-c780c2e/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 91.71it/s]
+[2026-11-25 15:50:19] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/marcpage-pylavi-90a3e81/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 97.94it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 102.68it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 95.11it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kabachuha-sd-webui-text2video-20ead10/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.30it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/facebookresearch-AudioDec-9b49838/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.68it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.02it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 93.57it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tigrisdata-tigris-client-python-667d484/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.31it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Stevenic-promptrix-py-6ed7059/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.05it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.37it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tungduongbk-airflow-custom-plugins-f0f571d/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.86it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kraemer-lab-GRAPEVNE-1d241a8/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.55it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/graphcore-PopTransformer-1314598/main (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 85.19it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.49it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.52it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.08it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.45it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.51it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.12it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.44it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 40.62it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Quantomatic-zxlive-c7b5c28/main (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.54it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.15it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.42it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/lhenault-simpleAI-1ac4954/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.69it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.97it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.84it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.75it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.16it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/AdaptChat-adapt.py-9e079c0/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.10it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.57it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/eloimoliner-BABE-777b624/main (18 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.10it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.84it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.91it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.50it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.86it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.31it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.78it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/CERT-EDF-generaptor-e71eb4c/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.74it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.99it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 47.74it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.57it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 56.86it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.31it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/jdum-asciinema-scene-82f586d/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.48it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.67it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 47.50it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.01it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 100.08it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 104.50it/s]
+[2026-11-25 15:50:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bxdoan-venom-auto-da0fcfa/main (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 95.35it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 99.96it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.90it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.94it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/v-mikhaylov-tfold-release-e2bae1f/main (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.75it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.97it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.63it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nyaarium-blender-nyaatools-4fc69af/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.62it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/langchain-ai-kork-3ff7137/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 114.49it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/pygfx-gfxmorph-0a3a9d9/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 98.16it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.35it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 92.83it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 116.25it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 99.88it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 102.45it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.38it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vladkens-twscrape-4f2ee7f/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.83it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.96it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Innocentsax-AirBnB_clone-a48e44b/main (9 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.74it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 94.79it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Zhendong-Wang-Patch-Diffusion-929b0c0/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.63it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.32it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 47.87it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.96it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.61it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.71it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.49it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.84it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.69it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.61it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.75it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.84it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.50it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.87it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/evalplus-evalplus-8b713cd/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.06it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/pnkraemer-matfree-9b88279/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 91.81it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/blurgyy-jaxngp-adbe49e/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.94it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/danilonumeroso-dar-64e8631/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.94it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Cerlancism-faster-whisper-webui-884f5fd/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.73it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/gabacode-chatGPDP-4701532/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.36it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/lucmos-powermanim-1bcf62a/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 94.07it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.04it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.89it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/BioMag-mtbi_meeg-b757aa8/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.96it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bufbuild-protovalidate-python-2eee9ba/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 93.12it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.06it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/google-research-precondition-861d2da/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 91.24it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/canpool-QxRibbon-4bbd7f5/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 94.07it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.16it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.32it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.55it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Jackory-RPBT-dbf3696/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.36it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/RobinSchfr-Lightning-control-for-Nanoleaf-dedf122/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.76it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.31it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.09it/s]
+[2026-11-25 15:50:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/edarchimbaud-systematic-trading-a9fec02/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 93.42it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 93.82it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.32it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/rmihaylov-falcontune-6bd029e/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.45it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.49it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/inWeb3ai-chatWeb3-cf1c933/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.45it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.51it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/dmlc-tl2cgen-9d135f4/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.42it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.88it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Lightning-AI-lit-llama-da71ade/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.66it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/davidmaamoaix-singleline-311d35f/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 111.05it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.69it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/devchat-ai-devchat-a8c53d2/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 110.35it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 115.46it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 101.29it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 97.44it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.73it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.24it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.99it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.94it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/hq0709-Depth-NeuS-49d93d4/main (11 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 48.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.03it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.96it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/hbqjzx-wxxiaozhi-dfc4a65/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.42it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.69it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/RTIInternational-teehr-2bd727d/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.66it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.39it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tongyuantongyu-cycmunet-3c34dbe/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.68it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.42it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.18it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.57it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kaiko-ai-typedspark-cf5bc65/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 93.16it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 92.43it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 93.20it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.60it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/maxvanspengler-hyperbolic_learning_library-f6cfca3/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.40it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/OpenGSL-OpenGSL-b40738c/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.76it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/N00Bception-AI-Powered-5G-OpenRAN-Optimizer-a0eac7b/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.46it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/geoffwhittington-meshtastic-matrix-relay-ffe969f/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 95.55it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.25it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.08it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.77it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/yairl-r1xbot-5323f61/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 93.10it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/EleutherAI-concept-erasure-0d4dbcb/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.28it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/yoheinakajima-babyagi-d10b08c/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.84it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/odtuyzt-chrono-kit-923b505/main (10 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.61it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nccgroup-libslub-7732a54/main (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 99.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 106.47it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 97.68it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 99.11it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 98.78it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/SAIC-iSmart-API-saic-python-client-29b99ad/main (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.09it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.98it/s]
+[2026-11-25 15:50:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/wm-pxel-langchain-testbench-53701f9/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.37it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.57it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.32it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.15it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.08it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.19it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.08it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.71it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/brdav-cma-fdae11a/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.52it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ergodicio-adept-2c7eee5/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.25it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.26it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tricktreat-DiffusionNER-cb095cd/main (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 93.51it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 94.87it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/light1726-BetaVAE_VC-08902f2/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.56it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/entangled-entangled.py-4dcbb63/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.78it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/EmbedInAI-EmbedInDB-b2d7852/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.90it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Adam-Vandervorst-PyBHV-ff5dcca/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 94.44it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.12it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.34it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.24it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.11it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/melMass-comfy_mtb-3b07984/main (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 105.91it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 94.63it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.95it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.30it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/taptorestart-forms-40b1a91/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 94.12it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/mp3guy-SymE3-445731e/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.55it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.04it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.59it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.76it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.59it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.56it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/liuzuxin-OSRL-6ede2c2/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 91.83it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 94.86it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/OSIPI-TF2.4_IVIM-MRI_CodeCollection-686d23e/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 45.40it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/edsaav-nail-64acdc6/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.59it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/RobertoCorti-gptravel-bcf49dd/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 92.07it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.94it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 93.42it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/AlexGidiotis-gpt-light-ae75a5e/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.93it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/david-stan-dagfed-chain-0a60a23/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.67it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.48it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/CMU-MultiComp-Lab-CMU-MultimodalSDK-3e27d37/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.86it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.69it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.15it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/dichem-django-excel-report-686e1da/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.32it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/paulpanwang-Cas6D-245489d/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 56.31it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/cibere-kick.py-03541c0/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.90it/s]
+[2026-11-25 15:50:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/apple-ml-tract-ad25296/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.96it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.67it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.42it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.60it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.87it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.51it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/adrienbrignon-mkdocs-exporter-bdbd7b5/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.18it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 94.49it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/knrdl-acme-ca-server-53598ad/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.91it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 104.28it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vsiegel-thoughttree-84b1498/main (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 95.32it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 97.53it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/IntelLabs-GraVi-T-08d95be/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.12it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/google-lineax-4e8a44a/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.00it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.79it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/iuiaoin-wechat-gptbot-b379085/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 93.72it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 92.93it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.72it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.22it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.40it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.22it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.95it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.40it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.04it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.01it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.45it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/JuniusLuo-VecLucene-8a47c91/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.11it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/piercefreeman-vectordb-orm-0b7fe7d/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.32it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/remixer-dec-botality-ii-f8402d5/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.42it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.43it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 48.18it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 47.64it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/egrinstein-gnn_ssl-74c7b5a/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.96it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/janghyuk-choi-slot-attention-lightning-2993443/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.32it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.50it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bytewax-rt-embed-7069fc6/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.13it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/BrianPugh-tamp-85634f4/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.21it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.95it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/somaonishi-MTR-33b87b3/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.20it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.57it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/dbt-labs-dbt-meshify-a11e507/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 92.44it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Sygil-Dev-muse-maskgit-pytorch-7d7c00c/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.44it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/SKbarbon-swoopyui-a4fb25d/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.01it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/microsoft-seqrecord-55c8d91/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.01it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/shug2k-content-review-tool-93305bb/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.00it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Priesemann-Group-nninfo-8289154/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.80it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.23it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.46it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/slewie-HypONIC-5b95063/main (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.82it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.23it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.65it/s]
+[2026-11-25 15:50:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/crowdgames-sturgeon-pub-a235e6d/main (20 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 97.08it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.03it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.80it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.88it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.36it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.09it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.33it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.96it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 37.73it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.27it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.54it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.68it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.90it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ches-001-metatune-278c315/main (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.89it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 40.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.66it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/solo-spice-sospice-64c941b/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.65it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.69it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/wolfhoundgelert-xman-1da4d2d/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.70it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 98.21it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 95.85it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 95.52it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.40it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.33it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.60it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.81it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.96it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.75it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.20it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.89it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.79it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.73it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.98it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.08it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/diptanu-indexify-216ecf2/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.17it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.52it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/amd-Open-Field-Health-Check-415e8a6/main (9 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.54it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/libsql-libsql-client-py-484c7d3/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.94it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/callowayproject-bump-my-version-0cf1cb5/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.12it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.71it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.49it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ansys-pyaedt-toolkit-template-73b2fc9/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.39it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Zhang-Zhiyuan-zzy-hotpot-3a13089/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.84it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/utiasDSL-fmpc_socp-de13764/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.07it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/JohnnyIrvin-shell-craft-26a7af7/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.05it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/epfml-landmark-attention-111ee30/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 44.33it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 40.30it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 37.12it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.99it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.20it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kit-cel-mokka-8a555d9/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 38.77it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/anarchy-ai-LLM-VM-83da960/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.06it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/xsfa-pointstorm-ede28ec/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.47it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Genentech-walk-jump-3cfaa37/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.67it/s]
+[2026-11-25 15:50:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/teelinsan-parallel-decoding-b16a009/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.50it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.02it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/czczup-GPTrans-1f6f651/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.74it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ycc140-fastapi_messaging-bed8c86/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.01it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.62it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.76it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/mihirh19-todo_web_app-fed9043/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.79it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ryongithub-GatedPromptTuning-1de14b5/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 85.82it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.65it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.98it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.46it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.10it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.42it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/SEIAROTg-autobean-format-2a51179/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.71it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/20171130-llmux-249dcdb/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.24it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.13it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/chunmeifeng-FedPR-f5c3e67/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.79it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/davisyoshida-qax-34f0905/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.18it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.16it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.75it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.66it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/isayahc-Semi-Automated-Youtube-Channel-80b0201/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.19it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Mattie-chatsnack-94305b2/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 91.36it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.60it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.96it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.91it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/FizzleDorf-AIT-ad34668/main (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.73it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/argus-hdps-rico-426daa0/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.72it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tmori-generative-agents-81cabfd/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.92it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/pimoroni-badger2040-24d6eb6/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.05it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/GChristensen-deepfloyd_if_lab-4644b93/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.73it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kaiokendev-superbig-be5500b/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.30it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/slonogram-slonogram-9f86552/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.05it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.88it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/AICPS-RS2G-b4e985f/main (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.25it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/speedb-io-log-parser-d600b0e/main (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.99it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.57it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 92.10it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/paulromano-endf-python-745bbb5/main (8 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.73it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.43it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/pawelkn-xapi-python-788a721/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.39it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/jfamestad-TexasHoldemAgents-a171a13/main (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.58it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.75it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tricktreat-PromptNER-3857235/main (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.50it/s]
+[2026-11-25 15:50:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/briandelmsft-STAT-Function-f91d421/main (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 48.50it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.18it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.43it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.76it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.48it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.90it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.19it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.51it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.41it/s]
+[2026-11-25 15:50:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/NREL-BuildingsBench-cc4b03d/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.99it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.73it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 49.19it/s]
+[2026-11-25 15:50:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/datasig-ac-uk-RoughPy-fbd9016/main (8 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.34it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 91.58it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.56it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.16it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.77it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.60it/s]
+[2026-11-25 15:50:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/javiber-scrat-748926a/main (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.71it/s]
+[2026-11-25 15:50:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/alteryx-locust-grasshopper-632db06/main (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.96it/s]
+[2026-11-25 15:50:27] INFO run_comparison - === base ===
+[2026-11-25 16:04:43] INFO src.evaluation.evaluator - [base] quality metrics: {'exact_match': 0.0184, 'edit_similarity': 0.4702, 'identifier_accuracy': 0.2869, 'code_bleu': 0.1906, 'exact_match_ci95': [0.0092, 0.0295], 'edit_similarity_ci95': [0.4501, 0.4903], 'n_samples': 543}
+[2026-11-25 16:04:43] INFO src.evaluation.evaluator - [base] efficiency: {'system': 'base', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 856254.68, 'total_latency_ms': 856254.68, 'avg_total_ms': 1576.9, 'peak_gpu_mb': 2480.08, 'peak_cpu_ram_mb': 2725.62}
+[2026-11-25 16:04:44] INFO src.evaluation.evaluator - Results saved -> results/b2/test_noretr/base_metrics.json
+[2026-11-25 16:04:44] INFO run_comparison - === finetuning_only ===
+[2026-11-25 16:20:53] INFO src.evaluation.evaluator - [finetuning_only] quality metrics: {'exact_match': 0.0681, 'edit_similarity': 0.5989, 'identifier_accuracy': 0.4263, 'code_bleu': 0.2353, 'exact_match_ci95': [0.0479, 0.0884], 'edit_similarity_ci95': [0.579, 0.618], 'n_samples': 543}
+[2026-11-25 16:20:53] INFO src.evaluation.evaluator - [finetuning_only] efficiency: {'system': 'finetuning_only', 'retrieval_latency_ms': 0.0, 'inference_latency_ms': 969539.02, 'total_latency_ms': 969539.02, 'avg_total_ms': 1785.52, 'peak_gpu_mb': 2481.36, 'peak_cpu_ram_mb': 2746.43}
+[2026-11-25 16:20:53] INFO src.evaluation.evaluator - Results saved -> results/b2/test_noretr/finetuning_only_metrics.json
+[2026-11-25 16:20:53] INFO src.evaluation.evaluator - Combined results -> results/b2/test_noretr/comparison_summary.json
+[2026-11-25 16:20:53] INFO src.evaluation.evaluator - Markdown comparison -> results/b2/test_noretr/comparison_summary.md
+[2026-11-25 16:20:53] INFO run_comparison - Done. See results/b2/test_noretr/comparison_summary.md and predictions.jsonl
+>> python -m experiments.run_comparison --adapter experiments/finetuned_model/crosscodeeval/v2 --4bit --base-prompt plain --output-dir results/b2/test_staleness_dense --subset test --view staleness --systems rag_only hybrid --save-raw --suppress-fim
+[2026-11-25 16:21:08] INFO run_comparison - test: 543 examples, view=staleness, top_k=5
+[2026-11-25 16:21:08] INFO src.retrieval.embedder - Loading embedding model: microsoft/unixcoder-base
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 199/199 [00:00<00:00, 17558.25it/s]
+
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/338 [00:01<10:29,  1.87s/it]
+Loading weights:   1%|          | 3/338 [00:02<03:03,  1.82it/s]
+Loading weights:   1%|          | 4/338 [00:02<02:12,  2.52it/s]
+Loading weights:   2%|▏         | 8/338 [00:02<00:49,  6.65it/s]
+Loading weights:   4%|▍         | 15/338 [00:02<00:22, 14.67it/s]
+Loading weights:   6%|▌         | 19/338 [00:02<00:19, 16.40it/s]
+Loading weights:   9%|▊         | 29/338 [00:02<00:10, 29.60it/s]
+Loading weights:  14%|█▍        | 47/338 [00:02<00:05, 57.75it/s]
+Loading weights:  19%|█▊        | 63/338 [00:02<00:03, 76.22it/s]
+Loading weights:  22%|██▏       | 76/338 [00:03<00:03, 87.14it/s]
+Loading weights:  26%|██▋       | 89/338 [00:03<00:02, 94.66it/s]
+Loading weights:  33%|███▎      | 111/338 [00:03<00:01, 120.99it/s]
+Loading weights:  37%|███▋      | 125/338 [00:03<00:02, 75.68it/s]
+Loading weights:  40%|████      | 136/338 [00:03<00:03, 65.34it/s]
+Loading weights:  43%|████▎     | 145/338 [00:04<00:03, 63.14it/s]
+Loading weights:  45%|████▌     | 153/338 [00:04<00:03, 47.18it/s]
+Loading weights:  47%|████▋     | 160/338 [00:04<00:04, 42.87it/s]
+Loading weights:  49%|████▉     | 166/338 [00:04<00:03, 43.84it/s]
+Loading weights:  51%|█████     | 172/338 [00:04<00:04, 37.37it/s]
+Loading weights:  52%|█████▏    | 177/338 [00:05<00:04, 38.16it/s]
+Loading weights:  55%|█████▍    | 185/338 [00:05<00:03, 44.06it/s]
+Loading weights:  59%|█████▉    | 200/338 [00:05<00:02, 65.71it/s]
+Loading weights:  65%|██████▍   | 219/338 [00:05<00:01, 90.34it/s]
+Loading weights:  69%|██████▊   | 232/338 [00:05<00:01, 98.49it/s]
+Loading weights:  72%|███████▏  | 245/338 [00:05<00:00, 104.26it/s]
+Loading weights:  79%|███████▉  | 267/338 [00:05<00:00, 128.07it/s]
+Loading weights:  83%|████████▎ | 281/338 [00:05<00:00, 122.30it/s]
+Loading weights:  90%|████████▉ | 303/338 [00:05<00:00, 140.38it/s]
+Loading weights:  94%|█████████▍| 318/338 [00:06<00:00, 129.06it/s]
+Loading weights: 100%|██████████| 338/338 [00:06<00:00, 54.62it/s]
+[2026-11-25 16:21:20] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/virtualzx-nad-easy_llm_agents-8a29505/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00,  4.87it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00,  4.86it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/turboderp-exllama-a544085/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.77it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/open-mmlab-Multimodal-GPT-9c73e47/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 47.89it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 40.03it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 39.05it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/prophecy-io-spark-ai-fd52ad1/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.41it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.87it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/microsoft-DPSDA-79f0868/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 43.82it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/lskyset-priconne-asset-extractor-3d54812/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.82it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 44.04it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Kubenew-ChaosGPT-2c40353/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.70it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.38it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.48it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.00it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 56.62it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.10it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.81it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/irgolic-AutoPR-10e2891/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.44it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.28it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/hyperliquid-dex-hyperliquid-python-sdk-6ddfbfb/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.44it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.17it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.85it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.80it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/last-war-photoshare-fastapi-67888ff/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.05it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.51it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.99it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.23it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 85.87it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.68it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.28it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/xbpeng-rl_assignments-cdb92a8/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 48.82it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.31it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ml-research-SLASH-8d0f42d/staleness (11 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.50it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/fbdp1202-tts_data_engine-02353ab/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.40it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/quarkslab-tritondse-9805288/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.10it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/maybelinot-yamx-5e304a5/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.97it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/obahamonde-aiofauna-67993d2/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 96.95it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/log10-io-log10-d605f37/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.44it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/BlueBrain-Currentscape-29753e8/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.04it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/imaginationtech-constrainedrandom-db5b49a/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.13it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 85.10it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.33it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.32it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/iryna-kondr-scikit-llm-38ad5e9/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.22it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.63it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.20it/s]
+[2026-11-25 16:21:21] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/opensean-kedro-graphql-75c7dae/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.76it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/K024-chatglm-q-eab6472/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.73it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/appsignal-appsignal-python-5a0cfa9/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 49.18it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/griffinbholt-decisionmaking-code-py-e08645e/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.23it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.19it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.65it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/swan-utokyo-deir-385d351/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 34.96it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/GenBench-genbench_cbt-caa63fb/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.36it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/traas-stack-holoinsight-ai-b235643/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 47.85it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/krishnaik06-Chicken-Disease-Classification-Projects-d0f5e13/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.20it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/FabienRoger-concistency-lenses-6500b44/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.63it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Cybereason-eztw-94a0ae9/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.07it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/aiplan4eu-UP4ROS-59c1358/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.10it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ingra14m-mipnerf360-pytorch-bfc1e77/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.42it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.63it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.90it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/willleeney-ugle-7cfe1b3/staleness (10 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.36it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.24it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.59it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 48.17it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/philtabor-ProtoRL-31f81e7/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.38it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.62it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ZhengPeng7-CoSOD_fps_collection-bee3764/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.36it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 40.33it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 44.45it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.96it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.88it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/adobe-aepp-0e23c55/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.41it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/colindecourt-darod-ab4878e/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.88it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.68it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.24it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.86it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 49.65it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.79it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/UMEssen-matrix-scala-bd97a56/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.90it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/salesforce-AuditNLG-c473044/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.32it/s]
+[2026-11-25 16:21:22] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Materials-Data-Science-and-Informatics-somesy-a47ca93/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.29it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.45it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.95it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.84it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.38it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.73it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.09it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Spawning-Inc-datadiligence-9e949d2/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.77it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tarsil-databasez-01b23b0/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 85.79it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/JunbongJang-contour-tracking-1219b66/staleness (9 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.27it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/knexer-ai-storyteller-86da1d3/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 32.09it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 26.29it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/leandl-wvalidate-8cb9603/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.21it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.63it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.56it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ortursucceeh-Project-PhotoShare-1942d61/staleness (12 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.59it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.88it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.51it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.08it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.88it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.84it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.29it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.66it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.64it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ddPn08-rvc-webui-c4a12a8/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.63it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bharatsubedi-PARseq_torch-8ffcb95/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.93it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.34it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ZhangJD-ong-MoSID-Breast-Tumor-Segmentation-from-Multi-parametric-MRI-e826e12/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.93it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/omron-sinicx-action-constrained-RL-benchmark-47b85fb/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.67it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.67it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/viper-framework-viper2-bd8aa34/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.80it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kabeer11000-autollm-53e7404/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.64it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/yuyujunjun-RSMT-Realtime-Stylized-Motion-Transition-67c65b7/staleness (12 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.22it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 43.00it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 48.20it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.15it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.18it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 48.16it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.55it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.00it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Adeon18-Mori-Bazius-Backend-f33b8ba/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.66it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.07it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.83it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/roboflow-cvevals-4d29537/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.02it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.64it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Ying1123-llm-caching-multiplexing-2dc7e69/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.07it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vectara-vectara-ingest-0a867f1/staleness (8 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.56it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.24it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.24it/s]
+[2026-11-25 16:21:23] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/reko-beep-hsr-data-c73208a/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.49it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.96it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.80it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.45it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/metalbobinou-python-ListComparator-00b6794/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.89it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.58it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/fuzzylabs-matcha-examples-c780c2e/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.41it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/marcpage-pylavi-90a3e81/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.57it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 89.02it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kabachuha-sd-webui-text2video-20ead10/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.86it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/facebookresearch-AudioDec-9b49838/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.44it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.05it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.56it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tigrisdata-tigris-client-python-667d484/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.28it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Stevenic-promptrix-py-6ed7059/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.13it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.05it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.74it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tungduongbk-airflow-custom-plugins-f0f571d/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.17it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kraemer-lab-GRAPEVNE-1d241a8/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.99it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/graphcore-PopTransformer-1314598/staleness (8 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.17it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.25it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.34it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 43.47it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.12it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.06it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.96it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 45.32it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.85it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.59it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 43.17it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Quantomatic-zxlive-c7b5c28/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.67it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.98it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.83it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/lhenault-simpleAI-1ac4954/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.44it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.81it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.81it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.90it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.27it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/AdaptChat-adapt.py-9e079c0/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.61it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.43it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/eloimoliner-BABE-777b624/staleness (23 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.12it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.08it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 56.36it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.55it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.42it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.65it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.99it/s]
+[2026-11-25 16:21:24] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/CERT-EDF-generaptor-e71eb4c/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.63it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.46it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 48.34it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 56.99it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.72it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 41.46it/s]
+[2026-11-25 16:21:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/jdum-asciinema-scene-82f586d/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.48it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.75it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.81it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.59it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.63it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.56it/s]
+[2026-11-25 16:21:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bxdoan-venom-auto-da0fcfa/staleness (10 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.79it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.94it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.22it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.34it/s]
+[2026-11-25 16:21:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/v-mikhaylov-tfold-release-e2bae1f/staleness (8 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 48.79it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 43.59it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.59it/s]
+[2026-11-25 16:21:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nyaarium-blender-nyaatools-4fc69af/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.58it/s]
+[2026-11-25 16:21:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/langchain-ai-kork-3ff7137/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.12it/s]
+[2026-11-25 16:21:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/pygfx-gfxmorph-0a3a9d9/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.70it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.22it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.05it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.90it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.18it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.71it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.13it/s]
+[2026-11-25 16:21:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vladkens-twscrape-4f2ee7f/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.23it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.08it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.47it/s]
+[2026-11-25 16:21:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Innocentsax-AirBnB_clone-a48e44b/staleness (9 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.33it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.32it/s]
+[2026-11-25 16:21:25] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Zhendong-Wang-Patch-Diffusion-929b0c0/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.34it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.69it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 56.05it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 49.54it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 47.67it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 49.77it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 46.67it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 47.52it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 44.01it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.05it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.09it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 40.42it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 43.86it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/evalplus-evalplus-8b713cd/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.40it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/pnkraemer-matfree-9b88279/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.43it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/blurgyy-jaxngp-adbe49e/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.09it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/danilonumeroso-dar-64e8631/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.35it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Cerlancism-faster-whisper-webui-884f5fd/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.34it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/gabacode-chatGPDP-4701532/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.86it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/lucmos-powermanim-1bcf62a/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.36it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.39it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.11it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/BioMag-mtbi_meeg-b757aa8/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.47it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bufbuild-protovalidate-python-2eee9ba/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.66it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.39it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/google-research-precondition-861d2da/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.56it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/canpool-QxRibbon-4bbd7f5/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.08it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.60it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.76it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Jackory-RPBT-dbf3696/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.57it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/RobinSchfr-Lightning-control-for-Nanoleaf-dedf122/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.75it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.04it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.24it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/edarchimbaud-systematic-trading-a9fec02/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.74it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.68it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.23it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/rmihaylov-falcontune-6bd029e/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 45.73it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.71it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/inWeb3ai-chatWeb3-cf1c933/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.38it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.95it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/dmlc-tl2cgen-9d135f4/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.58it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.74it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Lightning-AI-lit-llama-da71ade/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.48it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/davidmaamoaix-singleline-311d35f/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 100.66it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 94.69it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/devchat-ai-devchat-a8c53d2/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.13it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 106.66it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 91.05it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.39it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.30it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.05it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.34it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/hq0709-Depth-NeuS-49d93d4/staleness (12 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 42.27it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.69it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.36it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/hbqjzx-wxxiaozhi-dfc4a65/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.47it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.49it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/RTIInternational-teehr-2bd727d/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.62it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.54it/s]
+[2026-11-25 16:21:26] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tongyuantongyu-cycmunet-3c34dbe/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.15it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.68it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.35it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.27it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 49.94it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kaiko-ai-typedspark-cf5bc65/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.09it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.73it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.34it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/maxvanspengler-hyperbolic_learning_library-f6cfca3/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.05it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/OpenGSL-OpenGSL-b40738c/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.02it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/N00Bception-AI-Powered-5G-OpenRAN-Optimizer-a0eac7b/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.58it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/geoffwhittington-meshtastic-matrix-relay-ffe969f/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.72it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.52it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.11it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.90it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/yairl-r1xbot-5323f61/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.27it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/EleutherAI-concept-erasure-0d4dbcb/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.40it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/yoheinakajima-babyagi-d10b08c/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.98it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/odtuyzt-chrono-kit-923b505/staleness (10 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.63it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/nccgroup-libslub-7732a54/staleness (9 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.40it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.38it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.13it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 85.09it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.89it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/SAIC-iSmart-API-saic-python-client-29b99ad/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.46it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.18it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/wm-pxel-langchain-testbench-53701f9/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.08it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.30it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.36it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.10it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.25it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.37it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.40it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.69it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/brdav-cma-fdae11a/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.42it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ergodicio-adept-2c7eee5/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.88it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.21it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tricktreat-DiffusionNER-cb095cd/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.17it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/light1726-BetaVAE_VC-08902f2/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.37it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/entangled-entangled.py-4dcbb63/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.76it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/EmbedInAI-EmbedInDB-b2d7852/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.30it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Adam-Vandervorst-PyBHV-ff5dcca/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.72it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.98it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.81it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.59it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.80it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.53it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/melMass-comfy_mtb-3b07984/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.83it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.75it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.62it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.03it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/taptorestart-forms-40b1a91/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.51it/s]
+[2026-11-25 16:21:27] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/mp3guy-SymE3-445731e/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.35it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.71it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.81it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.39it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.56it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.52it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.24it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/liuzuxin-OSRL-6ede2c2/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.02it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.05it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/OSIPI-TF2.4_IVIM-MRI_CodeCollection-686d23e/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 39.08it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/edsaav-nail-64acdc6/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.58it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/RobertoCorti-gptravel-bcf49dd/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.46it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.58it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.70it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.95it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/AlexGidiotis-gpt-light-ae75a5e/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.14it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/david-stan-dagfed-chain-0a60a23/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.38it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.39it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/CMU-MultiComp-Lab-CMU-MultimodalSDK-3e27d37/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.83it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.58it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.64it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/dichem-django-excel-report-686e1da/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.48it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/paulpanwang-Cas6D-245489d/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 56.15it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/cibere-kick.py-03541c0/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.01it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/apple-ml-tract-ad25296/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.29it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 44.90it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.42it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.76it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 48.01it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.33it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/adrienbrignon-mkdocs-exporter-bdbd7b5/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.55it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.42it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/knrdl-acme-ca-server-53598ad/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.29it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 98.54it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/vsiegel-thoughttree-84b1498/staleness (9 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 85.34it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.74it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/IntelLabs-GraVi-T-08d95be/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 56.35it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/google-lineax-4e8a44a/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.74it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.05it/s]
+[2026-11-25 16:21:28] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/iuiaoin-wechat-gptbot-b379085/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.20it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.49it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.35it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.12it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.07it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.37it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.16it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.50it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.28it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/JuniusLuo-VecLucene-8a47c91/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.09it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/piercefreeman-vectordb-orm-0b7fe7d/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.51it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/remixer-dec-botality-ii-f8402d5/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.52it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.49it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 42.16it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 42.76it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/egrinstein-gnn_ssl-74c7b5a/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.72it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/janghyuk-choi-slot-attention-lightning-2993443/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.50it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.85it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/bytewax-rt-embed-7069fc6/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.43it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/BrianPugh-tamp-85634f4/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.79it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/somaonishi-MTR-33b87b3/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.15it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.67it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/dbt-labs-dbt-meshify-a11e507/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.84it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Sygil-Dev-muse-maskgit-pytorch-7d7c00c/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.44it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/SKbarbon-swoopyui-a4fb25d/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.20it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/microsoft-seqrecord-55c8d91/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.51it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/shug2k-content-review-tool-93305bb/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.83it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Priesemann-Group-nninfo-8289154/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.17it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.47it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.52it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/slewie-HypONIC-5b95063/staleness (8 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.74it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.15it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.29it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.87it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/crowdgames-sturgeon-pub-a235e6d/staleness (25 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.40it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.03it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 76.20it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.73it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.12it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.58it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 47.93it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.99it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 35.35it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.25it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.09it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.09it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.54it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.95it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.16it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ches-001-metatune-278c315/staleness (10 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 41.29it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 41.80it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/solo-spice-sospice-64c941b/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.54it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.45it/s]
+[2026-11-25 16:21:29] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/wolfhoundgelert-xman-1da4d2d/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.07it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.11it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.80it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.33it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.03it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.30it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.61it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.71it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.90it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 54.34it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.15it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.55it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.03it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.60it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 59.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.92it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/diptanu-indexify-216ecf2/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.20it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.41it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/amd-Open-Field-Health-Check-415e8a6/staleness (14 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.46it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.84it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/libsql-libsql-client-py-484c7d3/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 53.88it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/callowayproject-bump-my-version-0cf1cb5/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.82it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.10it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.12it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ansys-pyaedt-toolkit-template-73b2fc9/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.27it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.45it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Zhang-Zhiyuan-zzy-hotpot-3a13089/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.11it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/utiasDSL-fmpc_socp-de13764/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.60it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/JohnnyIrvin-shell-craft-26a7af7/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.48it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/epfml-landmark-attention-111ee30/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 36.23it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 34.55it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 33.75it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.81it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.32it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kit-cel-mokka-8a555d9/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.69it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/anarchy-ai-LLM-VM-83da960/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 95.49it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/xsfa-pointstorm-ede28ec/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.01it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Genentech-walk-jump-3cfaa37/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.14it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/teelinsan-parallel-decoding-b16a009/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.07it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 90.94it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/czczup-GPTrans-1f6f651/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.34it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ycc140-fastapi_messaging-bed8c86/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 88.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.77it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.22it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/mihirh19-todo_web_app-fed9043/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.56it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/ryongithub-GatedPromptTuning-1de14b5/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 86.32it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.89it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.12it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.97it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 61.16it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.43it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/SEIAROTg-autobean-format-2a51179/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 44.64it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/20171130-llmux-249dcdb/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.56it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 60.01it/s]
+[2026-11-25 16:21:30] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/chunmeifeng-FedPR-f5c3e67/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 43.63it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/davisyoshida-qax-34f0905/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 64.62it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.52it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.06it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.02it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/isayahc-Semi-Automated-Youtube-Channel-80b0201/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 62.65it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/Mattie-chatsnack-94305b2/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.47it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 66.49it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 68.94it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 57.96it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/FizzleDorf-AIT-ad34668/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 85.60it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/argus-hdps-rico-426daa0/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 69.14it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tmori-generative-agents-81cabfd/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 52.96it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/pimoroni-badger2040-24d6eb6/staleness (5 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.44it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/GChristensen-deepfloyd_if_lab-4644b93/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 74.24it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/kaiokendev-superbig-be5500b/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.59it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.42it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/slonogram-slonogram-9f86552/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.37it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.86it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/AICPS-RS2G-b4e985f/staleness (4 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 58.41it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/speedb-io-log-parser-d600b0e/staleness (6 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.09it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.88it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 72.03it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 75.27it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/paulromano-endf-python-745bbb5/staleness (8 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 78.10it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.88it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 70.26it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/pawelkn-xapi-python-788a721/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.25it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/jfamestad-TexasHoldemAgents-a171a13/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.90it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/tricktreat-PromptNER-3857235/staleness (7 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.58it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/briandelmsft-STAT-Function-f91d421/staleness (9 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 67.43it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 84.62it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 87.72it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.24it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 73.52it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.91it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 55.96it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 56.77it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 65.14it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/NREL-BuildingsBench-cc4b03d/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 51.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 46.27it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 43.01it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/datasig-ac-uk-RoughPy-fbd9016/staleness (11 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.82it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.43it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.15it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 63.02it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 79.12it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 80.03it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.34it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/javiber-scrat-748926a/staleness (3 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 82.81it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 83.00it/s]
+[2026-11-25 16:21:31] INFO src.retrieval.vector_store - Vector store loaded from data/embeddings/crosscodeeval/alteryx-locust-grasshopper-632db06/staleness (2 vectors)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.91it/s]
+[2026-11-25 16:21:32] INFO run_comparison - === rag_only ===
+[2026-11-25 16:37:27] INFO src.evaluation.evaluator - [rag_only] retrieval metrics: {'mrr': 0.7203, 'precision@1': 0.5321, 'recall@1': 0.4093, 'precision@3': 0.3894, 'recall@3': 0.843, 'precision@5': 0.2654, 'recall@5': 0.9462, 'precision@10': 0.1404, 'recall@10': 0.9985, 'n_queries': 327}
+[2026-11-25 16:37:27] INFO src.evaluation.evaluator - [rag_only] quality metrics: {'exact_match': 0.0313, 'edit_similarity': 0.4438, 'identifier_accuracy': 0.2802, 'code_bleu': 0.1907, 'exact_match_ci95': [0.0184, 0.046], 'edit_similarity_ci95': [0.4205, 0.4662], 'n_samples': 543}
+[2026-11-25 16:37:27] INFO src.evaluation.evaluator - [rag_only] efficiency: {'system': 'rag_only', 'retrieval_latency_ms': 10940.11, 'inference_latency_ms': 955411.96, 'total_latency_ms': 966352.07, 'avg_total_ms': 1779.65, 'peak_gpu_mb': 2556.15, 'peak_cpu_ram_mb': 2475.05}
+[2026-11-25 16:37:27] INFO src.evaluation.evaluator - Results saved -> results/b2/test_staleness_dense/rag_only_metrics.json
+[2026-11-25 16:37:27] INFO run_comparison - === hybrid ===
+[2026-11-25 16:56:07] INFO src.evaluation.evaluator - [hybrid] retrieval metrics: {'mrr': 0.7203, 'precision@1': 0.5321, 'recall@1': 0.4093, 'precision@3': 0.3894, 'recall@3': 0.843, 'precision@5': 0.2654, 'recall@5': 0.9462, 'precision@10': 0.1404, 'recall@10': 0.9985, 'n_queries': 327}
+[2026-11-25 16:56:07] INFO src.evaluation.evaluator - [hybrid] quality metrics: {'exact_match': 0.1179, 'edit_similarity': 0.6358, 'identifier_accuracy': 0.495, 'code_bleu': 0.3125, 'exact_match_ci95': [0.0921, 0.1455], 'edit_similarity_ci95': [0.615, 0.6563], 'n_samples': 543}
+[2026-11-25 16:56:07] INFO src.evaluation.evaluator - [hybrid] efficiency: {'system': 'hybrid', 'retrieval_latency_ms': 10940.11, 'inference_latency_ms': 1118848.59, 'total_latency_ms': 1129788.7, 'avg_total_ms': 2080.64, 'peak_gpu_mb': 2560.04, 'peak_cpu_ram_mb': 2535.62}
+[2026-11-25 16:56:07] INFO src.evaluation.evaluator - Results saved -> results/b2/test_staleness_dense/hybrid_metrics.json
+[2026-11-25 16:56:07] INFO src.evaluation.evaluator - Combined results -> results/b2/test_staleness_dense/comparison_summary.json
+[2026-11-25 16:56:07] INFO src.evaluation.evaluator - Markdown comparison -> results/b2/test_staleness_dense/comparison_summary.md
+[2026-11-25 16:56:07] INFO run_comparison - [rag_only] stop reasons {'eos': 22, 'newline': 520, 'max_tokens': 1}; empty first lines 27
+[2026-11-25 16:56:07] INFO run_comparison - [hybrid] stop reasons {'eos': 542, 'newline': 0, 'max_tokens': 1}; empty first lines 0
+[2026-11-25 16:56:07] INFO run_comparison - Done. See results/b2/test_staleness_dense/comparison_summary.md and predictions.jsonl
+
+
+checkpoint 2026-11-25 16:59:58 (Colab clock)
+PARTIAL results/b2/STATUS.txt  rows=0
+DONE    results/b2/test_main_dense  rows=543
+DONE    results/b2/test_noretr  rows=543
+DONE    results/b2/test_staleness_dense  rows=543
+
+===== test_noretr
+# Comparative Study Results
+
+## Code Completion Quality
+
+| System | Exact Match | Edit Sim | Identifier Acc | CodeBLEU |
+|--------|------------|----------|----------------|----------|
+| base | 0.0184 | 0.4702 | 0.2869 | 0.1906 |
+| finetuning_only | 0.0681 | 0.5989 | 0.4263 | 0.2353 |
+
+## Retrieval Quality (RAG-Only & Hybrid)
+
+| System | MRR | P@1 | P@3 | P@5 | P@10 | R@1 | R@3 | R@5 | R@10 |
+|--------|-----|-----|-----|-----|------|-----|-----|-----|------|
+| base | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| finetuning_only | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+
+## Efficiency
+
+| System | Retrieval (ms) | Inference (ms) | Total (ms) | GPU Mem (MB) | CPU RAM (MB) |
+|--------|---------------|----------------|------------|--------------|--------------|
+| base | 0.0 | 856254.68 | 856254.68 | 2480.08 | 2725.62 |
+| finetuning_only | 0.0 | 969539.02 | 969539.02 | 2481.36 | 2746.43 |
+
+===== test_staleness_dense
+# Comparative Study Results
+
+## Code Completion Quality
+
+| System | Exact Match | Edit Sim | Identifier Acc | CodeBLEU |
+|--------|------------|----------|----------------|----------|
+| rag_only | 0.0313 | 0.4438 | 0.2802 | 0.1907 |
+| hybrid | 0.1179 | 0.6358 | 0.495 | 0.3125 |
+
+## Retrieval Quality (RAG-Only & Hybrid)
+
+| System | MRR | P@1 | P@3 | P@5 | P@10 | R@1 | R@3 | R@5 | R@10 |
+|--------|-----|-----|-----|-----|------|-----|-----|-----|------|
+| rag_only | 0.7203 | 0.5321 | 0.3894 | 0.2654 | 0.1404 | 0.4093 | 0.843 | 0.9462 | 0.9985 |
+| hybrid | 0.7203 | 0.5321 | 0.3894 | 0.2654 | 0.1404 | 0.4093 | 0.843 | 0.9462 | 0.9985 |
+
+## Efficiency
+
+| System | Retrieval (ms) | Inference (ms) | Total (ms) | GPU Mem (MB) | CPU RAM (MB) |
+|--------|---------------|----------------|------------|--------------|--------------|
+| rag_only | 10940.11 | 955411.96 | 966352.07 | 2556.15 | 2475.05 |
+| hybrid | 10940.11 | 1118848.59 | 1129788.7 | 2560.04 | 2535.62 |
+
+checkpoint 2026-11-25 18:03:24 (Colab clock)
+PARTIAL results/b2/STATUS.txt  rows=0
+DONE    results/b2/test_main_bm25  rows=543
+DONE    results/b2/test_main_dense  rows=543
+DONE    results/b2/test_noretr  rows=543
+PARTIAL results/b2/test_staleness_bm25  rows=0
+DONE    results/b2/test_staleness_dense  rows=543
+
+===== test_noretr
+# Comparative Study Results
+
+## Code Completion Quality
+
+| System | Exact Match | Edit Sim | Identifier Acc | CodeBLEU |
+|--------|------------|----------|----------------|----------|
+| base | 0.0184 | 0.4702 | 0.2869 | 0.1906 |
+| finetuning_only | 0.0681 | 0.5989 | 0.4263 | 0.2353 |
+
+## Retrieval Quality (RAG-Only & Hybrid)
+
+| System | MRR | P@1 | P@3 | P@5 | P@10 | R@1 | R@3 | R@5 | R@10 |
+|--------|-----|-----|-----|-----|------|-----|-----|-----|------|
+| base | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| finetuning_only | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+
+## Efficiency
+
+| System | Retrieval (ms) | Inference (ms) | Total (ms) | GPU Mem (MB) | CPU RAM (MB) |
+|--------|---------------|----------------|------------|--------------|--------------|
+| base | 0.0 | 856254.68 | 856254.68 | 2480.08 | 2725.62 |
+| finetuning_only | 0.0 | 969539.02 | 969539.02 | 2481.36 | 2746.43 |
+
+===== test_staleness_dense
+# Comparative Study Results
+
+## Code Completion Quality
+
+| System | Exact Match | Edit Sim | Identifier Acc | CodeBLEU |
+|--------|------------|----------|----------------|----------|
+| rag_only | 0.0313 | 0.4438 | 0.2802 | 0.1907 |
+| hybrid | 0.1179 | 0.6358 | 0.495 | 0.3125 |
+
+## Retrieval Quality (RAG-Only & Hybrid)
+
+| System | MRR | P@1 | P@3 | P@5 | P@10 | R@1 | R@3 | R@5 | R@10 |
+|--------|-----|-----|-----|-----|------|-----|-----|-----|------|
+| rag_only | 0.7203 | 0.5321 | 0.3894 | 0.2654 | 0.1404 | 0.4093 | 0.843 | 0.9462 | 0.9985 |
+| hybrid | 0.7203 | 0.5321 | 0.3894 | 0.2654 | 0.1404 | 0.4093 | 0.843 | 0.9462 | 0.9985 |
+
+## Efficiency
+
+| System | Retrieval (ms) | Inference (ms) | Total (ms) | GPU Mem (MB) | CPU RAM (MB) |
+|--------|---------------|----------------|------------|--------------|--------------|
+| rag_only | 10940.11 | 955411.96 | 966352.07 | 2556.15 | 2475.05 |
+| hybrid | 10940.11 | 1118848.59 | 1129788.7 | 2560.04 | 2535.62 |
+
+run folder                          files  predictions rows  summary.json
+results/b2/test_main_bm25               5               543  yes
+results/b2/test_main_dense              5               543  yes
+results/b2/test_noretr                  5               543  yes
+results/b2/test_staleness_bm25          1                 0  NO (incomplete)
+results/b2/test_staleness_dense         5               543  yes
+flushed to Drive

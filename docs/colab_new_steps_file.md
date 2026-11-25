@@ -170,34 +170,74 @@ If the GPU quota allows and you want to save time, you may stay connected and ca
 
 ---
 
-## Part 4. B2: all 543 TEST examples (Session 2, after `BEST` is known)
+## Part 4. B2: all 543 TEST examples (updated 2026-11-25 after reading the B1 output in `docs/new_session_results`)
 
-Do Part 1 again if the runtime was disconnected or restarted. Systems that do not use retrieval are run once, because their output is identical in the main
-and staleness views (no retrieval, greedy decoding; confirmed in Entry 40).
+**Continue in the same session if it is still connected and Cells 1 to 6 have run (do NOT run Cells 1 to 3 again: Cell 2 would wipe the data).**
+You are in `/content/Thesisbaseline1` and the `run(...)` helper from Step 7 exists. If the runtime disconnected or restarted, do Part 1 again first
+(Steps 1 to 5 and 7; Step 6, the environment record, is already saved on Drive and need not be repeated).
 
-**Step 14. Cell 10, measure the speed first (about 10 minutes; do this before any long run)**
+**What B1 showed (read from the printed output; pilot n=50 and staleness-test n=68; full analysis follows locally):**
+- S0 reproduced the earlier run exactly (RAG edit similarity 0.3872, hybrid 0.644), so the diagnostic did not change any prediction.
+- RAG edit similarity per setting, pilot / 68-example set: S0 0.387 / 0.350, **S1 (no-FIM) 0.413 / 0.423**, S2 (Qwen repo format) 0.434 / 0.384, S3 0.434 / 0.384.
+  Intervals overlap everywhere (for example pilot S0 [0.311, 0.468] vs S2 [0.352, 0.514]); no paired test yet.
+- Empty first lines (RAG): pilot S0 5, S1 5, S2 7, S3 7; 68-set S0 1, S1 4, S2 14, S3 14. The `<|fim_suffix|>` answers of S0 (6 of 50, 18 of 68, found earlier)
+  are not counted in these numbers; S1 makes them impossible. S2 and S3 give more empty answers (the model often ends with only a newline).
+- The hybrid is identical in all four settings (pilot 0.644, 68-set 0.695), so these settings only matter for the RAG row.
+- No setting solves the problem: even the best one still has about 13 of 50 and 16 of 68 RAG answers that are empty or under 5 characters (for example `\`, `erro`).
+- **Setting chosen for B2 (provisional, by the rule fixed in advance: fewest unusable answers first, then edit similarity, hybrid not worse): S1 = `--suppress-fim`.**
+  It has the fewest empty-plus-fill-in-the-middle answers on both sets and the higher or similar edit similarity. The final decision is confirmed locally with the saved
+  predictions; if that changes it, only the RAG and hybrid runs 2 and 3 below would need repeating.
+- **Measured speed (replaces the planned timing run):** per example, RAG about 1.8 s and hybrid about 2.2 s (pilot and 68-set, with retrieval about 25 ms); earlier base 1.61 s and
+  fine-tuned 1.91 s. So: base + fine-tuned 543 x 3.5 s = about 32 min; RAG + hybrid 543 x 4.0 s = about 36 min per view; plus about 1.5 to 2 minutes to load the model for each run.
+  **Total about 1 h 50 min for the three runs below** (an estimate: the full set has longer prompts than the pilot, so the first run is the check). Nothing is printed while a system runs
+  (about 18 minutes each for RAG and hybrid); the cell stays busy until the run ends. Keep the tab open.
+
+**Step 14. Cell 10, set the flags and start with the main-view RAG and hybrid run (about 40 min; first because it is the headline and tests the long prompts)**
 ```python
-BEST = []   # <- put my flags here, e.g. ["--suppress-fim", "--rag-format", "qwen_repo"]; leave empty if S0 is best
-run("results/b2/timing_noretr", "--subset", "test", "--limit", "10", "--systems", "base", "finetuning_only")
-run("results/b2/timing_retr",   "--subset", "test", "--limit", "10", "--systems", "rag_only", "hybrid", *BEST)
-!grep -hE "base|rag_only|finetuning_only|hybrid" results/b2/timing_noretr/comparison_summary.md results/b2/timing_retr/comparison_summary.md
-```
-Estimated total = 543 x (sum of the four per-example times in seconds) / 60 minutes, plus about 2 minutes per run for loading. With the pilot timings:
-about 543 x 7.5 s = 68 minutes for all four systems in one view, so about **1 h 45 min to 2 h** for the plan below. **Paste me the measured numbers.** If the estimate
-is above 3 hours, free-tier GPU time may not be enough for one session; the runs are independent and skipped when finished, so they can be spread over days.
-
-**Step 15. Cell 11, the runs (most important first; each saved to Drive when it ends)**
-```python
-# 1. frozen base and fine-tuned model, all 543 (about 35 min)
-run("results/b2/test_noretr", "--subset", "test", "--systems", "base", "finetuning_only")
-# 2. RAG and hybrid, main view, dense top-5 (about 40 min)
+BEST = ["--suppress-fim"]
 run("results/b2/test_main_dense", "--subset", "test", "--view", "main", "--systems", "rag_only", "hybrid", "--save-raw", *BEST)
-# 3. RAG and hybrid, staleness view, dense top-5 (about 40 min)
+```
+Checks when it finishes: the log shows `test: 543 examples`-style counts (543), no `out of memory`, and the per-example time in the printed efficiency lines
+(`avg_total_ms`, or total ms / 543) is below about 6000 ms. If it is much slower or runs out of memory, stop and send me the output before starting the next run.
+
+**Step 14b. Checkpoint and stop here (do this as soon as Step 14 has finished; takes 2 minutes)**
+A Colab runtime cannot be paused, and an idle one is reclaimed, but everything under `results/` is on Drive and stays. A run is saved only when it finishes, so stop
+**between** runs, never inside one.
+```python
+import glob, os, time
+lines = [f"checkpoint {time.strftime('%Y-%m-%d %H:%M:%S')} (Colab clock)"]
+for d in sorted(glob.glob("results/b2/*")):
+    done = os.path.exists(f"{d}/comparison_summary.json")
+    n = sum(1 for _ in open(f"{d}/predictions.jsonl", encoding="utf-8")) if os.path.exists(f"{d}/predictions.jsonl") else 0
+    lines.append(f"{'DONE   ' if done else 'PARTIAL'} {d}  rows={n}")
+open("results/b2/STATUS.txt", "w").write("\n".join(lines) + "\n")
+print("\n".join(lines))
+print()
+!cat results/b2/test_main_dense/comparison_summary.md
+```
+Expect `DONE results/b2/test_main_dense rows=543`, followed by the results table (scores, retrieval metrics, cost) of the run.
+**Step 14 result seen on 2026-11-25:** `test: 543 examples, view=main`; run time 05:05:28 to 05:39:53 (about 34 minutes); RAG stop reasons `{eos: 21, newline: 521, max_tokens: 1}`
+with 26 empty first lines; hybrid `{eos: 542, max_tokens: 1}` with 0 empty first lines. (Pasted console output cut off before the metric lines; the cell above prints them.)
+Then, before you leave: **paste the output of this cell into the chat** (not the progress bars), and run **Runtime > Disconnect and delete runtime** (it does not delete anything on Drive).
+If the status says `PARTIAL` or rows is not 543, do not continue: send me the output.
+
+**Resume later (in a new session, any time; Drive keeps everything). Do these in order:**
+1. Part 1: Step 1 (T4 GPU), Step 2 (Cell 1), Step 3 (Cell 2), **Step 4 (Cell 3) straight after Cell 2**, Step 5 (Cell 4), Step 7 (Cell 6, the `run` helper). Skip Step 6.
+2. Run Step 15 below (it defines `BEST` again and skips any run that already finished, so `test_main_dense` is not repeated).
+3. Then Step 14b again (checkpoint), Part 5 (finish and download).
+
+**Step 15. Cell 11, the other two runs (about 35 + 40 min; each is saved to Drive when it ends). Start with `BEST` again after a restart.**
+```python
+BEST = ["--suppress-fim"]
+# frozen base and fine-tuned model, all 543, no retrieval: output is identical in both views (about 35 min)
+run("results/b2/test_noretr", "--subset", "test", "--systems", "base", "finetuning_only")
+# RAG and hybrid, staleness view (NEW files in the retrieval index), dense top-5 (about 40 min)
 run("results/b2/test_staleness_dense", "--subset", "test", "--view", "staleness", "--systems", "rag_only", "hybrid", "--save-raw", *BEST)
 ```
-(After a restart, define `BEST` again in this cell.) Each run writes `predictions.jsonl` (one row per example: predictions and scores per system, `retrieved_files`,
-`relevant_files`, `relevant_in_top_k` (the hit flag) and `mrr`, so per-example retrieval hit flags are included), `comparison_summary.json` / `.md`, and per-system
-metric files. If the session ends in the middle of a run, only that run is lost: repeat Cells 1 to 4 and 6, define `BEST`, run Cell 11 again; finished runs are skipped.
+If the session ends in the middle of a run, only that run is lost: repeat Part 1 (Steps 1 to 5, 7), define `BEST` again, and run the same cell; finished runs are skipped.
+Each run writes `predictions.jsonl` (one row per example: predictions and scores per system, `retrieved_files`, `relevant_files`, `relevant_in_top_k` (the per-example retrieval hit
+flag) and `mrr`), `comparison_summary.json` / `.md` and per-system metric files.
+If GPU time is short, the order of importance is: main-view run (Step 14), then `test_noretr`, then the staleness run.
 
 **Step 16. Cell 12, BM25 (optional, only if GPU time is left; about 35 minutes per view)**
 ```python
@@ -205,8 +245,8 @@ run("results/b2/test_main_bm25", "--subset", "test", "--view", "main", "--retrie
 run("results/b2/test_staleness_bm25", "--subset", "test", "--view", "staleness", "--retriever", "bm25", "--systems", "rag_only", "hybrid", "--save-raw", *BEST)
 ```
 
-**Watch for:** `out of memory` (long prompts on a 16 GB T4): reset, run Cell 11 again, tell me which run and system failed. Do not start anything else on the GPU
-while a run is going; keep the browser tab open.
+**Watch for:** `out of memory` (long prompts, up to about 6,000 tokens, on the 15 GB T4): Runtime > Restart session, Part 1 (Steps 1 to 5, 7), define `BEST`, run the same cell again;
+tell me which run and system failed. Do not start anything else on the GPU while a run is going.
 
 ---
 
