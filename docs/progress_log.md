@@ -1815,3 +1815,40 @@ minutes of GPU): it can run as soon as the code is pushed, in parallel with the 
 ### Status
 Project Part 1: about **96%** (94 to 98%): the analysis, charts and examples are done; the open item is the RAG fix (one short Colab session) and then refreshing the RAG
 numbers in the documents. Whole thesis: about 74%.
+
+## Entry 43: Supervisor's review requests: no-GPU part done (A1 to A4), Colab steps written for B1 and B2 (2026-11-25)
+- **Asked:** the supervisor reviewed the progress report and asked for (1) a full-scale evaluation, (2) the RAG formatting problem fixed, (3) clearer implementation and
+  reproducibility details, (4) a clearer account of the adapter setup and fairness (`docs/review_sugesstions`). Do the no-GPU part first, then write the Colab steps in a
+  separate file; everything produced goes to `results/additional_results/`.
+- **Done (no GPU; nothing trained or generated; no existing result changed):**
+  - A1: `docs/reproducibility.md` (code commit `2650823`, config, adapter v2 training settings, trainer-state summary, software versions, run commands, fairness notes).
+    Copies and parsed files in `results/additional_results/`: `config_snapshot.yaml`, `adapter_v2_config.json`, `trainer_state_summary.json`, `pip_freeze_local.txt`.
+  - A2 and A3: new `src/evaluation/supervisor_checks.py` -> `supervisor_checks.json`, `training_examples_per_repo.csv`.
+  - A4: new `src/evaluation/functional_proxies.py` -> `results/additional_results/functional_proxies.csv` (copy: `results/functional_proxies.csv`), one row per run folder and system.
+  - B1 and B2: `docs/colab_new_steps_file.md` (not run).
+- **A2 answer:** adapter v2 is **one global adapter** trained on the pooled BASE-file corpus of all 206 repositories. Training examples per repository: **min 10, median 39, max 180**
+  (mean 45.5, total 9,378); validation per repository: min 1, median 5, max 20 (total 1,059). Every repository has training examples.
+- **A3 answer:** the 50 pilot examples were drawn (seed 42) from the **292** TEST examples that have a relevant file in the BASE pool, **not** from all 543 (checked: all 50 are TEST,
+  all 50 are among the 292, 40 repositories). So the pilot is favourable to retrieval compared with the full set; 251 of the 543 have no relevant file in the pool.
+- **A4 results (plain-prompt runs, which are the valid ones; % of answers; "parses" = last prompt line plus answer parses with `ast` after closing open brackets, a rough proxy;
+  "ids in repo" = share of non-empty answers whose identifiers, minus Python keywords and builtins, all occur in the repository's benchmark files):**
+
+  | Run (n) | System | empty | `<\|fim..\|>` | parses | ids all in repo |
+  |---|---|---|---|---|---|
+  | pilot main (50) | base | 0.0 | 0.0 | 98.0 | 16.3 |
+  | | RAG | 10.0 | 12.0 | 76.0 | 23.7 |
+  | | fine-tuned | 0.0 | 0.0 | 100.0 | 53.1 |
+  | | hybrid | 0.0 | 0.0 | 100.0 | 62.0 |
+  | pilot staleness (50) | RAG / hybrid | 8.0 / 0.0 | 12.0 / 0.0 | 76.0 / 100.0 | 23.1 / 64.0 |
+  | 68 new-file examples, staleness view | RAG / hybrid | 1.5 / 0.0 | 26.5 / 0.0 | 63.2 / 100.0 | 39.1 / 73.5 |
+
+  The counts reproduce Entry 42 (RAG: 5 empty and 6 `<|fim_suffix|>` of 50; 14 and 18 fim of 68). Base, fine-tuned and hybrid never produce the marker. Runs with the first
+  (instruction) prompt are in the CSV too but are retired (their base and RAG rows measure the prompt artifact, e.g. 2% parse).
+- **Caveats (state them if these numbers are shown):** the "parses" and "ids in repo" columns are proxies, not tests of correctness; one-line answers can fail to parse alone yet be fine in the
+  file; new variable or keyword names are legitimate but count as "not in repo"; the fine-tuned and hybrid models were trained on the same repositories' BASE files, so a higher share of known
+  names is expected and is the effect being measured, not evidence of correctness. Repository text = only the files that appear in the benchmark. Pilot sizes (50, 68) are small.
+- **Not done / open:** B1 (RAG fix on 50 and 68 examples, S0 to S3) and B2 (all 543 TEST examples, four systems, both views) need the GPU: steps in `docs/colab_new_steps_file.md`.
+  Session 1 first (about 45 to 60 minutes, an estimate); Session 2 (about 2 hours, an estimate from pilot timings) only after the best RAG setting is chosen locally. The Colab `pip freeze`,
+  Python and torch versions and the commit used were never recorded for the earlier runs; step A6 of the new guide records them. No retraining of the adapter is planned: fairness (item 4) is
+  addressed in `docs/reproducibility.md`, section 7. Still open from Entry 41: `git rm -r --cached results`, and committing the new files (`src/evaluation/supervisor_checks.py`,
+  `src/evaluation/functional_proxies.py`, `docs/reproducibility.md`, `docs/colab_new_steps_file.md`, `docs/review_sugesstions`): **I do not commit; please do.**

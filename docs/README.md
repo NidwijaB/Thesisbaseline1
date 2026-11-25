@@ -8,6 +8,9 @@
 | `progress_log.md` | Running record: what was asked, done and found, with numbers and caveats (newest at the bottom) |
 | `results_summary.md` | Every real result so far in one place, with the command that regenerates each |
 | `colab_steps.md` | How the GPU work runs on Colab (Parts 0 to 8; Part 7 is the pilot-session plan) |
+| `reproducibility.md` | Config, adapter v2 settings, versions, commit, run commands, pilot sampling, fairness notes (for the supervisor) |
+| `colab_new_steps_file.md` | The one file to follow for the new GPU work: setup, B1 (RAG fix), then B2 (full 543-example run) |
+| `review_sugesstions` | The supervisor's requests and the instructions used for this work |
 | `reference_paper_comparison.md` | Analysis of the main reference paper (Wang et al., 2025) |
 | `references.md` | Bibliography |
 | `new_session_prompt.md` | Prompt to paste into a fresh Claude Code session |

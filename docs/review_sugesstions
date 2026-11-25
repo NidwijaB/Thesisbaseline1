@@ -1,0 +1,30 @@
+My supervisor reviewed my progress report and
+asked for: (1) a full-scale evaluation instead of pilot-size, (2) the RAG
+formatting problem fixed, (3) clearer implementation and reproducibility
+details, (4) a clearer account of the adapter setup and experimental fairness.
+
+Please do the following. Don't invent numbers; if something can't be computed,
+say why.
+
+A. No GPU
+1. Write docs/reproducibility.md with: config.yaml, adapter v2 training args
+   (LoRA r/alpha/dropout/target modules, LR, batch, epochs, max length,
+   quantisation), trainer_state.json summary, pip freeze, git commit, run commands.
+2. Tell me whether adapter v2 is one global adapter across all 206 repos, and the
+   training examples per repo (min/median/max).
+3. Tell me how the 50 pilot examples were sampled (from 543 TEST, or only the
+   292 with a relevant file in the pool?).
+4. From existing predictions.jsonl, per system and view, compute: % empty,
+   % "<|fim_suffix|>", % valid Python, % identifiers present in the repo.
+   Save to results/functional_proxies.csv.
+
+B. GPU (give resumable Colab commands)
+1. RAG fix: run --save-raw, --suppress-fim, --rag-format qwen_repo on the 50
+   pilot and 68 staleness examples (RAG and hybrid). Report empty/fim counts
+   and metrics per setting.
+2. With the best RAG setting, run all 543 TEST examples for base, RAG,
+   fine-tuned, hybrid in main and staleness views (dense, top-5; BM25 if time).
+   Save predictions, comparison_summary.json and per-example retrieval hit
+   flags. Estimate runtime first.
+
+End with a list of files I should send back and save as youhave did earlier in my progress_log as well, get any information already present fromt he progress log and save them to a seperate file if needed as per this suggestion in a relevenat data file. and for the colab sessions teps, creae a new file with all the steps as done earlier. thank yout
