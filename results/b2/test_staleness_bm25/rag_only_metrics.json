@@ -1,0 +1,49 @@
+{
+  "system": "rag_only",
+  "exact_match": 0.0258,
+  "edit_similarity": 0.4357,
+  "identifier_accuracy": 0.2679,
+  "code_bleu": 0.1667,
+  "exact_match_ci95": [
+    0.0147,
+    0.0405
+  ],
+  "edit_similarity_ci95": [
+    0.4129,
+    0.4589
+  ],
+  "n_samples": 543,
+  "n_examples": 543,
+  "n_with_relevant_file": 327,
+  "subset": "test",
+  "view": "staleness",
+  "top_k": 5,
+  "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+  "retriever": "bm25",
+  "max_code_tokens": null,
+  "noise_chunks": 0,
+  "base_prompt": "plain",
+  "rag_format": "comments",
+  "suppress_fim": true,
+  "retrieval": {
+    "mrr": 0.8704,
+    "precision@1": 0.7706,
+    "recall@1": 0.6188,
+    "precision@3": 0.4322,
+    "recall@3": 0.9345,
+    "precision@5": 0.2771,
+    "recall@5": 0.9865,
+    "precision@10": 0.1407,
+    "recall@10": 1.0,
+    "n_queries": 327
+  },
+  "efficiency": {
+    "system": "rag_only",
+    "retrieval_latency_ms": 805.71,
+    "inference_latency_ms": 949035.92,
+    "total_latency_ms": 949841.63,
+    "avg_total_ms": 1749.25,
+    "peak_gpu_mb": 2063.26,
+    "peak_cpu_ram_mb": 2421.88
+  }
+}

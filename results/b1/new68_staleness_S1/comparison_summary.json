@@ -1,0 +1,100 @@
+{
+  "rag_only": {
+    "system": "rag_only",
+    "exact_match": 0.0588,
+    "edit_similarity": 0.4228,
+    "identifier_accuracy": 0.2729,
+    "code_bleu": 0.2615,
+    "exact_match_ci95": [
+      0.0147,
+      0.118
+    ],
+    "edit_similarity_ci95": [
+      0.3489,
+      0.4906
+    ],
+    "n_samples": 68,
+    "n_examples": 68,
+    "n_with_relevant_file": 68,
+    "subset": "new_relevant",
+    "view": "staleness",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "rag_format": "comments",
+    "suppress_fim": true,
+    "retrieval": {
+      "mrr": 0.7157,
+      "precision@1": 0.5441,
+      "recall@1": 0.3284,
+      "precision@3": 0.4412,
+      "recall@3": 0.7721,
+      "precision@5": 0.3176,
+      "recall@5": 0.935,
+      "precision@10": 0.1691,
+      "recall@10": 0.9926,
+      "n_queries": 68
+    },
+    "efficiency": {
+      "system": "rag_only",
+      "retrieval_latency_ms": 1540.82,
+      "inference_latency_ms": 124470.54,
+      "total_latency_ms": 126011.36,
+      "avg_total_ms": 1853.11,
+      "peak_gpu_mb": 2171.01,
+      "peak_cpu_ram_mb": 2425.42
+    }
+  },
+  "hybrid": {
+    "system": "hybrid",
+    "exact_match": 0.1618,
+    "edit_similarity": 0.695,
+    "identifier_accuracy": 0.5508,
+    "code_bleu": 0.4436,
+    "exact_match_ci95": [
+      0.0882,
+      0.25
+    ],
+    "edit_similarity_ci95": [
+      0.6438,
+      0.7457
+    ],
+    "n_samples": 68,
+    "n_examples": 68,
+    "n_with_relevant_file": 68,
+    "subset": "new_relevant",
+    "view": "staleness",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "rag_format": "comments",
+    "suppress_fim": true,
+    "retrieval": {
+      "mrr": 0.7157,
+      "precision@1": 0.5441,
+      "recall@1": 0.3284,
+      "precision@3": 0.4412,
+      "recall@3": 0.7721,
+      "precision@5": 0.3176,
+      "recall@5": 0.935,
+      "precision@10": 0.1691,
+      "recall@10": 0.9926,
+      "n_queries": 68
+    },
+    "efficiency": {
+      "system": "hybrid",
+      "retrieval_latency_ms": 1540.82,
+      "inference_latency_ms": 145008.38,
+      "total_latency_ms": 146549.2,
+      "avg_total_ms": 2155.14,
+      "peak_gpu_mb": 2171.27,
+      "peak_cpu_ram_mb": 2497.5
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "base": {
+    "system": "base",
+    "exact_match": 0.0184,
+    "edit_similarity": 0.4702,
+    "identifier_accuracy": 0.2869,
+    "code_bleu": 0.1906,
+    "exact_match_ci95": [
+      0.0092,
+      0.0295
+    ],
+    "edit_similarity_ci95": [
+      0.4501,
+      0.4903
+    ],
+    "n_samples": 543,
+    "n_examples": 543,
+    "n_with_relevant_file": 292,
+    "subset": "test",
+    "view": "main",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "rag_format": "comments",
+    "suppress_fim": false,
+    "efficiency": {
+      "system": "base",
+      "retrieval_latency_ms": 0.0,
+      "inference_latency_ms": 856254.68,
+      "total_latency_ms": 856254.68,
+      "avg_total_ms": 1576.9,
+      "peak_gpu_mb": 2480.08,
+      "peak_cpu_ram_mb": 2725.62
+    }
+  },
+  "finetuning_only": {
+    "system": "finetuning_only",
+    "exact_match": 0.0681,
+    "edit_similarity": 0.5989,
+    "identifier_accuracy": 0.4263,
+    "code_bleu": 0.2353,
+    "exact_match_ci95": [
+      0.0479,
+      0.0884
+    ],
+    "edit_similarity_ci95": [
+      0.579,
+      0.618
+    ],
+    "n_samples": 543,
+    "n_examples": 543,
+    "n_with_relevant_file": 292,
+    "subset": "test",
+    "view": "main",
+    "top_k": 5,
+    "adapter": "experiments/finetuned_model/crosscodeeval/v2",
+    "retriever": "dense",
+    "max_code_tokens": null,
+    "noise_chunks": 0,
+    "base_prompt": "plain",
+    "rag_format": "comments",
+    "suppress_fim": false,
+    "efficiency": {
+      "system": "finetuning_only",
+      "retrieval_latency_ms": 0.0,
+      "inference_latency_ms": 969539.02,
+      "total_latency_ms": 969539.02,
+      "avg_total_ms": 1785.52,
+      "peak_gpu_mb": 2481.36,
+      "peak_cpu_ram_mb": 2746.43
+    }
+  }
+}

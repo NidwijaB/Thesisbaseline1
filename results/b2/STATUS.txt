@@ -1,0 +1,7 @@
+checkpoint 2026-11-25 18:03:24 (Colab clock)
+PARTIAL results/b2/STATUS.txt  rows=0
+DONE    results/b2/test_main_bm25  rows=543
+DONE    results/b2/test_main_dense  rows=543
+DONE    results/b2/test_noretr  rows=543
+PARTIAL results/b2/test_staleness_bm25  rows=0
+DONE    results/b2/test_staleness_dense  rows=543
