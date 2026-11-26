@@ -8,6 +8,7 @@
 | `progress_log.md` | Running record: what was asked, done and found, with numbers and caveats (newest at the bottom) |
 | `results_summary.md` | Every real result so far in one place, with the command that regenerates each |
 | `colab_steps.md` | How the GPU work runs on Colab (Parts 0 to 8; Part 7 is the pilot-session plan) |
+| `code_map.md` | Which file does what and where the key values and result files are (for questions in the presentation) |
 | `reproducibility.md` | Config, adapter v2 settings, versions, commit, run commands, pilot sampling, fairness notes (for the supervisor) |
 | `colab_new_steps_file.md` | The one file to follow for the new GPU work: setup, B1 (RAG fix), then B2 (full 543-example run) |
 | `review_sugesstions` | The supervisor's requests and the instructions used for this work |
