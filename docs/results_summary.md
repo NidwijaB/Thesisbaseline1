@@ -5,7 +5,7 @@ caveats and decisions; this file only collects the numbers so they can be pasted
 slides). Raw files are in `results/` (gitignored); regenerate with the commands given.
 
 **Status in one line:** retrieval results exist for both datasets and one fine-tuning run is finished.
-A pilot (n=50, main view) now gives completion scores for all four systems (section 5c); no full-set result yet.
+A pilot (n=50) and now a full CrossCodeEval TEST run (n=543, section 5g) give completion scores for all four systems.
 
 ---
 
@@ -148,8 +148,25 @@ relative change -4.5%, McNemar p = 0.68. Cost: 1.61 / 1.72 / 1.91 / 2.24 s per e
 measure of retrieval; fixes are being tested (`--suppress-fim`, `--rag-format qwen_repo`, `--save-raw`; `docs/colab_steps_new.md` section F).
 Charts: `results/figures/pilot_*.png`, numbers in `results/figures/pilot_numbers.csv`; example outputs: `docs/example_outputs.md`.
 
+## 5g. Full run, CrossCodeEval TEST n=543, dense retrieval top-5 (Entries 44 and 45, 2026-11-25; one adapter, one seed)
+
+RAG and hybrid with `--suppress-fim`; plain prompt for base and RAG. Files: `results/b2/`, analysis `results/additional_results/full_run_summary.md`. Steps: `docs/colab_new_steps_file.md`.
+
+| System | EM [95% CI] | Edit sim. [95% CI] | Identifier acc. | CodeBLEU | Time per example | GPU MB |
+|---|---|---|---|---|---|---|
+| base | 0.018 [0.007, 0.030] | 0.470 [0.450, 0.490] | 0.287 | 0.191 | 1.58 s | 2,480 |
+| RAG (A) | 0.024 [0.011, 0.039] | 0.442 [0.418, 0.465] | 0.275 | 0.184 | 1.77 s | 2,557 |
+| fine-tuned (B) | 0.068 [0.048, 0.090] | 0.599 [0.578, 0.617] | 0.426 | 0.235 | 1.79 s | 2,481 |
+| hybrid (C) | 0.111 [0.085, 0.136] | 0.628 [0.607, 0.649] | 0.479 | 0.300 | 2.03 s | 2,561 |
+
+Staleness view: RAG 0.444, hybrid 0.636 (EM 0.118). Retrieval (292 examples): MRR 0.770, R@3 0.921; staleness (327): MRR 0.720, R@3 0.843.
+Paired edit-similarity differences (95% CI): fine-tuned minus base +0.129 [0.108, 0.150]; RAG minus base -0.028 [-0.050, -0.007] (but -0.007 [-0.026, 0.013] after removing the 26 empty RAG answers);
+hybrid minus fine-tuned +0.029 [0.014, 0.044] (main) and +0.037 [0.021, 0.052] (staleness). 68 NEW-relevant examples: hybrid +0.055 [0.015, 0.103] when the new file is in the index; hybrid minus fine-tuned +0.091 [0.036, 0.146].
+BM25 vs dense: retrieval MRR 0.884 vs 0.770 (+0.114 [0.074, 0.155]); completion unchanged (RAG -0.002, hybrid +0.003, both CIs include 0). The rank of the relevant file has no visible effect on completion; hit vs miss has only 5 and 13 misses.
+RAG-format fix (B1, pilot n=50 and n=68, Entry 44): no setting removes the problem; `--suppress-fim` chosen; the hybrid is unaffected. Functional proxies: `results/additional_results/functional_proxies_full.csv`.
+Caveats: the RAG row is limited by prompt-format failures (about 5% empty answers); one seed; small pools; BM25 staleness view not run.
+
 ## 6. Not available yet
 
-EM / edit similarity / identifier accuracy / CodeBLEU for base, RAG, fine-tuned and hybrid; hit-versus-miss
-accuracy; staleness effect on completion; forgetting check; noisy-context test; top-k sweep; RepoBench
-completion and fine-tuning; latency and memory per system. All need the Colab GPU (pilot first).
+Noisy-context test; top-k sweep; RepoBench completion and fine-tuning; a usable hit-versus-miss analysis (too few misses at top-5, needs the top-k sweep);
+BM25 staleness view; more fine-tuning seeds; the RAFT-style variant. All except the last two need the Colab GPU. (The full 543-example comparison, staleness effect and forgetting check now exist: sections 5f and 5g.)

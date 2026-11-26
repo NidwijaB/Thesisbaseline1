@@ -1852,3 +1852,78 @@ numbers in the documents. Whole thesis: about 74%.
   Python and torch versions and the commit used were never recorded for the earlier runs; step A6 of the new guide records them. No retraining of the adapter is planned: fairness (item 4) is
   addressed in `docs/reproducibility.md`, section 7. Still open from Entry 41: `git rm -r --cached results`, and committing the new files (`src/evaluation/supervisor_checks.py`,
   `src/evaluation/functional_proxies.py`, `docs/reproducibility.md`, `docs/colab_new_steps_file.md`, `docs/review_sugesstions`): **I do not commit; please do.**
+
+## Entry 44: Colab session 1 (2026-11-25): environment record and B1, the RAG formatting fix (pilot n=50 and staleness test n=68)
+- **Asked:** run the supervisor's B1 (`docs/review_sugesstions`): the frozen RAG system's empty and `<|fim_suffix|>` answers, tested with `--save-raw`, `--suppress-fim`, `--rag-format qwen_repo` on the 50 pilot
+  and the 68 staleness-test examples, for RAG and hybrid. Steps followed: `docs/colab_new_steps_file.md` (Parts 1 and 2). Raw console output: `docs/new_session_results`; files: `results/b1/` (8 folders).
+- **Environment recorded for the first time** (`results/additional_results_colab/`): Python 3.13.16, Tesla T4, driver 580.82.07, CUDA 13.0, torch 2.14.1+cu130, transformers 5.15.0, peft 0.20.0, bitsandbytes 0.50.2,
+  codebleu 0.8.0 (729-line pip freeze). Code commit on Colab: `bd097937de23412fae67d5f0886b17643fbf7a12`. Also copied into `docs/reproducibility.md`. The environments of earlier runs were never recorded.
+- **Check passed:** S0 (current format, `--save-raw` only) reproduced the earlier run exactly: RAG edit similarity 0.3872, hybrid 0.644 (exact match 0.14), so the diagnostic changes no prediction.
+- **Results, RAG row** (`results/additional_results/b1_settings.csv`, recomputed locally from the saved predictions; paired difference against S0 with 95% bootstrap CI):
+
+  | Set | Setting | ES | empty | fim marker | under 5 chars | ES minus S0 |
+  |---|---|---|---|---|---|---|
+  | pilot n=50 | S0 current | 0.387 | 5 | 6 | 9 | - |
+  | | S1 no-FIM | 0.413 | 5 | 0 | 13 | +0.026 [-0.006, 0.071] |
+  | | S2 Qwen repo format | 0.434 | 7 | 0 | 10 | +0.047 [-0.007, 0.106] |
+  | | S3 both | 0.434 | 7 | 0 | 10 | same as S2 |
+  | 68-example test | S0 | 0.350 | 1 | 18 | 10 | - |
+  | | S1 | 0.423 | 4 | 0 | 16 | +0.072 [0.020, 0.127] |
+  | | S2 | 0.384 | 14 | 0 | 20 | +0.034 [-0.029, 0.102] |
+  | | S3 | 0.384 | 14 | 0 | 20 | same as S2 |
+- **Reading (pilot-sized, not findings):** S1 removes the fill-in-the-middle answers and S2 does not produce them; no setting removes the problem (13 of 50 and 16 of 68 answers under 5 characters even in S1, e.g. `\`, `erro`);
+  S2 turns the fill-in-the-middle answers into empty ones (14 of 68 empty). The hybrid's answers were **identical in all four settings in every example** (0 differing of 50 and of 68), so the settings only matter for the RAG row.
+- **Setting chosen for B2:** S1 `--suppress-fim`, by the rule fixed before looking (fewest empty plus fill-in-the-middle answers, then edit similarity, hybrid not worse): S1 has the fewest on both sets
+  (5 and 4 empty; fill-in-the-middle 0) and the best edit similarity on the 68-example set; on the pilot S2 is higher by 0.021 (intervals overlap). The local check of the saved predictions (above) confirms the counts.
+- **Cost seen:** RAG 1.76 to 1.89 s and hybrid 2.16 to 2.18 s per example (pilot), about 5 minutes wall time per run including model loading.
+- **Problem met:** after reconnecting, the `run` helper was undefined because the setup cell had not been run; documented in `docs/colab_remaining_steps.md`.
+
+## Entry 45: Colab sessions 2 and 3 (2026-11-25): B2, the full 543-example run, and the local analysis (no GPU)
+- **Asked:** B2: run all 543 TEST examples for base, RAG, fine-tuned and hybrid, main and staleness views, dense top-5 with the chosen RAG setting (`--suppress-fim`), BM25 if time; save predictions,
+  comparison summaries and per-example retrieval hit flags; estimate runtime first. Steps: `docs/colab_new_steps_file.md` Part 4 and `docs/colab_remaining_steps.md`. Console output: `docs/colab-remaining_steps results`;
+  files: `results/b2/`. Analysis: new `src/evaluation/full_run_analysis.py` (read-only), outputs in `results/additional_results/` (`full_run_summary.md`, `full_run_analysis.json`, `b1_settings.csv`,
+  `functional_proxies_full.csv`, `combined_main.jsonl`, `combined_staleness.jsonl`).
+- **What ran (Colab T4, 4-bit, adapter v2, plain prompt for base and RAG):** `test_main_dense` (RAG and hybrid, main view; 05:05 to 05:40, about 34 min), `test_noretr` (base and fine-tuned, no retrieval,
+  output identical in both views; about 33 min), `test_staleness_dense` (RAG and hybrid, staleness view; about 40 min), `test_main_bm25` (BM25 retrieval, main view; done). `test_staleness_bm25` was stopped when the daily free GPU
+  allowance ran low: **incomplete, not used** (only `rag_only_metrics.json` exists). The four finished folders have 543 rows and `comparison_summary.json` (checked after copying). Drive flush confirmed before disconnecting.
+- **Time:** estimated about 1 h 50 min for the three main runs; measured per-example times 1.58 s (base), 1.77 s (RAG), 1.79 s (fine-tuned) and 2.03 s (hybrid), from each run's total time.
+- **Issues met:** `STATUS.txt` was listed as a run folder by the checkpoint and Step 17 cells (fixed in `docs/colab_remaining_steps.md`); the free-allowance warning arrived during the optional BM25 staleness run.
+
+### Results, n=543, main view (RAG and hybrid with `--suppress-fim`; EM and edit similarity with 95% bootstrap CI; identifier accuracy and CodeBLEU are corpus values)
+| System | EM | Edit sim. | Identifier acc. | CodeBLEU |
+|---|---|---|---|---|
+| base | 0.018 [0.007, 0.030] | 0.470 [0.450, 0.490] | 0.287 | 0.191 |
+| RAG (A) | 0.024 [0.011, 0.039] | 0.442 [0.418, 0.465] | 0.275 | 0.184 |
+| fine-tuned (B) | 0.068 [0.048, 0.090] | 0.599 [0.578, 0.617] | 0.426 | 0.235 |
+| hybrid (C) | 0.111 [0.085, 0.136] | 0.628 [0.607, 0.649] | 0.479 | 0.300 |
+
+Staleness view: RAG 0.444 (EM 0.031), hybrid 0.636 (EM 0.118, identifier accuracy 0.495, CodeBLEU 0.313); base and fine-tuned unchanged.
+Retrieval (292 examples with a relevant file in the main pool): MRR 0.770, R@1 0.487, R@3 0.921, R@5 0.987; staleness view (327): MRR 0.720, R@3 0.843. Cost (time per example, GPU memory): base 1.58 s / 2.48 GB,
+RAG 1.77 s / 2.56 GB, fine-tuned 1.79 s / 2.48 GB, hybrid 2.03 s / 2.56 GB; retrieval 10.8 s in total for 543 examples (about 20 ms each).
+
+### Paired differences in edit similarity (95% CI; an interval that excludes 0 is a real difference at this sample)
+- Main view: fine-tuned minus base **+0.129 [0.108, 0.150]**; RAG minus base **-0.028 [-0.050, -0.007]**; hybrid minus fine-tuned **+0.029 [0.014, 0.044]**; hybrid minus RAG +0.186 [0.161, 0.211]; RAG minus fine-tuned -0.157 [-0.182, -0.133].
+- Staleness view: same ordering; hybrid minus fine-tuned **+0.037 [0.021, 0.052]**.
+- **The pilot's "hybrid is not significantly better than fine-tuned" (n=50) does not hold at n=543:** the gain is small (0.03 edit similarity; exact match 0.111 vs 0.068) but the interval excludes 0.
+- **RAG below base is mostly the empty answers:** removing the 26 empty RAG answers (27 in the staleness view) gives RAG minus base -0.007 [-0.026, +0.013] (n=517) and -0.003 [-0.023, +0.017] (n=516), not different from the base. With the format failures excluded,
+  retrieval in this prompt format neither helps nor hurts the frozen model; "RAG hurts" must not be presented as a finding.
+- **Staleness test (H3):** the hybrid improves when new files are in the index: all 543 +0.008 [0.001, 0.016]; the 68 NEW-relevant examples **+0.055 [0.015, 0.103]**; hybrid minus fine-tuned on those 68: +0.037 [-0.009, 0.085] in the main view and
+  **+0.091 [0.036, 0.146]** in the staleness view. These are the same 68 examples and the same hybrid answers as Entry 41 (reproduced, not independently replicated). RAG alone does not benefit (+0.002 all; +0.028 [-0.034, 0.092] on the 68).
+- **Dense vs BM25 (main view, 543):** BM25 retrieves better (MRR on the 292 with a relevant file 0.884 vs 0.770, difference **+0.114 [0.074, 0.155]**; hit@5 1.000 vs 0.983) but completion is the same: RAG edit similarity -0.002 [-0.016, +0.011], hybrid +0.003
+  [-0.004, +0.010]; RAG exact match +0.007 [0.002, 0.015] (about 4 examples, tiny, not robust).
+- **Hit vs miss is still not usable at top-5:** hits 287 and misses 5 (main), hits 314 and 13 misses (staleness), because pools are small. Grouping instead by the rank of the first relevant file (post hoc; the top-5 chunks were always in the prompt):
+  rank 1 (n=176), ranks 2 to 3 (102), rank 4 or lower (14): hybrid 0.623 / 0.637 / 0.685, RAG 0.445 / 0.456 / 0.448. **No dependence on the rank of the relevant file** is visible for these systems.
+- **Functional proxies (% of 543 answers; rough proxies)** (`functional_proxies_full.csv`): empty answers base 0.2, RAG 4.8 (main) / 5.0 (staleness) / 5.5 (BM25), fine-tuned 0, hybrid 0; fill-in-the-middle marker 0 for RAG (suppressed), base 0.4; answer parses:
+  base 93.6, RAG 86.4, fine-tuned 98.5, hybrid 98.7; all identifiers present in the repository's benchmark files: base 16.6, RAG 23.2, fine-tuned 55.2, hybrid 64.1 (staleness 65.6). This proxy favours the adapter systems (trained on the same repositories); it is not a correctness measure.
+- **Caveats:** one adapter, one seed, 1.5B model; the RAG row is limited by prompt-format failures of the frozen model (about 5% empty answers, a larger share very short), so it does not measure retrieval quality; pools are small (3 to about 10 chunks), so hit@5 is near 1 for every retriever;
+  only 292 (main) or 327 (staleness) of the 543 have a relevant file; the BM25 staleness run is missing.
+- **Status against the supervisor's four requests:** (1) full-scale evaluation done for CrossCodeEval; (2) RAG formatting fix tested, S1 chosen, no setting solves it; (3) `docs/reproducibility.md`; (4) the adapter and fairness account is its section 7.
+  Open: RepoBench fine-tuning and completion, noisy-context and top-k sweeps (the top-k sweep would also give a usable hit-vs-miss split), the RAFT-style retrain decision, more seeds, the BM25 staleness view, a better prompt for the frozen RAG system (few-shot, or Qwen's repository format with proper stopping),
+  numeric recommendations, thesis chapters. Completion estimate (a judgement, not a measurement): Part 1 about 98%; whole thesis about 80% (74% in Entry 42; the full run was the largest remaining Part 2 item).
+- **Not committed at this point (git status):** `src/evaluation/full_run_analysis.py` (new), and edits to `docs/progress_log.md`, `docs/results_summary.md`, `docs/reproducibility.md`. I do not commit; please do. `results/` is gitignored.
+
+## Entry 46: Report-update file for 2026-11-25 (2026-11-25)
+- **Asked:** put everything done today into one file that can be pasted into Claude to update the report; treat the open items as future work or a thesis proposal; list what else to send.
+- **Done:** wrote `docs/report_update_2026-11-25.md` (self-contained: the supervisor's four requests, setup and fairness facts, B1 table, the full 543-example results with intervals and paired tests, staleness test, BM25 vs dense, hit-vs-miss and rank analysis, functional proxies,
+  hypotheses against Wang et al. by direction, limitations, and section 8 "Future work / thesis proposal"). Every number is copied from Entries 43 to 45 and `results/additional_results/`; nothing new was computed or run. Future-work list: RepoBench fine-tuning and completion; top-k sweep and noisy-context test;
+  a better frozen-RAG prompt; RAFT-style retrain and epochs/sequence length decision; more seeds; BM25 staleness view, other retrievers, larger models; numeric recommendations.

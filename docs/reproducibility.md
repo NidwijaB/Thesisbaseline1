@@ -6,9 +6,9 @@ repository or from the saved Colab console output; anything that was not recorde
 `pip_freeze_local.txt`, `training_examples_per_repo.csv`, `supervisor_checks.json`.
 
 ## 1. Code version
-- Git commit at the time of writing: `2650823385ca610efd45d9dbc2119ba3bfce4bac` (2026-11-23), `main` equal to `origin/main`.
+- Git commit when this file was first written: `2650823385ca610efd45d9dbc2119ba3bfce4bac` (2026-11-23); on 2026-11-25 `main` and `origin/main` are at `5afdeeb` ("added results in gitignore file"). Commit used on Colab for B1 and B2: `bd097937de23412fae67d5f0886b17643fbf7a12`.
 - Colab clones the public repository `https://github.com/NidwijaB/Thesisbaseline1` (depth 1) at the start of every session, so a Colab run uses the
-  latest push at that moment. **The commit used by each past Colab run was not recorded**; the v2 training ran on 2026-11-19 with the code of
+  latest push at that moment. **The commit used by each Colab run before 2026-11-25 was not recorded** (the B1 and B2 runs used `bd097937de23412fae67d5f0886b17643fbf7a12`); the v2 training ran on 2026-11-19 with the code of
   that day (training code version 2, `TRAINING_VERSION = 2`). Future runs: write down `git rev-parse HEAD` in the session (see
   `docs/colab_new_steps_file.md`).
 - Seeds: 42 for every split, sample and bootstrap (constants in the scripts; `project.seed: 42` in the config is not read by them).
@@ -67,8 +67,13 @@ file, `--subset new_relevant`). The full run (`--subset test`) uses all 543.
 `bitsandbytes` 0.50.2, installed by `tools/colab_setup.py` with
 `pip install transformers==5.15.0 peft==0.20.0 accelerate==1.14.0 datasets==5.0.1 sentence-transformers==5.7.0 bitsandbytes faiss-cpu==1.15.0
 rank_bm25==0.2.2 Levenshtein==0.27.4 nltk psutil pyyaml matplotlib` (the CodeBLEU packages are installed by a separate step in the Colab notes).
-**Not recorded on Colab:** the Python, torch, CUDA and numpy versions and the `codebleu` version (Colab's preinstalled versions at the time). The full
-`pip freeze` of a Colab session was never saved; the session guide now includes a cell that saves it (`docs/colab_new_steps_file.md`, Step 6).
+**Recorded on Colab on 2026-11-25** (session of the B1 and B2 runs, `results/additional_results_colab/`: `git_commit.txt`, `python_version.txt`, `nvidia_smi.txt`, `pip_freeze_colab.txt`, 729 lines):
+Python 3.13.16; GPU Tesla T4 (15,360 MiB), driver 580.82.07, CUDA 13.0; torch 2.14.1+cu130; transformers 5.15.0; peft 0.20.0; accelerate 1.14.0; bitsandbytes 0.50.2;
+datasets 5.0.1; sentence-transformers 5.7.0; faiss-cpu 1.15.0; rank-bm25 0.2.2; codebleu 0.8.0; tree-sitter 0.26.1; tree-sitter-python 0.25.0; numpy 2.4.6. The code of that
+session was commit `bd097937de23412fae67d5f0886b17643fbf7a12` ("updated after review", an ancestor of the current `main` head `5afdeeb`; the local analysis scripts ran on head `5afdeeb` plus the uncommitted `src/evaluation/full_run_analysis.py`).
+**Not recorded for the earlier runs** (adapter training 2026-11-19, pilot runs 2026-11-21 and 2026-11-23): their Python, torch, CUDA and codebleu versions and commit. Colab's preinstalled
+packages change over time, so the 2026-11-25 record is exact for the B1 and B2 runs and "same pinned libraries, torch and Python probably newer" for the earlier ones (torch 2.14.1 here vs 2.13.0 locally;
+the pinned libraries are identical).
 **Local machine** (Windows, Python 3.11.9, CPU torch; used for data building, retrieval, analysis; full list in `results/additional_results/pip_freeze_local.txt`):
 torch 2.13.0, transformers 5.15.0, peft 0.20.0, accelerate 1.14.0, datasets 5.0.1, sentence-transformers 5.7.0, faiss-cpu 1.15.0, rank-bm25 0.2.2,
 Levenshtein 0.27.4, codebleu 0.8.0, tree-sitter 0.26.1, tree-sitter-python 0.25.0, numpy 2.4.6, nltk 3.10.2. The pinned libraries match the Colab pins above.
